@@ -12,15 +12,15 @@ object App {
     root.children(2).newChild(6)
 
     println(tree)
-    root.children(0).children(1).mergeWithLeftSibling
+    root.children(0).children(1).mergeWithLeftSibling(7)
     println(tree)
-    root.children(0).mergeWithRightSibling
+    root.children(0).mergeWithRightSibling(8)
     println(tree)
-    root.children(1).mergeWithOnlyChild
+    root.children(1).mergeWithOnlyChild(9)
     println(root)
-    root.children(0).mergeWithRightSibling
+    root.children(0).mergeWithRightSibling(10)
     println(root)
-    root.children(0).mergeWithOnlyChild
+    root.children(0).mergeWithOnlyChild(11)
     println(root)
   }
 

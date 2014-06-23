@@ -52,9 +52,11 @@ class Node[DataType](var parent: Node[DataType]) {
   def leftSibling = if (isFirstChild) None else Some(parent.children(index - 1))
   def rightSibling = if (isLastChild) None else Some(parent.children(index + 1))
 
-  def mergeWithLeftSibling = { assert(!isFirstChild); mergeWithSibling(index-1) }
-  def mergeWithRightSibling = { assert(!isLastChild); mergeWithSibling(index+1) }
-  private def mergeWithSibling(otherIndex: Int) = {
+  def mergeWithLeftSibling(data: Option[DataType] = None): Node[DataType] = { assert(!isFirstChild); mergeWithSibling(index-1, data) }
+  def mergeWithRightSibling(data: Option[DataType] = None): Node[DataType] = { assert(!isLastChild); mergeWithSibling(index+1, data) }
+  def mergeWithLeftSibling(data: DataType): Node[DataType] = mergeWithLeftSibling(Some(data))
+  def mergeWithRightSibling(data: DataType): Node[DataType] = mergeWithRightSibling(Some(data))
+  private def mergeWithSibling(otherIndex: Int, data: Option[DataType]) = {
     assert(Math.abs(index-otherIndex) == 1)
     val left  = parent.children(Math.min(index, otherIndex))
     var right = parent.children(Math.max(index, otherIndex))
@@ -66,21 +68,27 @@ class Node[DataType](var parent: Node[DataType]) {
       case (false, true) => { newNode.children = left.children; 2 }
       case _ => { assert(false); -1 }  // not allowed
     }
+    newNode.data = data
     parent.setChild(Math.min(index, otherIndex), newNode)
     parent.removeChild(Math.max(index, otherIndex))
     newNode  // return new node
   }
 
-  def mergeWithOnlyChild = {
+  def mergeWithOnlyChild(data: DataType): Node[DataType] = mergeWithOnlyChild(Some(data))
+  def mergeWithOnlyChild(_data: Option[DataType] = None): Node[DataType] = {
     assert(numChildren == 1)
     val child = children(0)
     if (child.isLeaf) {
       mergeType = 1
+      data = _data
       children.clear()
+      this
     } else {
       child.mergeType = 0
       child.parent = parent
+      child.data = _data
       parent.setChild(index, child);
+      child
     }
   }
 
