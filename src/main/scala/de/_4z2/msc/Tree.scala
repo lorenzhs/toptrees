@@ -15,6 +15,13 @@ class BinNode[DataType](val data: DataType, val parent: BinNode[DataType]) {
   def left_=  (node: BinNode[DataType]):Unit = { node.side = -1; left = Some(node) }
   def right_= (node: BinNode[DataType]):Unit = { node.side = 1; right = Some(node) }
 
+  def foreach[U](f: (BinNode[DataType]) => U): Unit = {
+    // Pre-order node traversal
+    left.foreach(f(_))
+    right.foreach(f(_))
+    f(this)
+  }
+
   def isLeaf = left == null && right == null
   def sibling = side match {
     case -1 => parent.right
@@ -51,6 +58,12 @@ class Node[DataType](var parent: Node[DataType]) {
   def isLastChild = { assert(!isRoot || { println(toString()); false }); index == parent.numChildren-1 }
   def leftSibling = if (isFirstChild) None else Some(parent.children(index - 1))
   def rightSibling = if (isLastChild) None else Some(parent.children(index + 1))
+
+  def foreach[U](f: (Node[DataType]) => U): Unit = {
+    // Pre-order traversal
+    children.foreach(_.foreach(f))
+    f(this)
+  }
 
   def mergeWithLeftSibling(data: Option[DataType] = None): Node[DataType] = { assert(!isFirstChild); mergeWithSibling(index-1, data) }
   def mergeWithRightSibling(data: Option[DataType] = None): Node[DataType] = { assert(!isLastChild); mergeWithSibling(index+1, data) }
