@@ -55,7 +55,7 @@ class Node[DataType](var parent: Node[DataType]) {
     case node => node.children.size > 1
   }
   def isFirstChild = { assert(!isRoot); index == 0 }
-  def isLastChild = { assert(!isRoot || { println(toString()); false }); index == parent.numChildren-1 }
+  def isLastChild = { assert(!isRoot); index == parent.numChildren-1 }
   def leftSibling = if (isFirstChild) None else Some(parent.children(index - 1))
   def rightSibling = if (isLastChild) None else Some(parent.children(index + 1))
 
