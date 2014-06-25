@@ -160,6 +160,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   def addNodes(n: Int) = { (1 to n).foreach(i => addNode); nodes.size - n }
   def removeNode(node: Int) { outgoingEdges(node).foreach(_.valid = false); nodes(node).lastEdgeIndex = nodes(node).firstEdgeIndex - 1 }
 
+  // prepares edge from `tail` to `head``and stores it with ID `index`
   private def prepareEdge(index: Int, tail:Int, head: Int): EdgeType = {
     nodes(head).parent = tail
     _numEdges += 1
@@ -169,6 +170,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     edges(index)
   }
 
+  // insert an edge (`from`, `to`)
   def addEdge(from: Int, to: Int): EdgeType = {
     val source = nodes(from)
     // Check for space to the right
@@ -183,7 +185,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     newId = source.firstEdgeIndex - 1;
     if (newId > 0 && !edges(newId).valid) {  // 0 is the dummy edge
       source.firstEdgeIndex -= 1
-      _moveEdges(newId + 1, newId, source.numEdges)
+      _copyEdges(newId + 1, newId, source.numEdges)
       return prepareEdge(newId + source.numEdges + 1, from, to)
     }
 
@@ -195,7 +197,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     else {
       // otherwise, move source node's edges to the end
       newId = _firstFreeEdge + source.numEdges
-      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, source.numEdges)
+      _moveEdges(source.firstEdgeIndex, _firstFreeEdge, source.numEdges)
       source.firstEdgeIndex = _firstFreeEdge
     }
     source.lastEdgeIndex = newId
@@ -203,21 +205,23 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     return prepareEdge(newId, from, to)
   }
 
-  private def _moveEdges(origIndex: Int, newIndex: Int, num: Int): Unit =
+  // copy `num` edges around (left-to-right)
+  private def _copyEdges(origIndex: Int, newIndex: Int, num: Int): Unit =
     (0 until num).foreach(i => edges(newIndex + i) = edges(origIndex + i).copy)
-
-  private def _moveEdgesInvalidate(origIndex: Int, newIndex: Int, num: Int): Unit =
+  // move `num` edges, invalidating the old ones
+  private def _moveEdges(origIndex: Int, newIndex: Int, num: Int): Unit =
     (0 until num).foreach(i => {
       edges(newIndex + i) = edges(origIndex + i).copy
       edges(origIndex + i).valid = false
     })
 
+  // Helper functions for edge insertion
   private def _addEdgeLeft(from: Int, to: Int, index: Int) : Option[EdgeType] = {
     val source = nodes(from)
     if (!edges(source.firstEdgeIndex-1).valid) {
       return None
     }
-    _moveEdges(source.firstEdgeIndex - 1, source.firstEdgeIndex, index)
+    _copyEdges(source.firstEdgeIndex - 1, source.firstEdgeIndex, index)
     source.firstEdgeIndex -= 1
     return Some(prepareEdge(source.firstEdgeIndex + index, from, to))
   }
@@ -233,6 +237,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     return Some(prepareEdge(source.firstEdgeIndex + index, from, to))
   }
 
+  // insert an edge (`from`, `to`) in a specific position of `from`'s outgoing edges
   def addEdge(from: Int, to: Int, index: Int): EdgeType = {
     val source = nodes(from)
     assert(source.numEdges >= index)
@@ -268,8 +273,8 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       return _addEdgeRight(from, to, index).get
     } else {
       // move to the end, leaving a gap at index into which we then insert the new edge
-      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, index)
-      _moveEdgesInvalidate(source.firstEdgeIndex + index, _firstFreeEdge + index + 1, (source.numEdges - index))
+      _moveEdges(source.firstEdgeIndex, _firstFreeEdge, index)
+      _moveEdges(source.firstEdgeIndex + index, _firstFreeEdge + index + 1, (source.numEdges - index))
 
       source.firstEdgeIndex = _firstFreeEdge
       source.lastEdgeIndex = _firstFreeEdge + source.numEdges + 1
@@ -278,6 +283,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     }
   }
 
+  // remove outgoing edge of from by (global) edge ID
   // XXX this may be hard to use because it requires the edge ID
   def removeEdge(from: Int, edge: Int) { removeEdge(nodes(from), edge) }
   def removeEdge(from: NodeType, edgeId: Int, compact: Boolean = true) {
@@ -289,9 +295,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       // edge is somewhere in the middle
       // edges need to remain ordered -> copy all of them :(
       if (compact) {
-        (edgeId + 1 to last).foreach(index => {
-          edges(index-1) = edges(index).copy
-        })
+        _copyEdges(edgeId + 1, edgeId, last-edgeId)
         edges(last).valid = false
       } else
         edges(edgeId).valid = false
@@ -299,9 +303,11 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     from.lastEdgeIndex -= 1
     _numEdges -= 1
   }
+  // remove the first edge from node `from` to node `to`
   def removeEdgeTo(from: Int, to: Int) { removeEdgeTo(nodes(from), to) }
   def removeEdgeTo(from: NodeType, to: Int) { removeEdge(from, (from.firstEdgeIndex to from.lastEdgeIndex).toIterator.filter(e => e == to).next()) }
 
+  // merge a node with its only child (types a=0, b=1)
   // returns (merged node id, merge type)
   def mergeNodeWithOnlyChild(nodeId: Int): (Int,Int) = {
     assert(nodes(nodeId).numEdges == 1)
@@ -317,6 +323,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     }
   }
 
+  // merge a node with one of its siblings (types c=2, d=3, e=4)
   // returns (merged node id, merge type)
   def mergeNodeWithSibling(nodeId: Int, siblingId: Int):(Int,Int) = {
     val parent = nodes(nodeId).parent
@@ -351,16 +358,21 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   def numEdges = _numEdges
   def numNodes = nodes.size
 
+  // retrieve first/last edge by node ID
   def firstEdge(node: Int) = edges(nodes(node).firstEdgeIndex)
   def lastEdge(node: Int)  = edges(nodes(node).lastEdgeIndex)
 
+  // Check existence or retrieve edge by endpoints (valid edges only)
   def hasEdge(from: Int, to: Int): Boolean = { outgoingEdges(from).foreach(e => if (e.headNode == to) return true); false }
   def getEdge(from: Int, to: Int): Option[EdgeType] = { outgoingEdges(from).foreach(e => if (e.headNode == to) return Some(e)); None }
-  def getEdgeId(from: Int, to:Int): Int = { outgoingEdgeIds(from).foreach(e => if (edges(e).headNode == to) return e); -1 }
+  def getEdgeId(from: Int, to:Int): Int = { outgoingEdgeIds(from).foreach(e => if (edges(e).valid && edges(e).headNode == to) return e); -1 }
 
+  // All *valid* outgoing edges of `node`
   def outgoingEdges(node: Int):Iterator[EdgeType] = outgoingEdges(nodes(node))
+  def outgoingEdges(node: NodeType):Iterator[EdgeType] = outgoingEdgeIds(node).map(edges(_)).filter(_.valid)
+
+  // IDs of all of `node`s outgoing edges (including invalid ones)
   def outgoingEdgeIds(node: Int):Iterator[Int] = outgoingEdgeIds(nodes(node))
-  def outgoingEdges(node: NodeType):Iterator[EdgeType] = outgoingEdgeIds(node).map(edges(_))
   def outgoingEdgeIds(node: NodeType):Iterator[Int] = (node.firstEdgeIndex to node.lastEdgeIndex).toIterator
 
   def children(node: Int):Iterator[NodeType] = children(nodes(node))
