@@ -183,9 +183,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     newId = source.firstEdgeIndex - 1;
     if (newId > 0 && !edges(newId).valid) {  // 0 is the dummy edge
       source.firstEdgeIndex -= 1
-      (0 until source.numEdges).foreach(i => {
-        edges(newId + i) = edges(newId + i + 1).copy
-      })
+      _moveEdges(newId + 1, newId, source.numEdges)
       return prepareEdge(newId + source.numEdges + 1, from, to)
     }
 
@@ -197,15 +195,87 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     else {
       // otherwise, move source node's edges to the end
       newId = _firstFreeEdge + source.numEdges
-      (0 until source.numEdges).foreach(i => {
-        edges(_firstFreeEdge + i) = edges(source.firstEdgeIndex + i).copy
-        edges(source.firstEdgeIndex + i).valid = false
-      })
+      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, source.numEdges)
       source.firstEdgeIndex = _firstFreeEdge
     }
     source.lastEdgeIndex = newId
     _firstFreeEdge = newId + 1
-    return prepareEdge(newId,from, to)
+    return prepareEdge(newId, from, to)
+  }
+
+  private def _moveEdges(origIndex: Int, newIndex: Int, num: Int): Unit =
+    (0 until num).foreach(i => edges(newIndex + i) = edges(origIndex + i).copy)
+
+  private def _moveEdgesInvalidate(origIndex: Int, newIndex: Int, num: Int): Unit =
+    (0 until num).foreach(i => {
+      edges(newIndex + i) = edges(origIndex + i).copy
+      edges(origIndex + i).valid = false
+    })
+
+  private def _addEdgeLeft(from: Int, to: Int, index: Int) : Option[EdgeType] = {
+    val source = nodes(from)
+    if (!edges(source.firstEdgeIndex-1).valid) {
+      return None
+    }
+    _moveEdges(source.firstEdgeIndex - 1, source.firstEdgeIndex, index)
+    source.firstEdgeIndex -= 1
+    return Some(prepareEdge(source.firstEdgeIndex + index, from, to))
+  }
+  private def _addEdgeRight(from: Int, to: Int, index: Int): Option[EdgeType] = {
+    val source = nodes(from)
+    if(!edges(source.lastEdgeIndex+1).valid) {
+      return None
+    }
+    (source.numEdges -1 to index by -1).foreach(i => {
+      edges(source.firstEdgeIndex + i + 1) = edges(source.firstEdgeIndex + i).copy
+    })
+    source.lastEdgeIndex += 1
+    return Some(prepareEdge(source.firstEdgeIndex + index, from, to))
+  }
+
+  def addEdge(from: Int, to: Int, index: Int): EdgeType = {
+    val source = nodes(from)
+    assert(source.numEdges >= index)
+    if (source.numEdges == index) return addEdge(from, to)  // simple case
+
+    if (2*index < source.numEdges) {
+      // try moving the first part left first
+      _addEdgeLeft(from, to, index) match {
+        case Some(edge) => return edge
+        case None => {}  // too bad
+      }
+      _addEdgeRight(from, to, index) match {
+        case Some(edge) => return edge
+        case None => {} // couldn't insert on the right side either
+      }
+    } else {
+       // try moving the last part right first
+      _addEdgeRight(from, to, index) match {
+        case Some(edge) => return edge
+        case None => {}  // no space on the right
+      }
+      _addEdgeLeft(from, to, index) match {
+        case Some(edge) => return edge
+        case None => {} // nor is there space on the left
+      }
+    }
+
+    // we have to move the node's edges to the end
+    if (source.numEdges >= edges.size - _firstFreeEdge)
+      (edges.size to _firstFreeEdge + source.numEdges).foreach(i => edges += edgeFactory())
+    if (source.lastEdgeIndex == _firstFreeEdge - 1) {
+      // vertex is at the end already
+      return _addEdgeRight(from, to, index).get
+    } else {
+      // move to the end, leaving a gap at index into which we then insert the new edge
+      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, index)
+      _moveEdgesInvalidate(source.firstEdgeIndex + index, _firstFreeEdge + index + 1, (source.numEdges - index))
+
+      source.firstEdgeIndex = _firstFreeEdge
+      source.lastEdgeIndex = _firstFreeEdge + source.numEdges + 1
+      _firstFreeEdge += source.numEdges + 1
+      return prepareEdge(_firstFreeEdge + index, from, to)
+    }
   }
 
   // XXX this may be hard to use because it requires the edge ID
