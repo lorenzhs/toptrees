@@ -304,18 +304,31 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     _numEdges -= 1
   }
   // remove the first edge from node `from` to node `to`
-  def removeEdgeTo(from: Int, to: Int) { println("removing edge from " + from + " to " + to); removeEdgeTo(nodes(from), to) }
+  def removeEdgeTo(from: Int, to: Int) { /*println("removing edge from " + from + " to " + to);*/ removeEdgeTo(nodes(from), to) }
   def removeEdgeTo(from: NodeType, to: Int) {
     removeEdge(from, (from.firstEdgeIndex to from.lastEdgeIndex).toIterator.filter(e => edges(e).headNode == to).next())
   }
 
   def horizontalMerges = {
-    // TODO: odd case
-    nodes.filter(_.numEdges >= 2).foreach(childrenIds(_).grouped(2).filter(_.size == 2)
-      .filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
-        println("merging nodes " + pair + ": " + pair.map(nodes(_)) + " parent " + nodes(pair(0)).parent + " = " + nodes(nodes(pair(0)).parent))
-        mergeNodeWithSibling(pair(0), pair(1))
-    }))
+    nodes.filter(_.numEdges >= 2).foreach(node => {
+      var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
+      first.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
+          println("merging nodes " + pair + ": " + pair.map(nodes(_)) + " parent " + nodes(pair(0)).parent + " = " + nodes(nodes(pair(0)).parent))
+          mergeNodeWithSibling(pair(0), pair(1))
+      })
+      last.foreach(list => {
+        assert(list.size == 1)
+        val node = list(0)
+        val parent = nodes(nodes(node).parent)
+        if (parent.numEdges > 2) {
+          val sib = (1 to 2).map(i => edges(parent.lastEdgeIndex - i).headNode)
+          if (!sib.exists(nodes(_).isLeaf)) {
+            println("merging odd node " + node + " with its left neighbour " + sib(0))
+            mergeNodeWithSibling(node, sib(0))
+          }
+        }
+      })
+    })
   }
 
   private def _extendVerticalMerges(idx: Int) {
@@ -330,19 +343,16 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       if (node.numEdges == 1) {
         index = childrenIds(node).next
         node = nodes(index)
-        println("continuing with node " + index)
-      } else {
-        println("heir " + tuple._1 + " = " + node + " has " + node.numEdges + " children, aborting")
-        return
-      }
+        println("continuing vertical merge chain with node " + index)
+      } else return
     }
   }
 
   def verticalMerges:Unit = {
-    // TODO: odd case
+    // TODO:don't merge in odd case
     nodes.view.zipWithIndex.filter(_._1.numEdges == 1)  // only one child
       .filter(pair => pair._1.parent >= 0 && nodes(pair._1.parent).numEdges > 1 )  // cannot extend chain to parent
-      .foreach(pair =>{ println(pair); _extendVerticalMerges(pair._2) })  // starting point of such a chain
+      .foreach(pair => _extendVerticalMerges(pair._2))  // starting point of such a chain
   }
 
   // merge a node with its only child (types a=0, b=1)
