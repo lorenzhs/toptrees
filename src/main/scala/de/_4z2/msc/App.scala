@@ -25,15 +25,25 @@ object App {
     println()
 
     val t = new OrderedTree[TreeNode, TreeEdge](() => new TreeNode(), () => new TreeEdge())
-    t.addNodes(7)
-    List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6).foreach(p => t.addEdge(p._1, p._2))
+    t.addNodes(9)
+    List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8).foreach(p => t.addEdge(p._1, p._2))
     println(t)
+
+    while(t.numEdges > 1) {
+        println("Horz Merges")
+        t.horizontalMerges
+        println("Vert Merges")
+        t.verticalMerges
+        println(t)
+        println()
+    }
+/*
     t.mergeNodeWithSibling(4,5)
     t.mergeNodeWithSibling(1,2)
     t.mergeNodeWithOnlyChild(3)
     t.mergeNodeWithSibling(1,3);
     t.mergeNodeWithOnlyChild(1);
-    println(t)
+*/
   }
 
 }
