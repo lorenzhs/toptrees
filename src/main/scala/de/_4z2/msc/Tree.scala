@@ -304,8 +304,46 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     _numEdges -= 1
   }
   // remove the first edge from node `from` to node `to`
-  def removeEdgeTo(from: Int, to: Int) { removeEdgeTo(nodes(from), to) }
-  def removeEdgeTo(from: NodeType, to: Int) { removeEdge(from, (from.firstEdgeIndex to from.lastEdgeIndex).toIterator.filter(e => e == to).next()) }
+  def removeEdgeTo(from: Int, to: Int) { println("removing edge from " + from + " to " + to); removeEdgeTo(nodes(from), to) }
+  def removeEdgeTo(from: NodeType, to: Int) {
+    removeEdge(from, (from.firstEdgeIndex to from.lastEdgeIndex).toIterator.filter(e => edges(e).headNode == to).next())
+  }
+
+  def horizontalMerges = {
+    // TODO: odd case
+    nodes.filter(_.numEdges >= 2).foreach(childrenIds(_).grouped(2).filter(_.size == 2)
+      .filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
+        println("merging nodes " + pair + ": " + pair.map(nodes(_)) + " parent " + nodes(pair(0)).parent + " = " + nodes(nodes(pair(0)).parent))
+        mergeNodeWithSibling(pair(0), pair(1))
+    }))
+  }
+
+  private def _extendVerticalMerges(idx: Int) {
+    println("extending vertical merges from " + idx)
+    var index = idx
+    var node = nodes(index)
+    while(node.numEdges == 1) {
+      val child = childrenIds(node).next()
+      val tuple = mergeNodeWithOnlyChild(index)
+      println("merging " + index + " with " + child + " to " + tuple);
+      node = nodes(tuple._1)
+      if (node.numEdges == 1) {
+        index = childrenIds(node).next
+        node = nodes(index)
+        println("continuing with node " + index)
+      } else {
+        println("heir " + tuple._1 + " = " + node + " has " + node.numEdges + " children, aborting")
+        return
+      }
+    }
+  }
+
+  def verticalMerges:Unit = {
+    // TODO: odd case
+    nodes.view.zipWithIndex.filter(_._1.numEdges == 1)  // only one child
+      .filter(pair => pair._1.parent >= 0 && nodes(pair._1.parent).numEdges > 1 )  // cannot extend chain to parent
+      .foreach(pair =>{ println(pair); _extendVerticalMerges(pair._2) })  // starting point of such a chain
+  }
 
   // merge a node with its only child (types a=0, b=1)
   // returns (merged node id, merge type)
@@ -333,8 +371,8 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
 
     assert(nodes(nodeId).isLeaf || nodes(siblingId).isLeaf)
 
-    val leftId  = Math.min(edgeToNode, edgeToSibling)
-    val rightId = Math.max(edgeToNode, edgeToSibling)
+    val leftId  = edges(Math.min(edgeToNode, edgeToSibling)).headNode
+    val rightId = edges(Math.max(edgeToNode, edgeToSibling)).headNode
     val left = nodes(leftId)
     val right = nodes(rightId)
     val mergeType = (left.isLeaf, right.isLeaf) match {
