@@ -183,7 +183,10 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     newId = source.firstEdgeIndex - 1;
     if (newId > 0 && !edges(newId).valid) {  // 0 is the dummy edge
       source.firstEdgeIndex -= 1
-      return prepareEdge(newId, from, to)
+      (0 until source.numEdges).foreach(i => {
+        edges(newId + i) = edges(newId + i + 1).copy
+      })
+      return prepareEdge(newId + source.numEdges + 1, from, to)
     }
 
     // Move edges of source vertex to the end
