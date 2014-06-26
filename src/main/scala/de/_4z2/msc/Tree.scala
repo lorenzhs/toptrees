@@ -318,14 +318,16 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   def doMerges(mergeCallback: (Int, Int, Int, Int) => Unit) {
     var iteration = 0
     while (_numEdges > 1) {
-      println("Horizontal merges, iteration " + iteration)
+      println("Iteration " + iteration + "; " + summary)
+      //println("Horizontal merges, iteration " + iteration)
       horizontalMerges(iteration, mergeCallback)
-      println("Vertical merges merges, iteration " + iteration)
+      //println("Vertical merges merges, iteration " + iteration)
       verticalMerges(iteration, mergeCallback)
-      println(this)
-      println()
+      //println(this)
+      //println()
       iteration += 1
     }
+    println(summary)
   }
 
   def horizontalMerges(iteration: Int, callback: (Int, Int, Int, Int) => Unit) = {
@@ -480,5 +482,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     case parent => childrenIds(parent).filter(c => nodes(c) != node)  // object comparison and stupid wrapping, extra slow
   }
 
-  override def toString = "Ordered tree with " + numNodes + " nodes and " + numEdges + " edges\nnodes: " + nodes + "\nedges: " + edges
+  def summary = "Ordered tree with " + numNodes + " nodes and " + numEdges + " edges"
+  def shortString = summary + "\nactive nodes: " + nodes.zipWithIndex.filter(_._1.numEdges > 0) + "\nvalid edges: " + edges.zipWithIndex.filter(_._1.valid)
+  override def toString = summary + "\nnodes: " + nodes + "\nedges: " + edges
 }
