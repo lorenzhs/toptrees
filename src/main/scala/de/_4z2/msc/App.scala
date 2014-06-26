@@ -28,8 +28,8 @@ object App {
 */
 
     val t = new OrderedTree[TreeNode, TreeEdge](() => new TreeNode(), () => new TreeEdge())
-    t.addNodes(9)
-    List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8).foreach(p => t.addEdge(p._1, p._2))
+    t.addNodes(11)
+    List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8, 2 -> 9, 2 -> 10).foreach(p => t.addEdge(p._1, p._2))
     println(t)
 
     val tt = new TopTree(t.numNodes)
@@ -44,7 +44,7 @@ object App {
         nodeIds(n) = tt.addCluster(nodeIds(u), nodeIds(v), t)
     })
 
-    println(tt.clusters.zipWithIndex)
+    tt.clusters.zipWithIndex.filter(_._1.left >= 0).foreach(pair => println(pair._2 + ": " + pair._1))
     println(nodeIds)
   }
 
