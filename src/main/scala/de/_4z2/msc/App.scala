@@ -1,6 +1,7 @@
 package de._4z2.msc
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.Map
 
 object App {
 
@@ -31,8 +32,20 @@ object App {
     List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8).foreach(p => t.addEdge(p._1, p._2))
     println(t)
 
+    val tt = new TopTree(t.numNodes)
+    println(tt)
+
     println("\n=== Doing all the merges now ===")
-    t.doMerges((u, v, n, t) => println("\tNodes " + u + " and " + v + " were merged into " + n + ", type=" + t))
+    //val nodeIds = (0 until t.numNodes).zipWithIndex.toMutableMap
+    val nodeIds: Map[Int,Int] = (0 until t.numNodes).map(i => (i, i))(scala.collection.breakOut)
+    println(nodeIds)
+    t.doMerges((u, v, n, t) => {
+        println("\tNodes " + u + " and " + v + " were merged into " + n + ", type=" + t)
+        nodeIds(n) = tt.addCluster(nodeIds(u), nodeIds(v), t)
+    })
+
+    println(tt.clusters.zipWithIndex)
+    println(nodeIds)
   }
 
 }
