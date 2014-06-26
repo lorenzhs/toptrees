@@ -5,6 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 object App {
 
   def main(args : Array[String]) {
+/*
     val root = new Node[Int](0)
     val tree = new Tree[Node[Int]](root)
     (1 to 3).foreach(i => root.newChild(i))
@@ -23,27 +24,15 @@ object App {
     root.children(0).mergeWithOnlyChild(11)
     println(root)
     println()
+*/
 
     val t = new OrderedTree[TreeNode, TreeEdge](() => new TreeNode(), () => new TreeEdge())
     t.addNodes(9)
     List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8).foreach(p => t.addEdge(p._1, p._2))
     println(t)
 
-    while(t.numEdges > 1) {
-        println("Horz Merges")
-        t.horizontalMerges
-        println("Vert Merges")
-        t.verticalMerges
-        println(t)
-        println()
-    }
-/*
-    t.mergeNodeWithSibling(4,5)
-    t.mergeNodeWithSibling(1,2)
-    t.mergeNodeWithOnlyChild(3)
-    t.mergeNodeWithSibling(1,3);
-    t.mergeNodeWithOnlyChild(1);
-*/
+    println("\n=== Doing all the merges now ===")
+    t.doMerges((u, v, n, t) => println("\tNodes " + u + " and " + v + " were merged into " + n + ", type=" + t))
   }
 
 }
