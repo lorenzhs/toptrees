@@ -343,7 +343,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
         assert(list.size == 1)
         val node = list(0)
         val parent = nodes(nodes(node).parent)
-        if (parent.numEdges > 2) {
+        if (nodes(node).isLeaf && parent.numEdges > 2) {
           val sib = (1 to 2).map(i => edges(parent.lastEdgeIndex - i).headNode)
           if (!sib.exists(nodes(_).isLeaf)) {
             //println("\tmerging odd node " + node + " with its left neighbour " + sib(0))
