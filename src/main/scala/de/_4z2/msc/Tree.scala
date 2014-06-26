@@ -278,9 +278,10 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       _moveEdges(source.firstEdgeIndex, _firstFreeEdge, index)
       _moveEdges(source.firstEdgeIndex + index, _firstFreeEdge + index + 1, (source.numEdges - index))
 
+      val numChildren = source.numEdges + 1
       source.firstEdgeIndex = _firstFreeEdge
-      source.lastEdgeIndex = _firstFreeEdge + source.numEdges + 1
-      _firstFreeEdge += source.numEdges + 1
+      source.lastEdgeIndex = _firstFreeEdge + numChildren
+      _firstFreeEdge += numChildren
       return prepareEdge(_firstFreeEdge + index, from, to)
     }
   }
@@ -330,7 +331,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   def horizontalMerges(iteration: Int, callback: (Int, Int, Int, Int) => Unit) = {
     nodes.filter(_.numEdges >= 2).foreach(node => {
       var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
-      first.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
+      first.toList.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
           val n1 = pair(0)
           val n2 = pair(1)
           pair.foreach(n => nodes(n).lastMergedIn = iteration)
@@ -339,7 +340,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
           callback(n1, n2, newNode, mergeType)
           //println("new node: " + newNode)
       })
-      last.foreach(list => {
+      last.toList.foreach(list => {
         assert(list.size == 1)
         val node = list(0)
         val parent = nodes(nodes(node).parent)
@@ -348,7 +349,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
           if (!sib.exists(nodes(_).isLeaf)) {
             //println("\tmerging odd node " + node + " with its left neighbour " + sib(0))
             nodes(node).lastMergedIn = iteration
-            nodes(sib(0)).lastEdgeIndex = iteration
+            nodes(sib(0)).lastMergedIn = iteration
             val (newNode, mergeType) = mergeNodeWithSibling(node, sib(0))
             callback(node, sib(0), newNode, mergeType)
           }
