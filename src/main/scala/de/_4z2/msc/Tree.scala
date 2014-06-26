@@ -311,27 +311,33 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     removeEdge(from, (from.firstEdgeIndex to from.lastEdgeIndex).toIterator.filter(e => edges(e).headNode == to).next())
   }
 
-  def doMerges {
+  // do merges until only one edge is left
+  // the callback is called for every pair of merged nodes, its signature:
+  // def callback(node1: Int, node2: Int, newNode: Int, mergeType:Int): Unit
+  def doMerges(mergeCallback: (Int, Int, Int, Int) => Unit) {
     var iteration = 0
     while (_numEdges > 1) {
       println("Horizontal merges, iteration " + iteration)
-      horizontalMerges(iteration)
+      horizontalMerges(iteration, mergeCallback)
       println("Vertical merges merges, iteration " + iteration)
-      verticalMerges(iteration)
+      verticalMerges(iteration, mergeCallback)
       println(this)
       println()
       iteration += 1
     }
   }
 
-  def horizontalMerges(iteration: Int) = {
+  def horizontalMerges(iteration: Int, callback: (Int, Int, Int, Int) => Unit) = {
     nodes.filter(_.numEdges >= 2).foreach(node => {
       var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
       first.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
+          val n1 = pair(0)
+          val n2 = pair(1)
           pair.foreach(n => nodes(n).lastMergedIn = iteration)
-          print("\tmerging nodes " + pair(0) + " and " + pair(1) + ", common parent " + nodes(pair(0)).parent + "; ")
-          val (newNode, mergeType) = mergeNodeWithSibling(pair(0), pair(1))
-          println("new node: " + newNode)
+          //print("\tmerging nodes " + n1 + " and " + n2 + ", common parent " + nodes(n1).parent + "; ")
+          val (newNode, mergeType) = mergeNodeWithSibling(n1, n2)
+          callback(n1, n2, newNode, mergeType)
+          //println("new node: " + newNode)
       })
       last.foreach(list => {
         assert(list.size == 1)
@@ -340,10 +346,11 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
         if (parent.numEdges > 2) {
           val sib = (1 to 2).map(i => edges(parent.lastEdgeIndex - i).headNode)
           if (!sib.exists(nodes(_).isLeaf)) {
-            println("\tmerging odd node " + node + " with its left neighbour " + sib(0))
+            //println("\tmerging odd node " + node + " with its left neighbour " + sib(0))
             nodes(node).lastMergedIn = iteration
             nodes(sib(0)).lastEdgeIndex = iteration
             val (newNode, mergeType) = mergeNodeWithSibling(node, sib(0))
+            callback(node, sib(0), newNode, mergeType)
           }
         }
       })
@@ -351,34 +358,32 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   }
 
   // Extend a chain of nodes upward from `idx`, the bottom node of the chain
-  private def _extendVerticalMerges(idx: Int, iteration: Int) {
-    println("\textending vertical merges upward from " + idx)
+  private def _extendVerticalMerges(idx: Int, iteration: Int, callback: (Int, Int, Int, Int) => Unit) {
+    //println("\textending vertical merges upward from " + idx)
     var index = idx
     var node = nodes(index)
-    var parent = nodes(node.parent)
-    while(node.parent >= 0 && parent.numEdges == 1 && parent.parent >= 0 && parent.lastMergedIn < iteration) {
+    var parentId = node.parent
+    while(parentId >= 0 && nodes(parentId).numEdges == 1 && nodes(parentId).parent >= 0 && nodes(parentId).lastMergedIn < iteration) {
       node.lastMergedIn = iteration
-      parent.lastMergedIn = iteration
-      print("\t\tmerging parent " + node.parent + " (LM: " + parent.lastMergedIn + ") with child " + index + " (LM: " + node.lastMergedIn + "); ")
-      val tuple = mergeNodeWithOnlyChild(node.parent)
-      println("result: " + tuple)
+      nodes(parentId).lastMergedIn = iteration
+      // print("\t\tmerging parent " + parentId + " (LM: " + nodes(parentId).lastMergedIn + ") with child " + index + " (LM: " + node.lastMergedIn + "); ")
+      val (newNode, mergeType) = mergeNodeWithOnlyChild(parentId)
+      callback(parentId, index, newNode, mergeType)
+      //println("result node: " + newNode + " merge type: " + mergeType)
       // Go upwards twice to extend the chain, if possible
-      node = nodes(tuple._1)
-      if (node.parent >= 0) {
-        index = node.parent
+      index = nodes(newNode).parent
+      if (index >= 0)
         node = nodes(index)
-      } else return
-      if (node.parent >= 0)
-        parent = nodes(node.parent)
       else return
+      parentId = node.parent
     }
-    println("\t\taborted vertical merges: parent has " + parent.numEdges + " children, parent " + parent.parent + ", was last merged in iteration " + parent.lastMergedIn)
+    //println("\t\taborted vertical merges: parent has " + nodes(parentId).numEdges + " children, parent " + nodes(parentId).parent + ", was last merged in iteration " + nodes(parentId).lastMergedIn)
   }
 
-  def verticalMerges(iteration: Int) = {
+  def verticalMerges(iteration: Int, callback: (Int, Int, Int, Int) => Unit) = {
     nodes.view.zipWithIndex.filter(pair => pair._1.parent >= 0 && nodes(pair._1.parent).numEdges == 1)  // only child of the parent
       .filter(pair => pair._1.numEdges != 1)  // cannot extend chain downwards
-      .foreach(pair => _extendVerticalMerges(pair._2, iteration))  // starting point of such a chain
+      .foreach(pair => _extendVerticalMerges(pair._2, iteration, callback))  // starting point of such a chain
   }
 
   // merge a node with its only child (types a=0, b=1)
