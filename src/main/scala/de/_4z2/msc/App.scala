@@ -26,10 +26,29 @@ object App {
     println(root)
     println()
 */
+    val filename = args.toList match {
+        case List(x) => x
+        case _ => "data/1998statistics.xml"
+    }
 
+    val start = System.nanoTime
+    val (tree, map) = LazyXmlParser.parse(filename)
+    val parsed = System.nanoTime
+    println("Read input file in " + (parsed - start)/1000000.0 + "ms")
+
+    val topTree = new TopTree(tree.numNodes)
+    val nodeIds: Map[Int,Int] = (0 until tree.numNodes).map(i => (i, i))(scala.collection.breakOut)
+
+    tree.doMerges((u, v, n, t) => {
+        nodeIds(n) = topTree.addCluster(nodeIds(u), nodeIds(v), t)
+    })
+
+    println("done, " + (System.nanoTime - parsed)/1000000.0 + "ms")
+
+/*
     val t = new OrderedTree[TreeNode, TreeEdge](() => new TreeNode(), () => new TreeEdge())
     t.addNodes(11)
-    List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8, 2 -> 9, 2 -> 10).foreach(p => t.addEdge(p._1, p._2))
+    List(0->1, 0->2, 0->3, 1->4, 1->5, 3->6, 6 -> 7, 7 -> 8, 4 -> 9, 4 -> 10).foreach(p => t.addEdge(p._1, p._2))
     println(t)
 
     val tt = new TopTree(t.numNodes)
@@ -46,6 +65,7 @@ object App {
 
     tt.clusters.zipWithIndex.filter(_._1.left >= 0).foreach(pair => println(pair._2 + ": " + pair._1))
     println(nodeIds)
+*/
   }
 
 }

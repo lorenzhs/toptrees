@@ -334,8 +334,10 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     nodes.filter(_.numEdges >= 2).foreach(node => {
       var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
       first.toList.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
+        assert(children(node).forall(_.parent >= 0))
           val n1 = pair(0)
           val n2 = pair(1)
+          assert(pair.forall(n => nodes(n).parent >= 0))
           pair.foreach(n => nodes(n).lastMergedIn = iteration)
           //print("\tmerging nodes " + n1 + " and " + n2 + ", common parent " + nodes(n1).parent + "; ")
           val (newNode, mergeType) = mergeNodeWithSibling(n1, n2)
@@ -413,6 +415,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   // returns (merged node id, merge type)
   def mergeNodeWithSibling(nodeId: Int, siblingId: Int):(Int,Int) = {
     val parent = nodes(nodeId).parent
+    assert(parent >= 0)
     assert(parent == nodes(siblingId).parent)
     val edgeToNode = getEdgeId(parent, nodeId)
     val edgeToSibling = getEdgeId(parent, siblingId)
