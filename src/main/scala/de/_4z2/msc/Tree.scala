@@ -113,6 +113,7 @@ trait NodeInt {
   var firstEdgeIndex: Int
   var lastEdgeIndex: Int
   var parent: Int
+  var lastMergedIn: Int
   def numEdges:Int = lastEdgeIndex - firstEdgeIndex + 1
   def isLeaf = numEdges == 0
 }
@@ -127,8 +128,9 @@ class TreeNode extends NodeInt {
   var firstEdgeIndex = -1
   var lastEdgeIndex = -1
   var parent = -1
+  var lastMergedIn = -1
 
-  override def toString = "(" + parent + ";" + firstEdgeIndex + "→" + lastEdgeIndex + ")"
+  override def toString = "(" + parent + ";" + firstEdgeIndex + "→" + lastEdgeIndex + ";" + lastMergedIn + ")"
 }
 
 class TreeEdge extends EdgeInt[TreeEdge] {
@@ -309,12 +311,27 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     removeEdge(from, (from.firstEdgeIndex to from.lastEdgeIndex).toIterator.filter(e => edges(e).headNode == to).next())
   }
 
-  def horizontalMerges = {
+  def doMerges {
+    var iteration = 0
+    while (_numEdges > 1) {
+      println("Horizontal merges, iteration " + iteration)
+      horizontalMerges(iteration)
+      println("Vertical merges merges, iteration " + iteration)
+      verticalMerges(iteration)
+      println(this)
+      println()
+      iteration += 1
+    }
+  }
+
+  def horizontalMerges(iteration: Int) = {
     nodes.filter(_.numEdges >= 2).foreach(node => {
       var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
       first.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
-          println("merging nodes " + pair + ": " + pair.map(nodes(_)) + " parent " + nodes(pair(0)).parent + " = " + nodes(nodes(pair(0)).parent))
-          mergeNodeWithSibling(pair(0), pair(1))
+          pair.foreach(n => nodes(n).lastMergedIn = iteration)
+          print("\tmerging nodes " + pair(0) + " and " + pair(1) + ", common parent " + nodes(pair(0)).parent + "; ")
+          val (newNode, mergeType) = mergeNodeWithSibling(pair(0), pair(1))
+          println("new node: " + newNode)
       })
       last.foreach(list => {
         assert(list.size == 1)
@@ -323,36 +340,45 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
         if (parent.numEdges > 2) {
           val sib = (1 to 2).map(i => edges(parent.lastEdgeIndex - i).headNode)
           if (!sib.exists(nodes(_).isLeaf)) {
-            println("merging odd node " + node + " with its left neighbour " + sib(0))
-            mergeNodeWithSibling(node, sib(0))
+            println("\tmerging odd node " + node + " with its left neighbour " + sib(0))
+            nodes(node).lastMergedIn = iteration
+            nodes(sib(0)).lastEdgeIndex = iteration
+            val (newNode, mergeType) = mergeNodeWithSibling(node, sib(0))
           }
         }
       })
     })
   }
 
-  private def _extendVerticalMerges(idx: Int) {
-    println("extending vertical merges from " + idx)
+  // Extend a chain of nodes upward from `idx`, the bottom node of the chain
+  private def _extendVerticalMerges(idx: Int, iteration: Int) {
+    println("\textending vertical merges upward from " + idx)
     var index = idx
     var node = nodes(index)
-    while(node.numEdges == 1) {
-      val child = childrenIds(node).next()
-      val tuple = mergeNodeWithOnlyChild(index)
-      println("merging " + index + " with " + child + " to " + tuple);
+    var parent = nodes(node.parent)
+    while(node.parent >= 0 && parent.numEdges == 1 && parent.parent >= 0 && parent.lastMergedIn < iteration) {
+      node.lastMergedIn = iteration
+      parent.lastMergedIn = iteration
+      print("\t\tmerging parent " + node.parent + " (LM: " + parent.lastMergedIn + ") with child " + index + " (LM: " + node.lastMergedIn + "); ")
+      val tuple = mergeNodeWithOnlyChild(node.parent)
+      println("result: " + tuple)
+      // Go upwards twice to extend the chain, if possible
       node = nodes(tuple._1)
-      if (node.numEdges == 1) {
-        index = childrenIds(node).next
+      if (node.parent >= 0) {
+        index = node.parent
         node = nodes(index)
-        println("continuing vertical merge chain with node " + index)
       } else return
+      if (node.parent >= 0)
+        parent = nodes(node.parent)
+      else return
     }
+    println("\t\taborted vertical merges: parent has " + parent.numEdges + " children, parent " + parent.parent + ", was last merged in iteration " + parent.lastMergedIn)
   }
 
-  def verticalMerges:Unit = {
-    // TODO:don't merge in odd case
-    nodes.view.zipWithIndex.filter(_._1.numEdges == 1)  // only one child
-      .filter(pair => pair._1.parent >= 0 && nodes(pair._1.parent).numEdges > 1 )  // cannot extend chain to parent
-      .foreach(pair => _extendVerticalMerges(pair._2))  // starting point of such a chain
+  def verticalMerges(iteration: Int) = {
+    nodes.view.zipWithIndex.filter(pair => pair._1.parent >= 0 && nodes(pair._1.parent).numEdges == 1)  // only child of the parent
+      .filter(pair => pair._1.numEdges != 1)  // cannot extend chain downwards
+      .foreach(pair => _extendVerticalMerges(pair._2, iteration))  // starting point of such a chain
   }
 
   // merge a node with its only child (types a=0, b=1)
@@ -362,12 +388,16 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     val childId = childrenIds(nodeId).next()
     val child = nodes(childId)
     removeEdgeTo(nodeId, childId) // remove edge from node to to child
+    child.parent = -1 // just to make this absolutely clear
     if (child.numEdges == 0) {
       return (nodeId, 1)
     } else {
-      child.parent = nodes(nodeId).parent
-      addEdge(child.parent, childId)
-      return (childId, 0)
+      val node = nodes(nodeId)
+      node.firstEdgeIndex = child.firstEdgeIndex
+      node.lastEdgeIndex = child.lastEdgeIndex
+      child.lastEdgeIndex = child.firstEdgeIndex - 1
+      children(node).foreach(_.parent = nodeId)  // attach grandchildren to this node
+      return (nodeId, 0)
     }
   }
 
@@ -394,10 +424,12 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     if (right.isLeaf) {
       // left is the new vertex
       removeEdgeTo(parent, rightId);
+      right.parent = -1
       return (leftId, mergeType);
     } else {
       // right is the new vertex
       removeEdgeTo(parent, leftId);
+      left.parent = -1
       return (rightId, mergeType);
     }
   }
