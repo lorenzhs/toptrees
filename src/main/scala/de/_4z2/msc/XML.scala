@@ -1,5 +1,6 @@
 package de._4z2.msc
 
+import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
 import scala.io.Source
 import scala.xml._
@@ -33,7 +34,7 @@ object LazyXmlParser {
 	def parse(filename: String) = {
 		val xml = new XMLEventReader(Source.fromFile(filename))
 		val tree = new OrderedTree[TreeNode, TreeEdge](() => new TreeNode(), () => new TreeEdge())
-		val map = Map[Int, String]()
+		val map = ArrayBuffer[String]()
 
 		def processNode(parents: List[Int]) {
 			if (xml.hasNext) {
@@ -41,7 +42,8 @@ object LazyXmlParser {
 					case EvElemStart(_, label, _, _) =>
 						//println("Start element: " + label + " parents: " + parents)
 						val nodeId = tree.addNode
-						map(nodeId) = label
+						assert(map.size == nodeId)
+						map += label
 						if (parents.size > 0) {
 							tree.addEdge(parents.head, nodeId)
 						}
