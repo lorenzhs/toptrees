@@ -160,13 +160,12 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     nodes.size - 1
   }
   def addNodes(n: Int) = { (1 to n).foreach(i => addNode); nodes.size - n }
-  def removeNode(node: Int) { outgoingEdges(node).foreach(_.valid = false); nodes(node).lastEdgeIndex = nodes(node).firstEdgeIndex - 1 }
+  def removeNode(node: Int) { _numEdges -= nodes(node).numEdges; outgoingEdges(node).foreach(_.valid = false); nodes(node).lastEdgeIndex = nodes(node).firstEdgeIndex - 1 }
 
   // prepares edge from `tail` to `head``and stores it with ID `index`
   private def prepareEdge(index: Int, tail:Int, head: Int): EdgeType = {
     nodes(head).parent = tail
     _numEdges += 1
-    edges(index) = edgeFactory()
     edges(index).valid = true
     edges(index).headNode = head
     edges(index)
