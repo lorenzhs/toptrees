@@ -291,19 +291,19 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   def removeEdge(from: Int, edge: Int) { removeEdge(nodes(from), edge) }
   def removeEdge(from: NodeType, edgeId: Int, compact: Boolean = true) {
     assert(edges(edgeId).valid)
+    edges(edgeId).valid = false
     val last = from.lastEdgeIndex
     if (edgeId == last)
-      edges(edgeId).valid = false
-    else {
-      // edge is somewhere in the middle
-      // edges need to remain ordered -> copy all of them :(
-      if (compact) {
-        _copyEdges(edgeId + 1, edgeId, last-edgeId)
-        edges(last).valid = false
-      } else
-        edges(edgeId).valid = false
+      from.lastEdgeIndex -= 1
+    else if (edgeId == from.firstEdgeIndex)
+      from.firstEdgeIndex += 1
+    // edge is somewhere in the middle
+    // edges need to remain ordered -> copy all of them :(
+    else if (compact) {
+      _copyEdges(edgeId + 1, edgeId, last-edgeId)
+      edges(last).valid = false
+      from.lastEdgeIndex -= 1
     }
-    from.lastEdgeIndex -= 1
     _numEdges -= 1
   }
   // remove the first edge from node `from` to node `to`
@@ -332,9 +332,9 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
 
   def horizontalMerges(iteration: Int, callback: (Int, Int, Int, Int) => Unit) = {
     nodes.filter(_.numEdges >= 2).foreach(node => {
+      assert(children(node).forall(_.parent >= 0))
       var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
       first.toList.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
-        assert(children(node).forall(_.parent >= 0))
         val n1 = pair(0)
         val n2 = pair(1)
         assert(pair.forall(n => nodes(n).parent >= 0))
