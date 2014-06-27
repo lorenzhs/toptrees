@@ -335,14 +335,14 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       var (first, last) = childrenIds(node).grouped(2).partition(_.size == 2)
       first.toList.filter(_.exists(nodes(_).isLeaf)).foreach(pair => {
         assert(children(node).forall(_.parent >= 0))
-          val n1 = pair(0)
-          val n2 = pair(1)
-          assert(pair.forall(n => nodes(n).parent >= 0))
-          pair.foreach(n => nodes(n).lastMergedIn = iteration)
-          //print("\tmerging nodes " + n1 + " and " + n2 + ", common parent " + nodes(n1).parent + "; ")
-          val (newNode, mergeType) = mergeNodeWithSibling(n1, n2)
-          callback(n1, n2, newNode, mergeType)
-          //println("new node: " + newNode)
+        val n1 = pair(0)
+        val n2 = pair(1)
+        assert(pair.forall(n => nodes(n).parent >= 0))
+        pair.foreach(n => nodes(n).lastMergedIn = iteration)
+        //print("\tmerging nodes " + n1 + " and " + n2 + ", common parent " + nodes(n1).parent + "; ")
+        val (newNode, mergeType) = mergeNodeWithSibling(n1, n2)
+        callback(n1, n2, newNode, mergeType)
+        //println("new node: " + newNode)
       })
       last.toList.foreach(list => {
         assert(list.size == 1)
@@ -484,6 +484,8 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     case -1 => Iterator.empty
     case parent => childrenIds(parent).filter(c => nodes(c) != node)  // object comparison and stupid wrapping, extra slow
   }
+
+  def numValidEdges(node:NodeType): Int = (node.firstEdgeIndex to node.lastEdgeIndex).map(edges(_)).count(_.valid)
 
   def summary = "Ordered tree with " + numNodes + " nodes and " + numEdges + " edges"
   def shortString = summary + "\nactive nodes: " + nodes.zipWithIndex.filter(_._1.numEdges > 0) + "\nvalid edges: " + edges.zipWithIndex.filter(_._1.valid)
