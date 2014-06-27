@@ -187,7 +187,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     newId = source.firstEdgeIndex - 1;
     if (newId > 0 && !edges(newId).valid) {  // 0 is the dummy edge
       source.firstEdgeIndex -= 1
-      _copyEdges(newId + 1, newId, source.numEdges)
+      _moveEdges(newId + 1, newId, source.numEdges)
       return prepareEdge(newId + source.numEdges + 1, from, to)
     }
 
@@ -199,7 +199,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     else {
       // otherwise, move source node's edges to the end
       newId = _firstFreeEdge + source.numEdges
-      _moveEdges(source.firstEdgeIndex, _firstFreeEdge, source.numEdges)
+      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, source.numEdges)
       source.firstEdgeIndex = _firstFreeEdge
     }
     source.lastEdgeIndex = newId
@@ -207,14 +207,14 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     return prepareEdge(newId, from, to)
   }
 
-  // copy `num` edges around (left-to-right)
-  private def _copyEdges(origIndex: Int, newIndex: Int, num: Int): Unit =
-    (0 until num).foreach(i => edges(newIndex + i) = edges(origIndex + i).copy)
-  // move `num` edges, invalidating the old ones
+  // move `num` edges around (left-to-right)
   private def _moveEdges(origIndex: Int, newIndex: Int, num: Int): Unit =
+    (0 until num).foreach(i => edges(newIndex + i) = edges(origIndex + i))
+  // move `num` edges, setting the old ones to the dummy edge
+  private def _moveEdgesInvalidate(origIndex: Int, newIndex: Int, num: Int): Unit =
     (0 until num).foreach(i => {
-      edges(newIndex + i) = edges(origIndex + i).copy
-      edges(origIndex + i).valid = false
+      edges(newIndex + i) = edges(origIndex + i)
+      edges(origIndex + i) = edges(0)
     })
 
   // Helper functions for edge insertion
@@ -223,7 +223,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     if (!edges(source.firstEdgeIndex-1).valid) {
       return None
     }
-    _copyEdges(source.firstEdgeIndex - 1, source.firstEdgeIndex, index)
+    _moveEdges(source.firstEdgeIndex - 1, source.firstEdgeIndex, index)
     source.firstEdgeIndex -= 1
     return Some(prepareEdge(source.firstEdgeIndex + index, from, to))
   }
@@ -275,8 +275,8 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       return _addEdgeRight(from, to, index).get
     } else {
       // move to the end, leaving a gap at index into which we then insert the new edge
-      _moveEdges(source.firstEdgeIndex, _firstFreeEdge, index)
-      _moveEdges(source.firstEdgeIndex + index, _firstFreeEdge + index + 1, (source.numEdges - index))
+      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, index)
+      _moveEdgesInvalidate(source.firstEdgeIndex + index, _firstFreeEdge + index + 1, (source.numEdges - index))
 
       val numChildren = source.numEdges + 1
       source.firstEdgeIndex = _firstFreeEdge
@@ -300,8 +300,8 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
     // edge is somewhere in the middle
     // edges need to remain ordered -> copy all of them :(
     else if (compact) {
-      _copyEdges(edgeId + 1, edgeId, last-edgeId)
-      edges(last).valid = false
+      _moveEdges(edgeId + 1, edgeId, last-edgeId)
+      edges(last) = edges(0)
       from.lastEdgeIndex -= 1
     }
     _numEdges -= 1
