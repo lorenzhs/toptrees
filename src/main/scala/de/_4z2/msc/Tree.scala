@@ -191,15 +191,26 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       return prepareEdge(newId + source.numEdges + 1, from, to)
     }
 
-    // Move edges of source vertex to the end
-    if (source.numEdges >= edges.size - _firstFreeEdge)
-      (edges.size to _firstFreeEdge + source.numEdges).foreach(i => edges += edgeFactory())
-    if (source.lastEdgeIndex == _firstFreeEdge - 1)
-      newId = _firstFreeEdge // if we happen to be at the end already,we can just append
-    else {
-      // otherwise, move source node's edges to the end
+    if (source.lastEdgeIndex == _firstFreeEdge - 1) {
+      // vertices are already at the end, just add a new one
+      edges += edgeFactory()
+      newId = _firstFreeEdge
+    } else {
+      assert(source.numEdges >= edges.size - _firstFreeEdge)
+      // move all the edges for which there is space
+      for (i <- 0 until (edges.size - _firstFreeEdge)) {
+        edges(_firstFreeEdge + i) = edges(source.firstEdgeIndex + i)
+        edges(source.firstEdgeIndex + i) = edges(0)
+      }
+      // append those for which there isn't
+      for (i <- (edges.size - _firstFreeEdge) until source.numEdges) {
+        edges += edges(source.firstEdgeIndex + i)
+        edges(source.firstEdgeIndex + i) = edges(0)
+      }
+      // and add the new edge
+      edges += edgeFactory()
+
       newId = _firstFreeEdge + source.numEdges
-      _moveEdgesInvalidate(source.firstEdgeIndex, _firstFreeEdge, source.numEdges)
       source.firstEdgeIndex = _firstFreeEdge
     }
     source.lastEdgeIndex = newId
