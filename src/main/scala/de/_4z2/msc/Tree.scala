@@ -148,7 +148,7 @@ class TreeEdge extends EdgeInt[TreeEdge] {
 // Especially addEdge takes a while to get right
 class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFactory: () => NodeType, val edgeFactory: () => EdgeType) {
   val nodes = new ArrayBuffer[NodeType]();
-  val edges = (new ArrayBuffer[EdgeType]() += edgeFactory());  // add a dummy edge
+  var edges = (new ArrayBuffer[EdgeType]() += edgeFactory());  // add a dummy edge
   private var _numEdges: Int = 0
   private var _firstFreeEdge: Int = 1
 
@@ -337,6 +337,7 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
       //println()
       iteration += 1
     }
+    gc()
     println(summary)
   }
 
@@ -500,4 +501,40 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   def summary = "Ordered tree with " + numNodes + " nodes and " + numEdges + " edges"
   def shortString = summary + "\nactive nodes: " + nodes.zipWithIndex.filter(_._1.numEdges > 0) + "\nvalid edges: " + edges.zipWithIndex.filter(_._1.valid)
   override def toString = summary + "\nnodes: " + nodes + "\nedges: " + edges
+
+
+  def checkConsistency {
+    nodes.zipWithIndex.foreach({ case (node, index) => {
+      assert(node.lastEdgeIndex >= node.firstEdgeIndex-1)
+      assert(outgoingEdges(node).map(edge => nodes(edge.headNode).parent).forall(_ == index) || {
+        println("not all children have the same parent. Node " + index + " = " + node + " has " + node.numEdges + " edges.\nEdges: " + outgoingEdges(node).toList
+          + "\nchildren: " + outgoingEdges(node).map(edge => nodes(edge.headNode)).toList)
+        false
+      })  // all should have the same parent
+    }
+    case _ => assert(false)
+    })
+  }
+
+  def gc(verbose: Boolean = true) {
+    val start = System.nanoTime
+    val newEdges = new ArrayBuffer[EdgeType](_numEdges);
+    newEdges += edges(0)
+    nodes.foreach(node => {
+      val oldSize = newEdges.size
+      val oldValidEdges = numValidEdges(node)
+      if (node.numEdges > 0) {
+        val parent = nodes(edges(node.firstEdgeIndex).headNode).parent
+        outgoingEdges(node).toList.filter(_.valid).foreach(newEdges += _.copy)
+      }
+      node.firstEdgeIndex = oldSize
+      node.lastEdgeIndex = newEdges.size - 1
+
+      assert(node.numEdges == oldValidEdges)
+    })
+    if (verbose) println("GC: " + (System.nanoTime - start) / 1000000.0 + "ms, edge buffer now " + newEdges.size + " edges, was " + edges.size + ". numEdges = " + _numEdges)
+    _firstFreeEdge = newEdges.size
+    edges = newEdges
+    System.gc
+  }
 }

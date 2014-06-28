@@ -14,6 +14,10 @@ object XmlParser {
 			tree.addEdge(id, childId)
 			assert(tree.nodes(childId).parent == id)
 			map(childId) = child.label
+			if (childId % 10000 == 0) {
+				println(tree.summary)
+				tree.gc()
+			}
 			processNode(child, childId, tree, map)
 		})
 	}
@@ -25,6 +29,7 @@ object XmlParser {
 		val id = tree.addNode
 		map(id) = root.label
 		processNode(root, id, tree, map)
+		tree.gc()
 		(tree, map)
 	}
 }
@@ -44,11 +49,12 @@ object LazyXmlParser {
 						val nodeId = tree.addNode
 						assert(map.size == nodeId)
 						map += label
-						if (parents.size > 0) {
+						if (parents.size > 0) {  // if this is not the root, add an edge to the parent
 							tree.addEdge(parents.head, nodeId)
 						}
 						if (nodeId % 10000 == 0) {
 							println(tree.summary)
+							tree.gc()
 						}
 						processNode(nodeId :: parents)
 					case EvElemEnd(_, label) =>
@@ -59,6 +65,7 @@ object LazyXmlParser {
 			}
 		}
 		processNode(List.empty)
+		tree.gc()
 		(tree, map)
 	}
 }
