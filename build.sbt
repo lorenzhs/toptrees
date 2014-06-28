@@ -164,11 +164,13 @@ resolvers += "Java.net Maven2 Repo" at "http://download.java.net/maven/2/"
 // fork a new JVM for 'run' and 'test:run'
 // fork := true
 
+fork in run := true
+
 // fork a new JVM for 'test:run', but not 'run'
 // fork in Test := true
 
 // add a JVM option to use when forking a JVM for 'run'
-// javaOptions += "-Xmx2G"
+javaOptions += "-Xmx4G"
 
 // only use a single thread for building
 // parallelExecution := false
