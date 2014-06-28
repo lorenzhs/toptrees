@@ -327,14 +327,13 @@ class OrderedTree[NodeType <: NodeInt, EdgeType <: EdgeInt[EdgeType]](val nodeFa
   // def callback(node1: Int, node2: Int, newNode: Int, mergeType:Int): Unit
   def doMerges(mergeCallback: (Int, Int, Int, Int) => Unit) {
     var iteration = 0
+    println("Performing merge iterations; " + summary)
     while (_numEdges > 1) {
-      println("Iteration " + iteration + "; " + summary)
-      //println("Horizontal merges, iteration " + iteration)
+      val start = System.nanoTime
       horizontalMerges(iteration, mergeCallback)
-      //println("Vertical merges merges, iteration " + iteration)
       verticalMerges(iteration, mergeCallback)
-      //println(this)
-      //println()
+      println("Iteration " + iteration + " took " + (System.nanoTime-start)/1000000.0 + "ms; " + summary)
+      if (edges.size - _numEdges > 100000) gc()  // compact edge array if more than 100k slots are wasted
       iteration += 1
     }
     gc()
