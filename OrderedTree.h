@@ -381,7 +381,8 @@ public:
 		}
 		_firstFreeEdge = newEdges.size();
 		edges.swap(newEdges);
-		if (verbose) cout << "GC: " << timer.elapsedMillis() << "ms, edge buffer now " << edges.size() << " edges, was " << newEdges.size() << endl;
+		if (verbose) cout << "GC: " << timer.elapsedMillis() << "ms, edge buffer now " << edges.size() << " edges, was "
+			<< newEdges.size() << " (" << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
 protected:
