@@ -387,6 +387,32 @@ public:
 			<< newEdges.size() << " (" << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
+	void inplaceCompact(const bool verbose = true) {
+		Timer timer;
+		int count = 0;
+		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
+			NodeType &node = nodes[nodeId];
+			int freeEdgeId = node.firstEdgeIndex;
+			for (int edgeId = node.firstEdgeIndex; edgeId <= node.lastEdgeIndex; ++edgeId) {
+				EdgeType *edge = edges.data() + edgeId;
+				if (!edge->valid) continue;
+				if (edgeId == freeEdgeId) {
+					freeEdgeId++;
+					continue;
+				} else {
+					edges[freeEdgeId] = edges[edgeId];
+					freeEdgeId++;
+					count++;
+				}
+			}
+			for (int edgeId = freeEdgeId; edgeId <= node.lastEdgeIndex; ++edgeId) {
+				edges[edgeId].valid = false;
+			}
+			node.lastEdgeIndex = freeEdgeId - 1;
+		}
+		if (verbose) cout << "Inplace compaction moved " << count << " edges (" << (count * 100.0 / _numEdges) << "%) in " << timer.elapsedMillis() << "ms" << endl;
+	}
+
 protected:
 	void initialise(const int n, const int m) {
 		nodes.clear();
