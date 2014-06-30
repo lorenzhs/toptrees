@@ -162,12 +162,12 @@ public:
 		int iteration = 0;
 		Timer timer;
 		while (_numEdges > 1) {
-			if (verbose) cout << "Iteration " << iteration << "... " << flush;
+			if (verbose) cout << "Iteration " << iteration << ": horizontal merges... " << flush;
 			horizontalMerges(iteration, mergeCallback);
-			if (verbose) cout << " horizontal merges: " << timer.elapsedMillis() << "ms " << flush;
+			if (verbose) cout << timer.getAndReset() << "ms; vertical merges... " << flush;
 			compact(false); // actually, always rebuilding seems faster than moving, probably because of subsequent cache efficiency
 			verticalMerges(iteration, mergeCallback);
-			if (verbose) cout << "vertical merges... all done after " << timer.getAndReset() << " ms; " << summary() << endl;
+			if (verbose) cout << timer.getAndReset() << " ms; " << summary() << endl;
 			iteration++;
 			checkConsistency();
 		}
