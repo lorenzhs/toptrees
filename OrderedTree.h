@@ -262,6 +262,7 @@ public:
 	}
 
 	void mergeSiblings(const EdgeType* leftEdge, const EdgeType* rightEdge, int& newNode, MergeType& mergeType) {
+		assert(leftEdge->valid && rightEdge->valid);
 		const int leftId(leftEdge->headNode), rightId(rightEdge->headNode);
 		assert(0 <= leftId < _numNodes && 0 <= rightId < _numNodes);
 		NodeType &left(nodes[leftId]), &right(nodes[rightId]);
@@ -297,7 +298,7 @@ public:
 		int childId = firstEdge(middleId)->headNode;
 		NodeType& child = nodes[childId];
 		//cout << "\tmerging chain. middle: " << middleId << " = " << middle << " child: " << childId << " = " << child << "; removing edge from " << middleId << " to " << childId << endl;
-		removeEdgeTo(middleId, childId);
+		removeEdge(middleId, middle.firstEdgeIndex);
 		child.parent = -1;
 		if (child.isLeaf()) {
 			//cout << "\tchild is a leaf, merge type (a)" << endl;
