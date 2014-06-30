@@ -32,28 +32,12 @@ public:
 		int rootId = tree.addNode();
 		assert((int)labels.size() == rootId);
 		labels.push_back(root->name());
-		/*
-		parseLinearSweep(root, rootId);
-		/*/
 		parseStructure(root, rootId);
-		//*/
 
 		if (verbose) cout << "building tree " << timer.elapsedMillis() << "ms" << endl;
 	}
 
 private:
-	void parseLinearSweep(rapidxml::xml_node<>* node, int id) {
-		rapidxml::xml_node<>* child = node->first_node();
-		int childId;
-		while (child != NULL) {
-			childId = tree.addNode();
-			tree.addEdge(id, childId);
-			labels[childId] = child->name();
-			parseLinearSweep(child, childId);
-			child = child->next_sibling();
-		}
-	}
-
 	void parseStructure(rapidxml::xml_node<>* node, int id) {
 		rapidxml::xml_node<>* child = node->first_node();
 		int numChildren(0), childId;
