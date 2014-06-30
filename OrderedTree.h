@@ -198,16 +198,17 @@ public:
 				if (nodes[left].isLeaf() || nodes[right].isLeaf()) {
 					nodes[left].lastMergedIn = iteration;
 					nodes[right].lastMergedIn = iteration;
-					mergeSiblings(left, right, newNode, mergeType);
+					mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
 					mergeCallback(left, right, newNode, mergeType);
 				}
 			}
 
-			if (leftEdge == lastEdge(nodeId)) {
+			if (edgeNum == node.numEdges() - 1) {
 				// the odd case
+				leftEdge = lastEdge(nodeId);
 				left = leftEdge->headNode;
 				const NodeType& child = nodes[left];
-				if (!child.isLeaf() || node.numEdges() <= 2) {
+				if (!child.isLeaf() || node.numEdges() <= 2 || !(leftEdge-1)->valid || !(leftEdge-2)->valid) {
 					// not a leaf or child has at most one sibling
 					continue;
 				}
@@ -215,8 +216,8 @@ public:
 				const int childMinusTwo = (leftEdge-2)->headNode;
 				if (!nodes[childMinusOne].isLeaf() && !nodes[childMinusTwo].isLeaf()) {
 					// child is a leaf, but its two left siblings are not
-					mergeSiblings(left, childMinusOne, newNode, mergeType);
-					mergeCallback(left, childMinusOne, newNode, mergeType);
+					mergeSiblings(leftEdge-1, leftEdge, newNode, mergeType);
+					mergeCallback(childMinusOne, left, newNode, mergeType);
 				}
 			}
 		}
@@ -260,7 +261,8 @@ public:
 		}
 	}
 
-	void mergeSiblings(const int leftId, const int rightId, int& newNode, MergeType& mergeType) {
+	void mergeSiblings(const EdgeType* leftEdge, const EdgeType* rightEdge, int& newNode, MergeType& mergeType) {
+		const int leftId(leftEdge->headNode), rightId(rightEdge->headNode);
 		assert(0 <= leftId < _numNodes && 0 <= rightId < _numNodes);
 		NodeType &left(nodes[leftId]), &right(nodes[rightId]);
 		assert(left.parent == right.parent);
@@ -276,12 +278,12 @@ public:
 
 		if (right.isLeaf()) {
 			// left is what remains
-			removeEdgeTo(right.parent, rightId, false);
+			removeEdge(right.parent, edgeId(rightEdge), false);
 			right.parent = -1; // just to make sure
 			//cout << "\tsetting parent of " << rightId << " to -1: " << right << endl;
 			newNode = leftId;
 		} else {
-			removeEdgeTo(left.parent, leftId, false);
+			removeEdge(left.parent, edgeId(leftEdge), false);
 			left.parent = -1;
 			//cout << "\tsetting parent of " << leftId << " to -1: " << left << endl;
 			newNode = rightId;
