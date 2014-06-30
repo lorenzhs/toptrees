@@ -14,13 +14,13 @@ all: $(EXECS)
 .PHONY: $(EXECS)
 
 test:
-	$(CC) $(FLAGS) $(BASEFLAGS) -o test$(EXTRA) test.cpp
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
 testDebug:
-	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) -o test$(EXTRA) test.cpp
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
 testNoDebug:
-	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) -o test$(EXTRA) test.cpp
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
 #RULES
 
