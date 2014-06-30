@@ -11,7 +11,11 @@
 
 using std::cout;
 using std::endl;
+using std::function;
 using std::flush;
+using std::ostream;
+using std::string;
+using std::stringstream;
 using std::vector;
 
 // #define awfulness
@@ -158,7 +162,7 @@ public:
 		}
 	}
 
-	void doMerges(const std::function<void (const int, const int, const int, const MergeType)> &mergeCallback, const bool verbose = true) {
+	void doMerges(const function<void (const int, const int, const int, const MergeType)> &mergeCallback, const bool verbose = true) {
 		int iteration = 0;
 		Timer timer;
 		while (_numEdges > 1) {
@@ -174,7 +178,7 @@ public:
 		if (verbose) cout << summary() << endl;
 	}
 
-	void horizontalMerges(const int iteration, const std::function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
+	void horizontalMerges(const int iteration, const function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
 		for (int nodeId = _numNodes-1; nodeId >= 0; --nodeId) {
 			const NodeType& node = nodes[nodeId];
 			if (node.numEdges() < 2) {
@@ -223,7 +227,7 @@ public:
 		}
 	}
 
-	void verticalMerges(const int iteration, const std::function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
+	void verticalMerges(const int iteration, const function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
 		vector<int> nodesToMerge;  // TODO is a linked list faster?
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
 			const NodeType& node = nodes[nodeId];
@@ -318,14 +322,14 @@ public:
 		}
 	}
 
-	std::string summary() const {
-		std::stringstream s;
+	string summary() const {
+		stringstream s;
 		s << "Ordered tree with " << _numNodes << " nodes and " << _numEdges << " edges";
 		return s.str();
 	}
 
-	std::string toString() const {
-		std::stringstream os;
+	string toString() const {
+		stringstream os;
 		os << summary() << endl << "Nodes:";
 		for (uint i = 0; i < nodes.size(); ++i) {
 			os << " " << nodes[i];
@@ -338,7 +342,7 @@ public:
 	}
 
 	template<typename treeType>
-	friend std::ostream& operator<<(std::ostream& os, const treeType &tree) {
+	friend ostream& operator<<(ostream& os, const treeType &tree) {
 		os << tree.summary() << endl << "Nodes:";
 		for (uint i = 0; i < tree.nodes.size(); ++i) {
 			os << " " << tree.nodes[i];

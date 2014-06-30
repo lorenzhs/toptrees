@@ -1,12 +1,12 @@
 #pragma once
 
-#include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "Common.h"
 
-using std::cout;
 using std::endl;
+using std::ostream;
 using std::vector;
 
 struct Cluster {
@@ -15,7 +15,7 @@ struct Cluster {
 	MergeType mergeType;
 	int left, right /*, rLeft, lRight, rRight, height, size, distTBleft, distTBright*/;
 
-	friend std::ostream& operator<<(std::ostream& os, const Cluster &cluster) {
+	friend ostream& operator<<(ostream& os, const Cluster &cluster) {
 		return os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << ")";
 	}
 };
@@ -28,7 +28,7 @@ struct TopTree {
 		return clusters.size() - 1;
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const TopTree &toptree) {
+	friend ostream& operator<<(ostream& os, const TopTree &toptree) {
 		os << "Top tree with " << toptree.clusters.size() << " clusters. Non-leaves:" << endl;
 		uint count = 0;
 		for (const Cluster &cluster : toptree.clusters) {
@@ -38,7 +38,7 @@ struct TopTree {
 			count++;
 		}
 		return os;
-	}	
+	}
 
 	vector<Cluster> clusters;
 };

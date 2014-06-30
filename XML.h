@@ -11,11 +11,13 @@
 using std::cout;
 using std::endl;
 using std::flush;
+using std::string;
+using std::vector;
 
 template<typename TreeType>
 class XmlParser {
 public:
-	XmlParser(const std::string& fn, TreeType &t, std::vector<std::string> &l): filename(fn), tree(t), labels(l) {}
+	XmlParser(const string& fn, TreeType &t, vector<string> &l): filename(fn), tree(t), labels(l) {}
 
 	void parse(const bool verbose = true) {
 		if (verbose) cout << "Reading " << filename << "... " << flush;
@@ -59,7 +61,7 @@ private:
 		}
 	}
 
-	std::string filename;
+	string filename;
 	TreeType &tree;
-	std::vector<std::string> &labels;
+	vector<string> &labels;
 };
