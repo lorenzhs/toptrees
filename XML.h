@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <vector>
 
 #include "Timer.h"
 
@@ -15,7 +15,7 @@ using std::flush;
 template<typename TreeType>
 class XmlParser {
 public:
-	XmlParser(const std::string& fn, TreeType &t, std::map<int, std::string> &l): filename(fn), tree(t), labels(l) {}
+	XmlParser(const std::string& fn, TreeType &t, std::vector<std::string> &l): filename(fn), tree(t), labels(l) {}
 
 	void parse(const bool verbose = true) {
 		if (verbose) cout << "Parsing " << filename << "... " << flush;
@@ -30,7 +30,8 @@ public:
 		if (verbose) cout <<"parsing " << timer.getAndReset() << "ms " << flush;
 
 		int rootId = tree.addNode();
-		labels[rootId] = root->name();
+		assert((int)labels.size() == rootId);
+		labels.push_back(root->name());
 		/*
 		parseLinearSweep(root, rootId);
 		/*/
@@ -60,7 +61,8 @@ private:
 			numChildren++;
 			childId = tree.addNode();
 			tree.addEdge(id, childId);
-			labels[childId] = child->name();
+			assert((int)labels.size() == childId);
+			labels.push_back(child->name());
 			child = child->next_sibling();
 		}
 		if (numChildren == 0) return;
@@ -75,5 +77,5 @@ private:
 
 	std::string filename;
 	TreeType &tree;
-	std::map<int, std::string> &labels;
+	std::vector<std::string> &labels;
 };

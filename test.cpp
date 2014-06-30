@@ -1,5 +1,5 @@
 #include <iostream>
-#include <map>
+#include <vector>
 
 #include "Edges.h"
 #include "Nodes.h"
@@ -16,7 +16,7 @@ using std::endl;
 int main(int argc, char** argv) {
 	OrderedTree<TreeNode,TreeEdge> t;
 //
-	std::map<int, std::string> labels;
+	std::vector<std::string> labels;
 
 	std::string filename = argc > 1 ? std::string(argv[1]) : "data/1998statistics.xml";
 
