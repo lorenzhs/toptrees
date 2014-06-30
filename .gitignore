@@ -2,8 +2,10 @@
 *.so
 *.ii
 *.s
+callgrind.out.*
 
 test
+test-*
 
 data/
 
