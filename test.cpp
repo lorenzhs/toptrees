@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 	cout << t.summary() << endl;
 
 	TopTree topTree(t._numNodes);
-	std::map<int,int> nodeIds;
+	vector<int> nodeIds(t._numNodes);
 	for (int i = 0; i < t._numNodes; ++i) {
 		nodeIds[i] = i;
 	}
