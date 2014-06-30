@@ -120,7 +120,7 @@ public:
 		return _prepareEdge(newId, from, to);
 	}
 
-	void removeEdge(const int from, const int edge) {
+	void removeEdge(const int from, const int edge, const bool compact = true) {
 		assert(edges[edge].valid);
 		edges[edge].valid = false;
 		NodeType& node = nodes[from];
@@ -128,7 +128,7 @@ public:
 			node.lastEdgeIndex--;
 		} else if (edge == node.firstEdgeIndex) {
 			node.firstEdgeIndex++;
-		} else {
+		} else if (compact) {
 			// because this is an ordered tree, we have to move edges around :(
 			if ((edge - node.firstEdgeIndex) >= (node.lastEdgeIndex - edge)) {
 				// there are morge edges on the left => move right side to the left
@@ -147,12 +147,12 @@ public:
 		_numEdges--;
 	}
 
-	void removeEdgeTo(const int from, const int to) {
+	void removeEdgeTo(const int from, const int to, const bool compact = true) {
 		NodeType& node = nodes[from];
 		for (int i = node.firstEdgeIndex; i <= node.lastEdgeIndex; ++i) {
 			if (edges[i].headNode == to) {
 				assert(nodes[edges[i].headNode].parent == from);
-				removeEdge(from, i);
+				removeEdge(from, i, compact);
 				return;
 			}
 		}
@@ -162,21 +162,20 @@ public:
 		int iteration = 0;
 		Timer timer;
 		while (_numEdges > 1) {
+			if (verbose) cout << "Iteration " << iteration << "... " << flush;
 			horizontalMerges(iteration, mergeCallback);
+			if (verbose) cout << " horizontal merges: " << timer.elapsedMillis() << "ms " << flush;
+			compact(false); // actually, always rebuilding seems faster than moving, probably because of subsequent cache efficiency
 			verticalMerges(iteration, mergeCallback);
-			if (verbose) cout << "Iteration " << iteration << " took " << timer.getAndReset() << " ms; " << summary() << endl;
+			if (verbose) cout << "vertical merges... all done after " << timer.getAndReset() << " ms; " << summary() << endl;
 			iteration++;
 			checkConsistency();
-			if (edges.size() - _numEdges > 100000) {
-				// Compact edge array if more than 100k slots are wasted
-				compact();
-			}
 		}
 		if (verbose) cout << summary() << endl;
 	}
 
 	void horizontalMerges(const int iteration, const std::function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
-		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
+		for (int nodeId = _numNodes-1; nodeId >= 0; --nodeId) {
 			const NodeType& node = nodes[nodeId];
 			if (node.numEdges() < 2) {
 				continue;
@@ -201,7 +200,6 @@ public:
 					nodes[right].lastMergedIn = iteration;
 					mergeSiblings(left, right, newNode, mergeType);
 					mergeCallback(left, right, newNode, mergeType);
-					edgeNum--;
 				}
 			}
 
@@ -278,12 +276,12 @@ public:
 
 		if (right.isLeaf()) {
 			// left is what remains
-			removeEdgeTo(right.parent, rightId);
+			removeEdgeTo(right.parent, rightId, false);
 			right.parent = -1; // just to make sure
 			//cout << "\tsetting parent of " << rightId << " to -1: " << right << endl;
 			newNode = leftId;
 		} else {
-			removeEdgeTo(left.parent, leftId);
+			removeEdgeTo(left.parent, leftId, false);
 			left.parent = -1;
 			//cout << "\tsetting parent of " << leftId << " to -1: " << left << endl;
 			newNode = rightId;
@@ -363,6 +361,10 @@ public:
 
 	void compact(const bool verbose = true) {
 		Timer timer;
+		if (_numEdges + 1 == (int) edges.size()) {
+			if (verbose) cout << "GC: nothing to do" << endl;
+			return;
+		}
 		vector<EdgeType> newEdges;
 		newEdges.reserve(_numEdges + 1);
 		newEdges.push_back(edges[0]);  // dummy edge
