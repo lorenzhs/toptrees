@@ -1,6 +1,13 @@
 #pragma once
 
+#include <iostream>
+#include <vector>
+
 #include "Common.h"
+
+using std::cout;
+using std::endl;
+using std::vector;
 
 struct Cluster {
 	Cluster(): mergeType(NO_MERGE), left(-1), right(-1) /*, rLeft(-1) , lRight(-1), rRight(-1), height(-1), size(-1), distTBleft(-1), distTBright(-1)*/ {}
@@ -24,7 +31,7 @@ struct TopTree {
 	friend std::ostream& operator<<(std::ostream& os, const TopTree &toptree) {
 		os << "Top tree with " << toptree.clusters.size() << " clusters. Non-leaves:" << endl;
 		uint count = 0;
-		for (const Cluster &cluster: toptree.clusters) {
+		for (const Cluster &cluster : toptree.clusters) {
 			if (cluster.left >= 0) {
 				os << "\t" << count << ": " << cluster << endl;
 			}

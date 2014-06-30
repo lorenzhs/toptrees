@@ -3,6 +3,8 @@
 #include <iostream>
 #include <map>
 
+#include "Timer.h"
+
 #include "3rdparty/rapidxml.hpp"
 #include "3rdparty/rapidxml_utils.hpp"
 
