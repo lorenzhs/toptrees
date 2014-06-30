@@ -18,23 +18,23 @@ public:
 	XmlParser(const std::string& fn, TreeType &t, std::vector<std::string> &l): filename(fn), tree(t), labels(l) {}
 
 	void parse(const bool verbose = true) {
-		if (verbose) cout << "Parsing " << filename << "... " << flush;
+		if (verbose) cout << "Reading " << filename << "... " << flush;
 		Timer timer;
 
 		rapidxml::file<> file(filename.c_str());
 		rapidxml::xml_document<> xml;
-		if (verbose) cout << "reading took " << timer.getAndReset() << "ms " << flush;
+		if (verbose) cout << " " << timer.getAndReset() << "ms; parsing... " << flush;
 
 		xml.parse<rapidxml::parse_no_data_nodes>(file.data());
 		rapidxml::xml_node<>* root = xml.first_node();
-		if (verbose) cout <<"parsing " << timer.getAndReset() << "ms " << flush;
+		if (verbose) cout << timer.getAndReset() << "ms; building tree... " << flush;
 
 		int rootId = tree.addNode();
 		assert((int)labels.size() == rootId);
 		labels.push_back(root->name());
 		parseStructure(root, rootId);
 
-		if (verbose) cout << "building tree " << timer.elapsedMillis() << "ms" << endl;
+		if (verbose) cout << timer.elapsedMillis() << "ms." << endl;
 	}
 
 private:
