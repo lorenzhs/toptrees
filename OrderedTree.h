@@ -190,9 +190,8 @@ public:
 			}
 #endif
 			EdgeType *leftEdge, *rightEdge;
-			int left, right, newNode;
+			int left, right, newNode, edgeNum;
 			MergeType mergeType;
-			int edgeNum;
 			for (edgeNum = 0; edgeNum < node.numEdges() - 1; edgeNum += 2) {
 				leftEdge = firstEdge(nodeId) + edgeNum;
 				rightEdge = leftEdge + 1;
@@ -236,10 +235,6 @@ public:
 				nodesToMerge.push_back(nodeId);
 			}
 		}
-
-		/*cout << "nodes to merge:";
-		for (int nodeId : nodesToMerge) cout << " " << nodeId;
-		cout << endl;*/
 
 		for (int nodeId : nodesToMerge) {
 			//cout << "Checking out node " << nodeId << endl;

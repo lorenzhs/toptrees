@@ -12,13 +12,14 @@
 
 using std::cout;
 using std::endl;
+using std::string;
+using std::vector;
 
 int main(int argc, char** argv) {
 	OrderedTree<TreeNode,TreeEdge> t;
-//
-	std::vector<std::string> labels;
+	vector<string> labels;
 
-	std::string filename = argc > 1 ? std::string(argv[1]) : "data/1998statistics.xml";
+	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
 
 	XmlParser<OrderedTree<TreeNode,TreeEdge>> xml(filename, t, labels);
 	xml.parse();

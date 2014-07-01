@@ -2,6 +2,8 @@
 
 #include <ostream>
 
+// TODO maybe be really hacky and use first bit of headNode as valid flag?
+// -> invalid edges have negative ID
 struct TreeEdge {
 	int headNode;
 	bool valid;

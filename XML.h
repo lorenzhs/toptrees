@@ -17,6 +17,8 @@ using std::vector;
 template<typename TreeType>
 class XmlParser {
 public:
+	// TODO figure out if we can keep the char pointers instead of converting them to string
+	// this currently uses more than half of the parsing time
 	XmlParser(const string& fn, TreeType &t, vector<string> &l): filename(fn), tree(t), labels(l) {}
 
 	void parse(const bool verbose = true) {
