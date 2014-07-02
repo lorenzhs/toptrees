@@ -12,8 +12,7 @@ class BinaryDag {
 public:
 	BinaryDag(const int n = 0): nodes() {
 		nodes.reserve(n);
-		std::string* s = new std::string("DUMMY");
-		nodes.emplace_back(-1, -1, s);
+		nodes.emplace_back();
 	}
 
 	int nodeId(DagNode<DataType> *node) const {
