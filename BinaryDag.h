@@ -12,15 +12,14 @@ class BinaryDag {
 public:
 	BinaryDag(const int n = 0): nodes() {
 		nodes.reserve(n);
-		nodes.emplace_back();
-	}
-
-	int nodeId(DagNode<DataType> *node) const {
-		return node - nodes.data();
+		// add a dummy element that is guaranteed to not appear
+		// (we assume that -1 is used for leaves, never -2, except for this dummy)
+		nodes.emplace_back(-2, -2, (std::string*)NULL);
 	}
 
 	int addNode(int left, int right, DataType *label) {
 		nodes.emplace_back(left, right, label);
+		// TODO figure out if this is correct
 		if (left != -1) {
 			nodes[left].inDegree++;
 		}
@@ -37,18 +36,6 @@ public:
 	int addNodes(const int n) {
 		nodes.resize(nodes.size() + n);
 		return nodes.size() - n;
-	}
-
-	void setLeftEdge(const int from, const int to) {
-		assert (0 <= from && from < (int) nodes.size() && 0 <= to && to < (int) nodes.size());
-		nodes[from].left = to;
-		nodes[to].inDegree++;
-	}
-
-	void setRightEdge(const int from, const int to) {
-		assert (0 <= from && from < (int) nodes.size() && 0 <= to && to < (int) nodes.size());
-		nodes[from].right = to;
-		nodes[to].inDegree++;
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const BinaryDag<DataType> &dag) {
