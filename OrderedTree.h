@@ -3,6 +3,7 @@
 #include <cassert>
 #include <functional>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <vector>
 
@@ -165,16 +166,20 @@ public:
 	void doMerges(const function<void (const int, const int, const int, const MergeType)> &mergeCallback, const bool verbose = true) {
 		int iteration = 0;
 		Timer timer;
+		const std::streamsize precision = cout.precision();
+		cout <<  std::fixed << std::setprecision(1);
 		while (_numEdges > 1) {
-			if (verbose) cout << "Iteration " << iteration << ": horizontal merges... " << flush;
+			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
 			horizontalMerges(iteration, mergeCallback);
-			if (verbose) cout << timer.getAndReset() << "ms; vertical merges... " << flush;
+			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 			compact(false); // actually, always rebuilding seems faster than moving, probably because of subsequent cache efficiency
 			verticalMerges(iteration, mergeCallback);
-			if (verbose) cout << timer.getAndReset() << " ms; " << summary() << endl;
+			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << summary() << endl;
 			iteration++;
 			checkConsistency();
 		}
+		cout.unsetf(std::ios_base::fixed);
+		cout << std::setprecision(precision);
 		if (verbose) cout << summary() << endl;
 	}
 
@@ -319,7 +324,7 @@ public:
 
 	string summary() const {
 		stringstream s;
-		s << "Ordered tree with " << _numNodes << " nodes and " << _numEdges << " edges";
+		s << "Tree with n = " << _numNodes << " m = " << std::setw(NUM_DIGITS(_numNodes)) << _numEdges << " edges";
 		return s.str();
 	}
 
