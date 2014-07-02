@@ -23,6 +23,10 @@ struct SubtreeEquality {
 
 template<typename DataType>
 struct SubtreeHasher {
+	// adapted from: http://www.boost.org/doc/libs/1_55_0/doc/html/hash/reference.html#boost.hash_combine
+	// the magic number is the binary extension of the golden ratio
+	// the idea is that every bit is random. A more detailed explanation is available at
+	// http://stackoverflow.com/questions/4948780/magic-number-in-boosthash-combine
 	template<typename T>
 	void boost_hash_combine(uint& seed, const T& val) const {
 		std::hash<T> hasher;
