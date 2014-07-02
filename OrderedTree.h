@@ -224,6 +224,8 @@ public:
 				const int childMinusTwo = (leftEdge-2)->headNode;
 				if (!nodes[childMinusOne].isLeaf() && !nodes[childMinusTwo].isLeaf()) {
 					// child is a leaf, but its two left siblings are not
+					nodes[left].lastMergedIn = iteration;
+					nodes[childMinusOne].lastMergedIn = iteration;
 					mergeSiblings(leftEdge-1, leftEdge, newNode, mergeType);
 					mergeCallback(childMinusOne, left, newNode, mergeType);
 				}
