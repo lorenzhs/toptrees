@@ -341,8 +341,7 @@ public:
 		return os.str();
 	}
 
-	template<typename treeType>
-	friend ostream& operator<<(ostream& os, const treeType &tree) {
+	friend std::ostream& operator<<(std::ostream& os, const OrderedTree<NodeType, EdgeType> &tree) {
 		os << tree.summary() << endl << "Nodes:";
 		for (uint i = 0; i < tree.nodes.size(); ++i) {
 			os << " " << tree.nodes[i];
