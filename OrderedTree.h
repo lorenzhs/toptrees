@@ -268,7 +268,7 @@ public:
 	void mergeSiblings(const EdgeType* leftEdge, const EdgeType* rightEdge, int& newNode, MergeType& mergeType) {
 		assert(leftEdge->valid && rightEdge->valid);
 		const int leftId(leftEdge->headNode), rightId(rightEdge->headNode);
-		assert(0 <= leftId < _numNodes && 0 <= rightId < _numNodes);
+		assert(0 <= leftId && leftId < _numNodes && 0 <= rightId && rightId < _numNodes);
 		NodeType &left(nodes[leftId]), &right(nodes[rightId]);
 		assert(left.parent == right.parent);
 		assert(left.isLeaf() || right.isLeaf());
@@ -296,7 +296,7 @@ public:
 	}
 
 	void mergeChain(const int middleId, MergeType& mergeType) {
-		assert(0 <= middleId < _numNodes);
+		assert(0 <= middleId && middleId < _numNodes);
 		NodeType& middle = nodes[middleId];
 		assert(middle.numEdges() == 1);
 		int childId = firstEdge(middleId)->headNode;
