@@ -9,6 +9,7 @@
 #include "XML.h"
 #include "Timer.h"
 
+#include "DagBuilder.h"
 
 using std::cout;
 using std::endl;
@@ -17,6 +18,7 @@ using std::vector;
 
 int main(int argc, char** argv) {
 	OrderedTree<TreeNode,TreeEdge> t;
+//*
 	vector<string> labels;
 
 	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
@@ -26,7 +28,7 @@ int main(int argc, char** argv) {
 
 	cout << t.summary() << endl;
 
-	TopTree topTree(t._numNodes);
+	TopTree topTree(t._numNodes, labels);
 	vector<int> nodeIds(t._numNodes);
 	for (int i = 0; i < t._numNodes; ++i) {
 		nodeIds[i] = i;
@@ -37,7 +39,14 @@ int main(int argc, char** argv) {
 		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
 	});
 
-	cout << "Top tree construction took " << timer.elapsedMillis() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
+
+	BinaryDag<string> dag;
+	DagBuilder<string> builder(topTree, dag);
+	builder.createDag();
+
+	cout << "Top dag has " << dag.nodes.size() - 1<< " nodes" << endl;
+	cout << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
 /*/
 	t.addNodes(11);
 	t.addEdge(0, 1);
@@ -52,10 +61,12 @@ int main(int argc, char** argv) {
 	t.addEdge(4, 10);
 	cout << t << endl << endl;
 
+	vector<string> labels({"root", "chain", "chain", "chain", "chain", "chain", "chain", "chain", "chain", "chain", "chain"});
+
 	t.toString();
 
-	TopTree topTree(t._numNodes);
-	std::map<int,int> nodeIds;
+	TopTree topTree(t._numNodes, labels);
+	vector<int> nodeIds(t._numNodes);
 	for (int i = 0; i < t._numNodes; ++i) {
 		nodeIds[i] = i;
 	}
@@ -65,6 +76,10 @@ int main(int argc, char** argv) {
 	});
 	cout << endl << t << endl;
 	cout << topTree << endl;
+	BinaryDag<string> dag;
+	DagBuilder<string> builder(topTree, dag);
+	builder.createDag();
+	cout << dag << endl;
 //*/
 	return 0;
 }
