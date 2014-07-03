@@ -276,7 +276,8 @@ public:
 			// a) node or parent is the root node
 			// b) parent has more than one child
 			// otherwise, merge the chain grandparent -> parent -> node
-			while (parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].parent >= 0 && nodes[nodes[parentId].parent].hasOnlyOneChild()) {
+			while (parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].parent >= 0 &&
+				nodes[parentId].lastMergedIn < iteration && nodes[nodes[parentId].parent].hasOnlyOneChild()) {
 				//cout << "merging " << parentId << " with its child " << nodeId << endl;
 				NodeType &node(nodes[nodeId]), &parent(nodes[parentId]);
 				node.lastMergedIn = iteration;
