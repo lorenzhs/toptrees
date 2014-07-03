@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <ostream>
 #include <functional>
 #include <vector>
@@ -25,7 +26,7 @@ struct Cluster {
 };
 
 struct TopTree {
-	TopTree(const int numLeaves, vector<string> &labels): clusters(numLeaves), labels(labels) {
+	TopTree(const int numLeaves, vector<string> &labels): clusters(numLeaves), labels(labels), numLeaves(numLeaves) {
 		for (int i = 0; i < numLeaves; ++i) {
 			clusters[i].label = &labels[i];
 		}
@@ -65,4 +66,90 @@ struct TopTree {
 
 	vector<Cluster> clusters;
 	vector<string> &labels;
+	int numLeaves;
+};
+
+template<typename TreeType>
+class TopTreeUnpacker {
+public:
+	TopTreeUnpacker(TopTree &topTree, TreeType &tree): topTree(topTree), tree(tree) {
+		assert(tree._numNodes == 0);
+	}
+
+	void unpack() {
+		int firstId = tree.addNodes(topTree.numLeaves);
+		assert (firstId == 0);
+		int rootCluster = topTree.clusters.size() - 1;
+		unpackCluster(rootCluster, 0);
+	}
+
+private:
+	bool isLeaf(const int clusterId) const {
+		return clusterId < topTree.numLeaves;
+	}
+
+	int unpackCluster(const int clusterId, const int nodeId) {
+		const Cluster& cluster = topTree.clusters[clusterId];
+		int leafId;
+		switch (cluster.mergeType) {
+			case VERT_NO_BBN:
+			case VERT_WITH_BBN: leafId = unpackVertCluster(clusterId, nodeId); break;
+			case HORZ_NO_BBN:
+			case HORZ_LEFT_BBN:
+			case HORZ_RIGHT_BBN: leafId = unpackHorzCluster(clusterId, nodeId); break;
+			default: assert(false);
+		}
+		return leafId;
+	}
+
+	int unpackVertCluster(const int clusterId, const int nodeId) {
+		const Cluster &cluster = topTree.clusters[clusterId];
+		int boundaryNode(nodeId);
+		if (isLeaf(cluster.left)) {
+			tree.addEdge(nodeId, cluster.left);
+			boundaryNode = cluster.left;
+		} else {
+			boundaryNode = unpackCluster(cluster.left, nodeId);
+		}
+
+		if (isLeaf(cluster.right)) {
+			tree.addEdge(cluster.left, cluster.right);
+			boundaryNode = cluster.right;
+		} else {
+			boundaryNode = unpackCluster(cluster.right, boundaryNode);
+		}
+
+		if (cluster.mergeType == VERT_WITH_BBN)
+			return boundaryNode;
+		else
+			return -1;
+	}
+
+	int unpackHorzCluster(const int clusterId, const int nodeId) {
+		const Cluster &cluster = topTree.clusters[clusterId];
+		int left, right;
+		if (isLeaf(cluster.left)) {
+			tree.addEdge(nodeId, cluster.left);
+			left = cluster.left;
+		} else {
+			left = unpackCluster(cluster.left, nodeId);
+		}
+
+		if (isLeaf(cluster.right)) {
+			tree.addEdge(nodeId, cluster.right);
+			right = cluster.right;
+		} else {
+			right = unpackCluster(cluster.right, nodeId);
+		}
+
+		if (cluster.mergeType == HORZ_LEFT_BBN)
+			return left;
+		else if (cluster.mergeType == HORZ_RIGHT_BBN)
+			return right;
+		else
+			return -1;
+	}
+
+	TopTree &topTree;
+	TreeType &tree;
 };

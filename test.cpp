@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
 
 	if (argc > 2) {
-		XmlWriter writer(topTree);
+		XmlWriter<TopTree> writer(topTree);
 		writer.write(argv[2]);
 		cout << "Wrote top tree to " << argv[2] << " in " << timer.getAndReset() << "ms" << endl;
 	}
@@ -88,8 +88,15 @@ int main(int argc, char** argv) {
 	builder.createDag();
 	cout << dag << endl;
 
-	XmlWriter writer(topTree);
+	XmlWriter<TopTree> writer(topTree);
 	writer.write("/tmp/toptree.xml");
+
+	OrderedTree<TreeNode, TreeEdge> newTree;
+	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>> unpacker(topTree, newTree);
+	unpacker.unpack();
+
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>> unpackedWriter(newTree, labels);
+	unpackedWriter.write("/tmp/unpacked.xml");
 
 //*/
 	return 0;

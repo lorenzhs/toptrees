@@ -22,7 +22,7 @@ using std::vector;
 // #define awfulness
 #define FORALL_NODES(tree, node) for (int node = 0; node < tree._numNodes; ++node)
 #define FORALL_EDGES(tree, node, edge) for (int node = 0; node < tree._numNodes; ++node) for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
-#define FORALL_OUTGOING_EDGES(tree, node, edge) for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(u); ++edge)
+#define FORALL_OUTGOING_EDGES(tree, node, edge) for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
 
 template<typename NodeType, typename EdgeType>
 class OrderedTree {

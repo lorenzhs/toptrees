@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Timer.h"
+#include "OrderedTree.h"
 #include "TopTree.h"
 
 #include "3rdparty/rapidxml.hpp"
@@ -70,7 +71,11 @@ private:
 	vector<string> &labels;
 };
 
-class XmlWriter {
+template<typename TreeType>
+class XmlWriter {};
+
+template<>
+class XmlWriter<TopTree> {
 public:
 	XmlWriter(TopTree &tree): tree(tree) {}
 
@@ -86,7 +91,7 @@ public:
 
 private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
-		auto &node = tree.clusters[nodeId];
+		const Cluster &node = tree.clusters[nodeId];
 		const string& label(node.label != NULL ? *node.label : "DUMMY");
 		for (int i = 0; i < depth; ++i) out << "\t";
 		out << "<" << label << ">" << endl;
@@ -103,4 +108,40 @@ private:
 	}
 
 	TopTree &tree;
+};
+
+template<typename NodeType, typename EdgeType>
+class XmlWriter<OrderedTree<NodeType, EdgeType>> {
+public:
+	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, vector<string> &labels): tree(tree), labels(labels) {}
+
+	void write(const string &filename) {
+		std::ofstream out(filename.c_str());
+		assert(out.is_open());
+
+		writeNode(out, 0, 0);
+
+		out.close();
+	}
+
+private:
+	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
+		for (int i = 0; i < depth; ++i) out << "\t";
+		out << "<" << labels[nodeId] << ">";
+		if (tree.nodes[nodeId].isLeaf()) {
+			out << "</" << labels[nodeId] << ">" << endl;
+			return;
+		}
+		out << endl;
+
+		FORALL_OUTGOING_EDGES(tree, nodeId, edge) {
+			writeNode(out, edge->headNode, depth + 1);
+		}
+
+		for (int i = 0; i < depth; ++i) out << "\t";
+		out << "</" << labels[nodeId] << ">" << endl;
+	}
+
+	OrderedTree<NodeType, EdgeType> &tree;
+	vector<string> &labels;
 };
