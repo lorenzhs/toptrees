@@ -84,6 +84,7 @@ public:
 		out.close();
 	}
 
+private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
 		auto &node = tree.clusters[nodeId];
 		const string& label(node.label != NULL ? *node.label : "DUMMY");
