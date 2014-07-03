@@ -19,13 +19,6 @@ public:
 
 	int addNode(int left, int right, DataType *label) {
 		nodes.emplace_back(left, right, label);
-		// TODO figure out if this is correct
-		if (left != -1) {
-			nodes[left].inDegree++;
-		}
-		if (right != -1) {
-			nodes[right].inDegree++;
-		}
 		return (nodes.size() - 1);
 	}
 

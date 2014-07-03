@@ -79,13 +79,16 @@ public:
 			// node is not yet in the hashmap (element 0 is the dummy)
 			nodeMap[node] = id;
 			clusterToDag[clusterId] = id;
+			// Increase the childrens' in-degree
+			if (left >= 0)
+				dag.nodes[left].inDegree++;
+			if (right >= 0)
+				dag.nodes[right].inDegree++;
 			return id;
 		} else {
 			// node is already in the hashmap, compression is happening!
-			// we should probably increase the indegree instead of the childrens
-			// indegrees? so move the child indegree increase to the if case and the
-			// node indegree increase here? TODO figure this out tomorrow, it's late
 			clusterToDag[clusterId] = nodeId;
+			dag.nodes[nodeId].inDegree++;
 			dag.popNode();
 			return nodeId;
 		}
