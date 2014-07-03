@@ -31,6 +31,15 @@ public:
 		return nodes.size() - n;
 	}
 
+	int countEdges() const {
+		int count(0);
+		for (const DagNode<DataType> &node : nodes) {
+			count += (node.left >= 0);
+			count += (node.right >= 0);
+		}
+		return count;
+	}
+
 	friend std::ostream& operator<<(std::ostream& os, const BinaryDag<DataType> &dag) {
 		os << "Binary Dag with " << dag.nodes.size() << " nodes";
 		for (uint i = 0; i < dag.nodes.size(); ++i) {

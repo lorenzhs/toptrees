@@ -45,8 +45,9 @@ int main(int argc, char** argv) {
 	DagBuilder<string> builder(topTree, dag);
 	builder.createDag();
 
-	cout << "Top dag has " << dag.nodes.size() - 1<< " nodes" << endl;
+	cout << "Top dag has " << dag.nodes.size() - 1<< " nodes, " << dag.countEdges() << " edges" << endl;
 	cout << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
+
 /*/
 	t.addNodes(11);
 	t.addEdge(0, 1);
