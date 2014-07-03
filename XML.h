@@ -1,9 +1,11 @@
 #pragma once
 
+#include <fstream>
 #include <iostream>
 #include <vector>
 
 #include "Timer.h"
+#include "TopTree.h"
 
 #include "3rdparty/rapidxml.hpp"
 #include "3rdparty/rapidxml_utils.hpp"
@@ -66,4 +68,38 @@ private:
 	string filename;
 	TreeType &tree;
 	vector<string> &labels;
+};
+
+class XmlWriter {
+public:
+	XmlWriter(TopTree &tree): tree(tree) {}
+
+	void write(const string &filename) {
+		std::ofstream out(filename.c_str());
+		assert(out.is_open());
+
+		int rootId = tree.clusters.size() - 1;
+		writeNode(out, rootId, 0);
+
+		out.close();
+	}
+
+	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
+		auto &node = tree.clusters[nodeId];
+		const string& label(node.label != NULL ? *node.label : "DUMMY");
+		for (int i = 0; i < depth; ++i) out << "\t";
+		out << "<" << label << ">" << endl;
+
+		if (node.left >= 0) {
+			writeNode(out, node.left, depth + 1);
+		}
+		if (node.right >= 0) {
+			writeNode(out, node.right, depth + 1);
+		}
+
+		for (int i = 0; i < depth; ++i) out << "\t";
+		out << "</" << label << ">" << endl;
+	}
+
+	TopTree &tree;
 };
