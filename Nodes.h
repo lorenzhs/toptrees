@@ -15,7 +15,20 @@ struct TreeNode {
 	}
 
 	int isLeaf() const {
-		return (lastEdgeIndex + 1) == firstEdgeIndex;
+		return lastEdgeIndex < firstEdgeIndex;
+	}
+
+	// These are faster than comparing numEdges against a constant
+	bool hasOnlyOneChild() const {
+		return firstEdgeIndex == lastEdgeIndex;
+	}
+
+	int hasChildren() const {
+		return firstEdgeIndex <= lastEdgeIndex;
+	}
+
+	bool hasMoreThanOneChild() const {
+		return firstEdgeIndex < lastEdgeIndex;
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const TreeNode &node) {

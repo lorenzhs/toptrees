@@ -264,7 +264,7 @@ public:
 		vector<int> nodesToMerge;
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
 			const NodeType& node = nodes[nodeId];
-			if (node.parent >= 0 && node.numEdges() != 1 && nodes[node.parent].numEdges() == 1) {
+			if (node.parent >= 0 && !node.hasOnlyOneChild() && nodes[node.parent].hasOnlyOneChild()) {
 				// only interested in nodes without siblings where the chain can't be extended further
 				nodesToMerge.push_back(nodeId);
 			}
@@ -273,11 +273,11 @@ public:
 		for (int nodeId : nodesToMerge) {
 			int parentId = nodes[nodeId].parent;
 			// Follow the chain upwards until we hit a node where it has to end. Possible cases:
-			// a) hit the root node
-			// b) arrived at a node with more than one child
-			// c) node's parent is the root XXX TODO is this really a killer condition?
-			// d) parent was not merged in this iteration yet XXX TODO what about the node itself?
-			while (parentId >= 0 && nodes[parentId].numEdges() == 1 && nodes[parentId].parent >= 0 && nodes[parentId].lastMergedIn < iteration) {
+			// a) node or parent is the root node
+			// b) parent has more than one child
+			// otherwise, merge the chain grandparent -> parent -> node
+			while (parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].parent >= 0 && nodes[nodes[parentId].parent].hasOnlyOneChild()) {
+				//cout << "merging " << parentId << " with its child " << nodeId << endl;
 				NodeType &node(nodes[nodeId]), &parent(nodes[parentId]);
 				node.lastMergedIn = iteration;
 				parent.lastMergedIn = iteration;
@@ -294,8 +294,21 @@ public:
 					break;  // break while loop
 				}
 			}
+			/*cout << "merging loop ended with nodeId = " << nodeId << " parentId = " << parentId;
+			if (nodeId >= 0) cout << " node = " << nodes[nodeId];
+			if (parentId >= 0) cout << " parent = " << nodes[parentId];
+			cout << endl;*/
 
-			// XXX TODO is the "odd case" covered by this????
+			if (nodeId >= 0 && parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].lastMergedIn < iteration && nodes[parentId].parent >= 0) {
+				// We hit the "odd case"
+				//cout << "ODD CASE: nodeId = " << nodeId << " " << nodes[nodeId] << " parentId = "<< parentId << " " << nodes[parentId] << endl;
+				assert(!nodes[nodes[parentId].parent].hasOnlyOneChild());
+				nodes[nodeId].lastMergedIn = iteration;
+				nodes[parentId].lastMergedIn = iteration;
+				MergeType mergeType;
+				mergeChain(parentId, mergeType);
+				mergeCallback(parentId, nodeId, parentId, mergeType);
+			}
 		}
 	}
 
@@ -341,7 +354,7 @@ public:
 		// Retrieve nodes and perform sanity checks
 		assert(0 <= middleId && middleId < _numNodes);
 		NodeType& middle = nodes[middleId];
-		assert(middle.numEdges() == 1);
+		assert(middle.hasOnlyOneChild());
 		int childId = firstEdge(middleId)->headNode;
 		NodeType& child = nodes[childId];
 
@@ -423,7 +436,7 @@ public:
 			oldSize = newEdges.size();
 			// While a bit counterintuitive at first, this check speeds things up because now
 			// we don't need to fetch two edges just to determine if we need to copy anything
-			if (nodes[nodeId].numEdges() > 0) {
+			if (nodes[nodeId].hasChildren()) {
 				for (EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
 					if (edge->valid) {
 						newEdges.push_back(*edge);
