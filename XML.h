@@ -125,7 +125,7 @@ public:
 	}
 
 private:
-	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
+	void writeNode(std::ofstream &out, const int nodeId, const int depth) const {
 		for (int i = 0; i < depth; ++i) out << "\t";
 		out << "<" << labels[nodeId] << ">";
 		if (tree.nodes[nodeId].isLeaf()) {

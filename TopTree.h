@@ -80,7 +80,7 @@ public:
 		int firstId = tree.addNodes(topTree.numLeaves);
 		assert (firstId == 0);
 		int rootCluster = topTree.clusters.size() - 1;
-		unpackCluster(rootCluster, 0);
+		unpackCluster(rootCluster, firstId);
 	}
 
 private:
@@ -97,8 +97,13 @@ private:
 			case HORZ_NO_BBN:
 			case HORZ_LEFT_BBN:
 			case HORZ_RIGHT_BBN: leafId = unpackHorzCluster(clusterId, nodeId); break;
-			default: assert(false);
+			default: assert(false); leafId = -1; // to make the compiler happy with NDEBUG
 		}
+
+		if (tree._firstFreeEdge - tree._numEdges > 10000000) {
+			tree.compact();
+		}
+
 		return leafId;
 	}
 
@@ -113,7 +118,7 @@ private:
 		}
 
 		if (isLeaf(cluster.right)) {
-			tree.addEdge(cluster.left, cluster.right);
+			tree.addEdge(boundaryNode, cluster.right);
 			boundaryNode = cluster.right;
 		} else {
 			boundaryNode = unpackCluster(cluster.right, boundaryNode);
