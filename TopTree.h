@@ -100,8 +100,10 @@ private:
 			default: assert(false); leafId = -1; // to make the compiler happy with NDEBUG
 		}
 
-		if (tree._firstFreeEdge - tree._numEdges > 10000000) {
-			tree.compact();
+		// Perform compaction because the OrderedTree data structure is really unsuitable
+		// for decompression of the tree.
+		if (tree._firstFreeEdge - tree._numEdges > 100000000) {
+			tree.compact(true, 5);
 		}
 
 		return leafId;
@@ -111,14 +113,14 @@ private:
 		const Cluster &cluster = topTree.clusters[clusterId];
 		int boundaryNode(nodeId);
 		if (isLeaf(cluster.left)) {
-			tree.addEdge(nodeId, cluster.left);
+			tree.addEdge(nodeId, cluster.left, extraSpace);
 			boundaryNode = cluster.left;
 		} else {
 			boundaryNode = unpackCluster(cluster.left, nodeId);
 		}
 
 		if (isLeaf(cluster.right)) {
-			tree.addEdge(boundaryNode, cluster.right);
+			tree.addEdge(boundaryNode, cluster.right, extraSpace);
 			boundaryNode = cluster.right;
 		} else {
 			boundaryNode = unpackCluster(cluster.right, boundaryNode);
@@ -134,14 +136,14 @@ private:
 		const Cluster &cluster = topTree.clusters[clusterId];
 		int left, right;
 		if (isLeaf(cluster.left)) {
-			tree.addEdge(nodeId, cluster.left);
+			tree.addEdge(nodeId, cluster.left, extraSpace);
 			left = cluster.left;
 		} else {
 			left = unpackCluster(cluster.left, nodeId);
 		}
 
 		if (isLeaf(cluster.right)) {
-			tree.addEdge(nodeId, cluster.right);
+			tree.addEdge(nodeId, cluster.right, extraSpace);
 			right = cluster.right;
 		} else {
 			right = unpackCluster(cluster.right, nodeId);
@@ -157,4 +159,5 @@ private:
 
 	TopTree &topTree;
 	TreeType &tree;
+	const int extraSpace = 50;
 };

@@ -135,7 +135,8 @@ private:
 		out << endl;
 
 		FORALL_OUTGOING_EDGES(tree, nodeId, edge) {
-			writeNode(out, edge->headNode, depth + 1);
+			if (edge->valid)
+				writeNode(out, edge->headNode, depth + 1);
 		}
 
 		for (int i = 0; i < depth; ++i) out << "\t";

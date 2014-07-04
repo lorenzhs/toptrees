@@ -79,7 +79,7 @@ public:
 		nodes[u].lastEdgeIndex = nodes[u].firstEdgeIndex - 1;
 	}
 
-	EdgeType* addEdge(const int from, const int to) {
+	EdgeType* addEdge(const int from, const int to, const int extraSpace = 0) {
 		NodeType& node = nodes[from];
 		int newId = node.lastEdgeIndex + 1;
 		// Check for space to the right
@@ -110,7 +110,9 @@ public:
 			// We're already at the end
 			newId = _firstFreeEdge;
 		} else {
+			edges.resize(edges.size() + extraSpace);
 			// move node's edges to the end
+			_firstFreeEdge += extraSpace;
 			newId = _firstFreeEdge + node.numEdges();
 			for (int i = 0; i < node.numEdges(); ++i) {
 				edges[_firstFreeEdge + i] = edges[node.firstEdgeIndex + i];
@@ -422,14 +424,18 @@ public:
 #endif
 	}
 
-	void compact(const bool verbose = true) {
+	void compact(const bool verbose = true, const int extraSpace = 0) {
 		Timer timer;
 		if (_numEdges + 1 == (int) edges.size()) {
 			if (verbose) cout << "GC: nothing to do" << endl;
 			return;
 		}
 		vector<EdgeType> newEdges;
-		newEdges.reserve(_numEdges + 1);
+		// Guess the amount of space needed for extra empty edges
+		const int numEdgesReserved(_numEdges + 1 + _numNodes/2*extraSpace);
+		if (verbose)
+			cout << "GC: allocating " << numEdgesReserved << " edges (" << numEdgesReserved*sizeof(EdgeType)/1e6 << "MB); " << flush;
+		newEdges.reserve(numEdgesReserved);
 		newEdges.push_back(edges[0]);  // dummy edge
 		uint oldSize;
 		// Copy each node's valid edges to the new array
@@ -446,12 +452,14 @@ public:
 			}
 			nodes[nodeId].firstEdgeIndex = oldSize;
 			nodes[nodeId].lastEdgeIndex  = newEdges.size() - 1;
+			if (nodes[nodeId].hasChildren())
+				newEdges.resize(newEdges.size() + extraSpace);
 		}
 		_firstFreeEdge = newEdges.size();
 		edges.swap(newEdges);
 
-		if (verbose) cout << "GC: " << timer.elapsedMillis() << "ms, edge buffer now " << edges.size() << " edges, was "
-			<< newEdges.size() << " (" << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
+		if (verbose) cout << timer.elapsedMillis() << "ms, " << edges.size() << " / "
+			<< newEdges.size() << " edges left (" << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
 	// Do an inplace compaction of each node's vertices
