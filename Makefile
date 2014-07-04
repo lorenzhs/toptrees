@@ -6,7 +6,7 @@ FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g -Wextra
 #-D_GLIBCXX_DEBUG
 
-EXECS=test
+EXECS=test testTT
 #EXECS
 
 all: $(EXECS)
@@ -21,6 +21,15 @@ testDebug:
 
 testNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
+
+testTT:
+	$(CC) $(FLAGS) $(BASEFLAGS) -o testTT testTT.cpp $(ADD_LIBS)
+
+testTTDebug:
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) -o testTT testTT.cpp $(ADD_LIBS)
+
+testTTNoDebug:
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) -o testTT testTT.cpp $(ADD_LIBS)
 
 #RULES
 

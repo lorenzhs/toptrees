@@ -383,7 +383,7 @@ public:
 
 	string summary() const {
 		stringstream s;
-		s << "Tree with n = " << _numNodes << " m = " << std::setw(NUM_DIGITS(_numNodes)) << _numEdges << " edges";
+		s << "Tree with n = " << _numNodes << " m = " << std::setw(NUM_DIGITS(_numNodes)) << _numEdges;
 		return s.str();
 	}
 

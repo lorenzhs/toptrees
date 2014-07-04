@@ -41,12 +41,6 @@ int main(int argc, char** argv) {
 
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
 
-	if (argc > 2) {
-		XmlWriter<TopTree> writer(topTree);
-		writer.write(argv[2]);
-		cout << "Wrote top tree to " << argv[2] << " in " << timer.getAndReset() << "ms" << endl;
-	}
-
 	BinaryDag<string> dag;
 	DagBuilder<string> builder(topTree, dag);
 	builder.createDag();

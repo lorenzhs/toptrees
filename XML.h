@@ -94,7 +94,13 @@ private:
 		const Cluster &node = tree.clusters[nodeId];
 		const string& label(node.label != NULL ? *node.label : "DUMMY");
 		for (int i = 0; i < depth; ++i) out << " ";
-		out << "<" << label << ">" << endl;
+		out << "<" << label << ">";
+
+		if (node.left < 0 && node.right < 0) {
+			out << "</" << label << ">" << endl;
+			return;
+		}
+		out << endl;
 
 		if (node.left >= 0) {
 			writeNode(out, node.left, depth + 1);

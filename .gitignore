@@ -8,4 +8,7 @@ test
 test-*
 
 data/
+ext
 
+testTT
+testTT-*
