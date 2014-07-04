@@ -98,7 +98,7 @@ public:
 			for (int i = node.firstEdgeIndex; i < node.lastEdgeIndex; ++i) {
 				edges[i] = edges[i+1];
 			}
-			return _prepareEdge(node.lastEdgeIndex + 1, from, to);
+			return _prepareEdge(node.lastEdgeIndex, from, to);
 		}
 
 		if (node.numEdges() >= (int)edges.size() - _firstFreeEdge) {
