@@ -93,7 +93,7 @@ private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
 		const Cluster &node = tree.clusters[nodeId];
 		const string& label(node.label != NULL ? *node.label : "DUMMY");
-		for (int i = 0; i < depth; ++i) out << "\t";
+		for (int i = 0; i < depth; ++i) out << " ";
 		out << "<" << label << ">" << endl;
 
 		if (node.left >= 0) {
@@ -103,7 +103,7 @@ private:
 			writeNode(out, node.right, depth + 1);
 		}
 
-		for (int i = 0; i < depth; ++i) out << "\t";
+		for (int i = 0; i < depth; ++i) out << " ";
 		out << "</" << label << ">" << endl;
 	}
 
@@ -126,7 +126,7 @@ public:
 
 private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) const {
-		for (int i = 0; i < depth; ++i) out << "\t";
+		for (int i = 0; i < depth; ++i) out << " ";
 		out << "<" << labels[nodeId] << ">";
 		if (tree.nodes[nodeId].isLeaf()) {
 			out << "</" << labels[nodeId] << ">" << endl;
@@ -139,7 +139,7 @@ private:
 				writeNode(out, edge->headNode, depth + 1);
 		}
 
-		for (int i = 0; i < depth; ++i) out << "\t";
+		for (int i = 0; i < depth; ++i) out << " ";
 		out << "</" << labels[nodeId] << ">" << endl;
 	}
 
