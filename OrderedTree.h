@@ -432,7 +432,7 @@ public:
 		}
 		vector<EdgeType> newEdges;
 		// Guess the amount of space needed for extra empty edges
-		const int numEdgesReserved(_numEdges*factor);
+		const int numEdgesReserved(_numEdges*factor + 1);
 		if (verbose)
 			cout << "GC: allocating " << numEdgesReserved << " edges (" << numEdgesReserved*sizeof(EdgeType)/1e6 << "MB); " << flush;
 		newEdges.reserve(numEdgesReserved);
