@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cassert>
+#include <functional>
 #include <vector>
 
 #include "Nodes.h"
 
 using std::vector;
+using std::function;
 
 template<typename DataType>
 class BinaryDag {
@@ -38,6 +40,25 @@ public:
 			count += (node.right >= 0);
 		}
 		return count;
+	}
+
+	template<typename T>
+	void inPostOrder(const function<T (const int, const T, const T)> &callback) {
+		traverseDagPostOrder(nodes.size() - 1, callback);
+	}
+
+	template<typename T>
+	T traverseDagPostOrder(const int nodeId, const function<T (const int, const T, const T)> &callback) {
+		assert (nodeId != 0);  // 0 is the dummy not and should not be reachable
+		DagNode<DataType> &node = nodes[nodeId];
+		T left(-1), right(-1);
+		if (node.left >= 0) {
+			left = traverseDagPostOrder(node.left, callback);
+		}
+		if (node.right >= 0) {
+			right = traverseDagPostOrder(node.right, callback);
+		}
+		return callback(nodeId, left, right);
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const BinaryDag<DataType> &dag) {

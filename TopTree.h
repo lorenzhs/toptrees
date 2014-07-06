@@ -26,11 +26,13 @@ struct Cluster {
 };
 
 struct TopTree {
-	TopTree(const int numLeaves, vector<string> &labels): clusters(numLeaves), labels(labels), numLeaves(numLeaves) {
+	TopTree(const int numLeaves, vector<string> &labels): clusters(numLeaves), numLeaves(numLeaves) {
 		for (int i = 0; i < numLeaves; ++i) {
 			clusters[i].label = &labels[i];
 		}
 	}
+
+	TopTree(const int numLeaves): clusters(numLeaves), numLeaves(numLeaves) {}
 
 	int addCluster(const int left, const int right, const MergeType mergeType) {
 		clusters.push_back(Cluster(left, right, mergeType));
@@ -65,7 +67,6 @@ struct TopTree {
 	}
 
 	vector<Cluster> clusters;
-	vector<string> &labels;
 	int numLeaves;
 };
 

@@ -58,5 +58,23 @@ int main(int argc, char** argv) {
 	unpackedWriter.write("/tmp/unpacked.xml");
 	cout << "Wrote unpacked top tree in " << timer.getAndReset() << "ms" << endl;
 
+	BinaryDag<string> dag;
+	DagBuilder<string> builder(topTree, dag);
+	builder.createDag();
+
+	cout << "Top DAG has " << dag.nodes.size() - 1<< " nodes, " << dag.countEdges() << " edges" << endl;
+	cout << "Top DAG construction took in " << timer.getAndReset() << "ms" << endl;
+
+	TopTree newTopTree(t._numNodes);
+	BinaryDagUnpacker<string> dagUnpacker(dag, newTopTree);
+	dagUnpacker.unpack();
+
+	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << newTopTree.clusters.size() << " clusters" << endl;
+
+	XmlWriter<TopTree> newWriter(newTopTree);
+	newWriter.write("/tmp/uncomp_toptree.xml");
+
+	cout << "Wrote unpacked top DAG in " << timer.getAndReset() << "ms" << endl;
+
 	return 0;
 }
