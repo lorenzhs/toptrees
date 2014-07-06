@@ -12,3 +12,5 @@ ext
 
 testTT
 testTT-*
+*.txt
+*.log
