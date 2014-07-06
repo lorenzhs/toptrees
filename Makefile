@@ -22,13 +22,13 @@ testNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
 testTT:
-	$(CC) $(FLAGS) $(BASEFLAGS) -o testTT testTT.cpp $(ADD_LIBS)
+	$(CC) $(FLAGS) $(BASEFLAGS) -o testTT testTT.cpp
 
 testTTDebug:
-	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) -o testTT testTT.cpp $(ADD_LIBS)
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) -o testTT testTT.cpp
 
 testTTNoDebug:
-	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) -o testTT testTT.cpp $(ADD_LIBS)
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) -o testTT testTT.cpp
 
 #RULES
 
@@ -37,3 +37,9 @@ clean:
 
 cleanup:
 	rm -f **/*~ *.ii *.s *.o
+
+scan-build:
+	scan-build -analyze-headers -enable-checker alpha.core.BoolAssignment -enable-checker alpha.core.CastSize -enable-checker alpha.core.FixedAddr -enable-checker alpha.core.IdenticalExpr -enable-checker alpha.core.PointerArithm -enable-checker alpha.core.PointerSub -enable-checker alpha.core.SizeofPtr -enable-checker alpha.cplusplus.NewDeleteLeaks -enable-checker alpha.cplusplus.VirtualCall -enable-checker alpha.security.ArrayBound -enable-checker alpha.security.ArrayBoundV2 -enable-checker alpha.security.MallocOverflow -enable-checker alpha.security.ReturnPtrRange -enable-checker alpha.security.taint.TaintPropagation -enable-checker alpha.unix.Chroot -enable-checker alpha.unix.MallocWithAnnotations -enable-checker alpha.unix.PthreadLock -enable-checker alpha.unix.SimpleStream -enable-checker alpha.unix.Stream -enable-checker alpha.unix.cstring.BufferOverlap -enable-checker alpha.unix.cstring.NotNullTerminated -enable-checker alpha.unix.cstring.OutOfBounds -enable-checker security.FloatLoopCounter -enable-checker security.insecureAPI.rand -enable-checker security.insecureAPI.strcpy $(CC) $(DEBUGFLAGS) $(BASEFLAGS) -o testTT testTT.cpp
+
+cppcheck:
+	cppcheck --enable=all --inconclusive .

@@ -10,7 +10,7 @@ public:
 		start = timestamp();
 	}
 
-	double elapsedMillis() {
+	double elapsedMillis() const {
 		return timestamp() - start;
 	}
 
@@ -23,9 +23,9 @@ public:
 private:
 	double start;
 
-	double timestamp() {
+	static double timestamp() {
 		timeval time;
-		gettimeofday(&time, NULL);
+		gettimeofday(&time, nullptr);
 		double ms = double(time.tv_usec) / 1000.0;
 		return time.tv_sec*1000 + ms;
 	}

@@ -28,7 +28,7 @@ struct SubtreeHasher {
 	// the idea is that every bit is random. A more detailed explanation is available at
 	// http://stackoverflow.com/questions/4948780/magic-number-in-boosthash-combine
 	template<typename T>
-	void boost_hash_combine(uint& seed, const T& val) const {
+	static void boost_hash_combine(uint& seed, const T& val) {
 		std::hash<T> hasher;
 		seed ^= hasher(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 	}
