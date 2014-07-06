@@ -22,13 +22,14 @@ int main(int argc, char** argv) {
 	vector<string> labels;
 
 	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
+	string outputfolder = argc > 2 ? string(argv[2]) : "/tmp";
 
 	XmlParser<OrderedTree<TreeNode,TreeEdge>> xml(filename, t, labels);
 	xml.parse();
 
 	Timer timer;
 	XmlWriter<OrderedTree<TreeNode,TreeEdge>> origWriter(t, labels);
-	origWriter.write("/tmp/orig.xml");
+	origWriter.write(outputfolder + "/orig.xml");
 
 	cout << "Wrote orginial trimmed XML file in " << timer.getAndReset() << "ms: " << t.summary() << endl;
 
@@ -46,7 +47,7 @@ int main(int argc, char** argv) {
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
 
 	XmlWriter<TopTree> writer(topTree);
-	writer.write("/tmp/toptree.xml");
+	writer.write(outputfolder + "/toptree.xml");
 	cout << "Wrote top tree in " << timer.getAndReset() << "ms" << endl;
 
 
@@ -55,7 +56,7 @@ int main(int argc, char** argv) {
 	unpacker.unpack();
 	cout << "Unpacked top tree in " << timer.getAndReset() << "ms: " << unpackedTree.summary() << endl;
 	XmlWriter<OrderedTree<TreeNode,TreeEdge>> unpackedWriter(unpackedTree, labels);
-	unpackedWriter.write("/tmp/unpacked.xml");
+	unpackedWriter.write(outputfolder + "/unpacked.xml");
 	cout << "Wrote unpacked top tree in " << timer.getAndReset() << "ms" << endl;
 
 	BinaryDag<string> dag;
@@ -72,7 +73,7 @@ int main(int argc, char** argv) {
 	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << newTopTree.clusters.size() << " clusters" << endl;
 
 	XmlWriter<TopTree> newWriter(newTopTree);
-	newWriter.write("/tmp/uncomp_toptree.xml");
+	newWriter.write(outputfolder + "/uncomp_toptree.xml");
 
 	cout << "Wrote unpacked top DAG in " << timer.getAndReset() << "ms" << endl;
 
