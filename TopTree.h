@@ -104,7 +104,7 @@ private:
 		// Perform compaction because the OrderedTree data structure is really unsuitable
 		// for decompression of the tree.
 		if (tree._firstFreeEdge - tree._numEdges > 100000000) {
-			tree.compact(true, 5);
+			tree.compact(true, 3);
 		}
 
 		return leafId;

@@ -424,7 +424,7 @@ public:
 #endif
 	}
 
-	void compact(const bool verbose = true, const int extraSpace = 0) {
+	void compact(const bool verbose = true, const int factor = 1) {
 		Timer timer;
 		if (_numEdges + 1 == (int) edges.size()) {
 			if (verbose) cout << "GC: nothing to do" << endl;
@@ -432,7 +432,7 @@ public:
 		}
 		vector<EdgeType> newEdges;
 		// Guess the amount of space needed for extra empty edges
-		const int numEdgesReserved(_numEdges + 1 + _numNodes/2*extraSpace);
+		const int numEdgesReserved(_numEdges*factor);
 		if (verbose)
 			cout << "GC: allocating " << numEdgesReserved << " edges (" << numEdgesReserved*sizeof(EdgeType)/1e6 << "MB); " << flush;
 		newEdges.reserve(numEdgesReserved);
@@ -453,7 +453,7 @@ public:
 			nodes[nodeId].firstEdgeIndex = oldSize;
 			nodes[nodeId].lastEdgeIndex  = newEdges.size() - 1;
 			if (nodes[nodeId].hasChildren())
-				newEdges.resize(newEdges.size() + extraSpace);
+				newEdges.resize(newEdges.size() + nodes[nodeId].numEdges() * (factor - 1));
 		}
 		_firstFreeEdge = newEdges.size();
 		edges.swap(newEdges);
