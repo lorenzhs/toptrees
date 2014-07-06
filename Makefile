@@ -1,10 +1,9 @@
 CC=clang++
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold
-BASEFLAGS=-std=c++11 -Wall
+BASEFLAGS=-std=c++11 -Wall -Wextra -Werror
 FLAGS=-O3 -ffast-math -flto
-DEBUGFLAGS=-O0 -g -Wextra
-#-D_GLIBCXX_DEBUG
+DEBUGFLAGS=-O0 -g
 
 EXECS=test testTT
 #EXECS

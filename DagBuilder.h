@@ -107,7 +107,7 @@ public:
 	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree &topTree): nextLeafId(0), dag(dag), topTree(topTree) {}
 
 	void unpack() {
-		assert(topTree.clusters.size() == topTree.numLeaves);
+		assert((int) topTree.clusters.size() == topTree.numLeaves);
 		dag.template inPostOrder<int>([&] (const int nodeId, const int left, const int right) {
 			return addNodeToTopTree(nodeId, left, right);
 		});
