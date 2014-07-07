@@ -113,7 +113,8 @@ struct TopTree {
 template<typename TreeType>
 class TopTreeUnpacker {
 public:
-	TopTreeUnpacker(TopTree &topTree, TreeType &tree): topTree(topTree), tree(tree) {
+	TopTreeUnpacker(TopTree &topTree, TreeType &tree, vector<string> &labels): topTree(topTree), tree(tree), labels(labels) {
+		labels.resize(topTree.numLeaves);
 		assert(tree._numNodes == 0);
 	}
 
@@ -123,12 +124,21 @@ public:
 		int rootClusterId = topTree.clusters.size() - 1;
 
 		Cluster& rootCluster = topTree.clusters[rootClusterId];
+		string* label = topTree.clusters[rootCluster.left].label;
+		assert (label != NULL);
+		labels[0] = *label;
 		unpackCluster(rootCluster.right, firstId);
 	}
 
 private:
 	bool isLeaf(const int clusterId) const {
 		return clusterId < topTree.numLeaves;
+	}
+
+	void handleLeaf(const int leafId) {
+		string* label = topTree.clusters[leafId].label;
+		assert (label != NULL);
+		labels[leafId] = *label;
 	}
 
 	int unpackCluster(const int clusterId, const int nodeId) {
@@ -157,6 +167,7 @@ private:
 		int boundaryNode(nodeId);
 		if (isLeaf(cluster.left)) {
 			tree.addEdge(nodeId, cluster.left, extraSpace);
+			handleLeaf(cluster.left);
 			boundaryNode = cluster.left;
 		} else {
 			boundaryNode = unpackCluster(cluster.left, nodeId);
@@ -164,6 +175,7 @@ private:
 
 		if (isLeaf(cluster.right)) {
 			tree.addEdge(boundaryNode, cluster.right, extraSpace);
+			handleLeaf(cluster.right);
 			boundaryNode = cluster.right;
 		} else {
 			boundaryNode = unpackCluster(cluster.right, boundaryNode);
@@ -180,6 +192,7 @@ private:
 		int left, right;
 		if (isLeaf(cluster.left)) {
 			tree.addEdge(nodeId, cluster.left, extraSpace);
+			handleLeaf(cluster.left);
 			left = cluster.left;
 		} else {
 			left = unpackCluster(cluster.left, nodeId);
@@ -187,6 +200,7 @@ private:
 
 		if (isLeaf(cluster.right)) {
 			tree.addEdge(nodeId, cluster.right, extraSpace);
+			handleLeaf(cluster.right);
 			right = cluster.right;
 		} else {
 			right = unpackCluster(cluster.right, nodeId);
@@ -202,5 +216,6 @@ private:
 
 	TopTree &topTree;
 	TreeType &tree;
+	vector<string> &labels;
 	const int extraSpace = 50;
 };

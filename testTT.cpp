@@ -64,17 +64,16 @@ int main(int argc, char** argv) {
 	dagUnpacker.unpack();
 
 	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << recoveredTopTree.clusters.size() << " clusters" << endl;
-
 	cout << "Equality check... " << topTree.isEqual(recoveredTopTree) << endl;
-
 
 	// unpack recovered top tree
 	OrderedTree<TreeNode,TreeEdge> recoveredTree;
-	TopTreeUnpacker<OrderedTree<TreeNode,TreeEdge>> unpacker(recoveredTopTree, recoveredTree);
+	vector<string> newLabels;
+	TopTreeUnpacker<OrderedTree<TreeNode,TreeEdge>> unpacker(recoveredTopTree, recoveredTree, newLabels);
 	unpacker.unpack();
 	cout << "Unpacked recovered top tree in " << timer.getAndReset() << "ms: " << recoveredTree.summary() << endl;
 
-	XmlWriter<OrderedTree<TreeNode,TreeEdge>> unpackedWriter(recoveredTree, labels);
+	XmlWriter<OrderedTree<TreeNode,TreeEdge>> unpackedWriter(recoveredTree, newLabels);
 	unpackedWriter.write(outputfolder + "/unpacked.xml");
 	cout << "Wrote recovered tree in " << timer.getAndReset() << "ms" << endl;
 
