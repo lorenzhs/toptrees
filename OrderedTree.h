@@ -195,6 +195,7 @@ public:
 			iteration++;
 			checkConsistency();
 		}
+		mergeCallback(0, edges[nodes[0].firstEdgeIndex].headNode, 0, VERT_WITH_BBN);
 		// reset the output stream
 		cout.unsetf(std::ios_base::fixed);
 		cout << std::setprecision(precision);

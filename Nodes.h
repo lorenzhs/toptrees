@@ -2,6 +2,8 @@
 
 #include <ostream>
 
+#include "Common.h"
+
 struct TreeNode {
 	int firstEdgeIndex;
 	int lastEdgeIndex;
@@ -41,11 +43,12 @@ struct DagNode {
 	int left;
 	int right;
 	int inDegree;
+	MergeType mergeType;
 	T* label;
 
-	DagNode(): left(-1), right(-1), inDegree(0), label(NULL) {}
-	DagNode(int l, int r, T *la): left(l), right(r), inDegree(0), label(la) {}
-	DagNode(const DagNode<T> &other): left(other.left), right(other.right), inDegree(other.inDegree), label(other.label) {}
+	DagNode(): left(-1), right(-1), inDegree(0), mergeType(NO_MERGE), label(NULL) {}
+	DagNode(int l, int r, T *la, MergeType t): left(l), right(r), inDegree(0), mergeType(t), label(la) {}
+	DagNode(const DagNode<T> &other): left(other.left), right(other.right), inDegree(other.inDegree), mergeType(other.mergeType), label(other.label) {}
 
 	friend std::ostream& operator<<(std::ostream& os, const DagNode &node) {
 		return os << "(" << node.left << ";"  << node.right << ";" << node.inDegree << ";" << (node.label == NULL ? "NULL" : *node.label) << ")";

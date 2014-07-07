@@ -58,9 +58,9 @@ struct TopTree {
 		os << "Top tree with " << toptree.clusters.size() << " clusters. Non-leaves:" << endl;
 		uint count = 0;
 		for (const Cluster &cluster : toptree.clusters) {
-			if (cluster.left >= 0) {
+			//if (cluster.left >= 0) {
 				os << "\t" << count << ": " << cluster << endl;
-			}
+			//}
 			count++;
 		}
 		return os;
@@ -80,8 +80,10 @@ public:
 	void unpack() {
 		int firstId = tree.addNodes(topTree.numLeaves);
 		assert (firstId == 0);
-		int rootCluster = topTree.clusters.size() - 1;
-		unpackCluster(rootCluster, firstId);
+		int rootClusterId = topTree.clusters.size() - 1;
+
+		Cluster& rootCluster = topTree.clusters[rootClusterId];
+		unpackCluster(rootCluster.right, firstId);
 	}
 
 private:

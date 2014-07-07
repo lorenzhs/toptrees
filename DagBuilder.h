@@ -17,7 +17,7 @@ struct SubtreeEquality {
 		if ((node.label != NULL) && *(node.label) != *(other.label)) {
 			return false;
 		}
-		return (node.left == other.left) && (node.right == other.right);
+		return (node.left == other.left) && (node.right == other.right) && (node.mergeType == other.mergeType);
 	}
 };
 
@@ -41,6 +41,7 @@ struct SubtreeHasher {
 			boost_hash_combine(seed, NULL);
 		boost_hash_combine(seed, node.left);
 		boost_hash_combine(seed, node.right);
+		boost_hash_combine(seed, (int)node.mergeType);
 		return seed;
 	}
 };
@@ -72,7 +73,7 @@ public:
 		// only constructed once) and the next node would've caused an extension of
 		// the vector anyway. Plus, we would've needed the object for checking the
 		// hashmap anyway, so this way, we can avoid creating it twice.
-		int id = dag.addNode(left, right, cluster.label);
+		int id = dag.addNode(left, right, cluster.label, cluster.mergeType);
 		DagNode<DataType> &node = dag.nodes[id];
 		int nodeId = nodeMap[node];
 		if (nodeId == 0) {
@@ -124,11 +125,10 @@ private:
 			return newId;
 		} else {
 			// add `left` and `right` as children
-			// XXX TODO how do we get the merge type back?
 			assert(node.label == NULL);
-			return topTree.addCluster(left, right, NO_MERGE);
+			assert(node.mergeType != NO_MERGE);
+			return topTree.addCluster(left, right, node.mergeType);
 		}
-		return -1;
 	}
 
 	int nextLeafId;

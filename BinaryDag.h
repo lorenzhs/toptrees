@@ -16,11 +16,11 @@ public:
 		nodes.reserve(n);
 		// add a dummy element that is guaranteed to not appear
 		// (we assume that -1 is used for leaves, never -2, except for this dummy)
-		nodes.emplace_back(-2, -2, (std::string*)NULL);
+		nodes.emplace_back(-2, -2, (std::string*)NULL, NO_MERGE);
 	}
 
-	int addNode(int left, int right, DataType *label) {
-		nodes.emplace_back(left, right, label);
+	int addNode(int left, int right, DataType *label, MergeType mergeType) {
+		nodes.emplace_back(left, right, label, mergeType);
 		return (nodes.size() - 1);
 	}
 

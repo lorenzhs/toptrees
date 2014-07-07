@@ -49,6 +49,12 @@ int main(int argc, char** argv) {
 	cout << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
 
 /*/
+
+	int foo = argc;
+	foo++;
+	char** bar = argv;
+	bar++;
+
 	t.addNodes(11);
 	t.addEdge(0, 1);
 	t.addEdge(0, 2);
@@ -85,12 +91,17 @@ int main(int argc, char** argv) {
 	XmlWriter<TopTree> writer(topTree);
 	writer.write("/tmp/toptree.xml");
 
+	TopTree newTopTree(t._numNodes);
+	BinaryDagUnpacker<string> dagUnpacker(dag, newTopTree);
+	dagUnpacker.unpack();
+	cout << newTopTree << endl;
+
 	OrderedTree<TreeNode, TreeEdge> newTree;
 	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>> unpacker(topTree, newTree);
 	unpacker.unpack();
 
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>> unpackedWriter(newTree, labels);
-	unpackedWriter.write("/tmp/unpacked.xml");
+	//XmlWriter<OrderedTree<TreeNode, TreeEdge>> unpackedWriter(newTree, labels);
+	//unpackedWriter.write("/tmp/unpacked.xml");
 
 //*/
 	return 0;
