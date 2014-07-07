@@ -19,7 +19,7 @@ public:
 		nodes.emplace_back(-2, -2, (std::string*)NULL, NO_MERGE);
 	}
 
-	int addNode(int left, int right, DataType *label, MergeType mergeType) {
+	int addNode(int left, int right, const DataType *label, MergeType mergeType) {
 		nodes.emplace_back(left, right, label, mergeType);
 		return (nodes.size() - 1);
 	}

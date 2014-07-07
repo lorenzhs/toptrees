@@ -7,6 +7,7 @@
 #include "Timer.h"
 #include "OrderedTree.h"
 #include "TopTree.h"
+#include "Labels.h"
 
 #include "3rdparty/rapidxml.hpp"
 #include "3rdparty/rapidxml_utils.hpp"
@@ -22,7 +23,7 @@ class XmlParser {
 public:
 	// TODO figure out if we can keep the char pointers instead of converting them to string
 	// this currently uses more than half of the parsing time
-	XmlParser(const string& fn, TreeType &t, vector<string> &l): filename(fn), tree(t), labels(l) {}
+	XmlParser(const string& fn, TreeType &t, Labels<string> &l): filename(fn), tree(t), labels(l) {}
 
 	void parse(const bool verbose = true) {
 		if (verbose) cout << "Reading " << filename << "… " << flush;
@@ -38,7 +39,7 @@ public:
 
 		int rootId = tree.addNode();
 		assert((int)labels.size() == rootId);
-		labels.push_back(root->name());
+		labels.set(rootId, root->name());
 		parseStructure(root, rootId);
 
 		if (verbose) cout << timer.elapsedMillis() << "ms." << endl;
@@ -52,8 +53,7 @@ private:
 			numChildren++;
 			childId = tree.addNode();
 			tree.addEdge(id, childId);
-			assert((int)labels.size() == childId);
-			labels.push_back(child->name());
+			labels.set(childId, child->name());
 			child = child->next_sibling();
 		}
 		if (numChildren == 0) return;
@@ -68,7 +68,7 @@ private:
 
 	string filename;
 	TreeType &tree;
-	vector<string> &labels;
+	Labels<string> &labels;
 };
 
 template<typename TreeType>
@@ -119,7 +119,7 @@ private:
 template<typename NodeType, typename EdgeType>
 class XmlWriter<OrderedTree<NodeType, EdgeType>> {
 public:
-	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, vector<string> &labels): tree(tree), labels(labels) {}
+	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<string> &labels): tree(tree), labels(labels) {}
 
 	void write(const string &filename) {
 		std::ofstream out(filename.c_str());
@@ -150,5 +150,5 @@ private:
 	}
 
 	OrderedTree<NodeType, EdgeType> &tree;
-	vector<string> &labels;
+	Labels<string> &labels;
 };

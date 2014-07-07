@@ -19,7 +19,7 @@ using std::vector;
 int main(int argc, char** argv) {
 	OrderedTree<TreeNode,TreeEdge> t;
 
-	vector<string> labels;
+	Labels<string> labels;
 
 	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
 	string outputfolder = argc > 2 ? string(argv[2]) : "/tmp";
@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
 	// unpack recovered top tree
 	OrderedTree<TreeNode,TreeEdge> recoveredTree;
-	vector<string> newLabels;
+	Labels<string> newLabels(labels.numKeys());
 	TopTreeUnpacker<OrderedTree<TreeNode,TreeEdge>> unpacker(recoveredTopTree, recoveredTree, newLabels);
 	unpacker.unpack();
 	cout << "Unpacked recovered top tree in " << timer.getAndReset() << "ms: " << recoveredTree.summary() << endl;

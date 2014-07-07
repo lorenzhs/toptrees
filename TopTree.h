@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Common.h"
+#include "Labels.h"
 
 using std::function;
 using std::cout;
@@ -19,7 +20,7 @@ struct Cluster {
 	Cluster(int l, int r, MergeType t): mergeType(t), left(l), right(r), label(NULL) /*, rLeft(-1), lRight(-1), rRight(-1), height(-1), size(-1), distTBleft(-1), distTBright(-1)*/ {}
 	MergeType mergeType;
 	int left, right /*, rLeft, lRight, rRight, height, size, distTBleft, distTBright*/;
-	string* label;
+	const string* label;
 
 	friend ostream& operator<<(ostream& os, const Cluster &cluster) {
 		return os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; " << (cluster.label == NULL ? "NULL" : *cluster.label) << ")";
@@ -27,7 +28,7 @@ struct Cluster {
 };
 
 struct TopTree {
-	TopTree(const int numLeaves, vector<string> &labels): clusters(numLeaves), numLeaves(numLeaves) {
+	TopTree(const int numLeaves, Labels<string> &labels): clusters(numLeaves), numLeaves(numLeaves) {
 		for (int i = 0; i < numLeaves; ++i) {
 			clusters[i].label = &labels[i];
 		}
@@ -113,8 +114,7 @@ struct TopTree {
 template<typename TreeType>
 class TopTreeUnpacker {
 public:
-	TopTreeUnpacker(TopTree &topTree, TreeType &tree, vector<string> &labels): topTree(topTree), tree(tree), labels(labels) {
-		labels.resize(topTree.numLeaves);
+	TopTreeUnpacker(TopTree &topTree, TreeType &tree, Labels<string> &labels): topTree(topTree), tree(tree), labels(labels) {
 		assert(tree._numNodes == 0);
 	}
 
@@ -124,9 +124,9 @@ public:
 		int rootClusterId = topTree.clusters.size() - 1;
 
 		Cluster& rootCluster = topTree.clusters[rootClusterId];
-		string* label = topTree.clusters[rootCluster.left].label;
+		const string* label = topTree.clusters[rootCluster.left].label;
 		assert (label != NULL);
-		labels[0] = *label;
+		labels.set(0, *label);
 		unpackCluster(rootCluster.right, firstId);
 	}
 
@@ -136,9 +136,9 @@ private:
 	}
 
 	void handleLeaf(const int leafId) {
-		string* label = topTree.clusters[leafId].label;
+		const string* label = topTree.clusters[leafId].label;
 		assert (label != NULL);
-		labels[leafId] = *label;
+		labels.set(leafId, *label);
 	}
 
 	int unpackCluster(const int clusterId, const int nodeId) {
@@ -216,6 +216,6 @@ private:
 
 	TopTree &topTree;
 	TreeType &tree;
-	vector<string> &labels;
+	Labels<string> &labels;
 	const int extraSpace = 50;
 };

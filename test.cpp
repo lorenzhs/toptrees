@@ -19,7 +19,7 @@ using std::vector;
 int main(int argc, char** argv) {
 	OrderedTree<TreeNode,TreeEdge> t;
 //*
-	vector<string> labels;
+	Labels<string> labels;
 
 	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
 
