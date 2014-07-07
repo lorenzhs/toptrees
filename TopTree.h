@@ -69,7 +69,7 @@ struct TopTree {
 		const Cluster &otherCluster = other.clusters[otherClusterId];
 		if ((cluster.label == NULL) != (otherCluster.label == NULL)) {
 			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (label NULL)" << endl;
-			//return false;
+			return false;
 		}
 		if (cluster.mergeType != otherCluster.mergeType) {
 			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (different merge types)" << endl;
@@ -99,9 +99,9 @@ struct TopTree {
 		os << "Top tree with " << toptree.clusters.size() << " clusters. Non-leaves:" << endl;
 		uint count = 0;
 		for (const Cluster &cluster : toptree.clusters) {
-			//if (cluster.left >= 0) {
+			if (cluster.left >= 0) {
 				os << "\t" << count << ": " << cluster << endl;
-			//}
+			}
 			count++;
 		}
 		return os;
