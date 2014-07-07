@@ -92,7 +92,7 @@ public:
 private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
 		const Cluster &node = tree.clusters[nodeId];
-		const string& label(node.label != NULL ? *node.label : "0");
+		const string& label(node.label != NULL ? *node.label : std::to_string(node.mergeType));
 		for (int i = 0; i < depth; ++i) out << " ";
 		out << "<" << label << ">";
 

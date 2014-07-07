@@ -65,6 +65,9 @@ int main(int argc, char** argv) {
 
 	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << recoveredTopTree.clusters.size() << " clusters" << endl;
 
+	cout << "Equality check... " << topTree.isEqual(recoveredTopTree) << endl;
+
+
 	// unpack recovered top tree
 	OrderedTree<TreeNode,TreeEdge> recoveredTree;
 	TopTreeUnpacker<OrderedTree<TreeNode,TreeEdge>> unpacker(recoveredTopTree, recoveredTree);

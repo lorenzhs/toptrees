@@ -1,13 +1,14 @@
 #pragma once
 
 #include <cassert>
-#include <ostream>
+#include <iostream>
 #include <functional>
 #include <vector>
 
 #include "Common.h"
 
 using std::function;
+using std::cout;
 using std::endl;
 using std::ostream;
 using std::string;
@@ -52,6 +53,45 @@ struct TopTree {
 			traverseTreePostOrder(cluster.right, callback);
 		}
 		callback(clusterId);
+	}
+
+	bool isEqual(const TopTree &other) const {
+		if (numLeaves != other.numLeaves || clusters.size() != other.clusters.size()) {
+			return false;
+		}
+
+		return nodesEqual(other, clusters.size() - 1, clusters.size() - 1);
+	}
+
+	bool nodesEqual(const TopTree &other, const int clusterId, const int otherClusterId) const {
+		const Cluster &cluster = clusters[clusterId];
+		const Cluster &otherCluster = other.clusters[otherClusterId];
+		if ((cluster.label == NULL) != (otherCluster.label == NULL)) {
+			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (label NULL)" << endl;
+			//return false;
+		}
+		if (cluster.mergeType != otherCluster.mergeType) {
+			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (different merge types)" << endl;
+			return false;
+		}
+		if ((cluster.left < 0) != (otherCluster.left < 0)) {
+			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (left < 0)" << endl;
+			return false;
+		}
+		if ((cluster.right < 0) != (otherCluster.right < 0)) {
+			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (right < 0)" << endl;
+			return false;
+		}
+
+		if (cluster.left >= 0 && !nodesEqual(other, cluster.left, otherCluster.left)) {
+			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (left clusters don't match)" << endl;
+			return false;
+		}
+		if (cluster.right >= 0 && !nodesEqual(other, cluster.right, otherCluster.right)) {
+			cout << "Difference in clusters " << clusterId << " / "<< cluster << " and " << otherClusterId << " / " << otherCluster << " (right clusters don't match)" << endl;
+			return false;
+		}
+		return true;
 	}
 
 	friend ostream& operator<<(ostream& os, const TopTree &toptree) {

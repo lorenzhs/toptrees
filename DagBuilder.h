@@ -66,7 +66,7 @@ public:
 			// cluster is NOT a leaf, resolve child nodes in DAG
 			left = clusterToDag[cluster.left];
 			right = clusterToDag[cluster.right];
-			assert(left >= 0 && right >= 0);
+			assert(left > 0 && right > 0);
 		}
 		// Adding the node to the DAG and potentially removing it immediately a few
 		// lines down is very cheap, as it's added with emplace_back (object is
@@ -75,6 +75,7 @@ public:
 		// hashmap anyway, so this way, we can avoid creating it twice.
 		int id = dag.addNode(left, right, cluster.label, cluster.mergeType);
 		DagNode<DataType> &node = dag.nodes[id];
+		assert(node.left == left && node.right == right && node.label == cluster.label && node.mergeType == cluster.mergeType);
 		int nodeId = nodeMap[node];
 		if (nodeId == 0) {
 			// node is not yet in the hashmap (element 0 is the dummy)
@@ -120,6 +121,7 @@ private:
 		assert((node.left < 0) == (node.right < 0));
 		if (node.left < 0) {
 			// it's a leaf
+			assert(nextLeafId < topTree.numLeaves);
 			int newId = nextLeafId++;
 			topTree.clusters[newId].label = node.label;
 			return newId;
