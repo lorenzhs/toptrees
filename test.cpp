@@ -45,7 +45,10 @@ int main(int argc, char** argv) {
 	DagBuilder<string> builder(topTree, dag);
 	builder.createDag();
 
-	cout << "Top dag has " << dag.nodes.size() - 1<< " nodes, " << dag.countEdges() << " edges" << endl;
+	const int edges = dag.countEdges();
+	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const double ratio = ((int)(1000/percentage))/10.0;
+	cout << "Top dag has " << dag.nodes.size() - 1<< " nodes, " << edges << " edges (" << percentage << "% of original tree, " << ratio << ":1)" << endl;
 	cout << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
 
 /*/
