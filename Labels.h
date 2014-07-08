@@ -19,9 +19,9 @@ struct Labels {
 			keys.resize(id + 1);
 		}
 
-		typename std::unordered_map<Value, size_t>::iterator it = values.find(value);
+		typename std::unordered_map<Value, int>::iterator it = values.find(value);
     	if (it == values.end()) {
-       		it = values.insert(typename std::unordered_map<Value, size_t>::value_type(value, values.size())).first;
+       		it = values.insert(typename std::unordered_map<Value, int>::value_type(value, (int)values.size())).first;
         	valueIndex.push_back(&it->first);
     	}
 
@@ -36,7 +36,7 @@ struct Labels {
 		return keys.size();
 	}
 
-	std::vector<size_t> keys;
+	std::vector<int> keys;
 	std::vector<const Value*> valueIndex;
-	std::unordered_map<Value, size_t> values;
+	std::unordered_map<Value, int> values;
 };
