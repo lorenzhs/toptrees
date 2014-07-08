@@ -9,14 +9,14 @@
 using std::vector;
 using std::function;
 
-template<typename DataType>
+template <typename DataType>
 class BinaryDag {
 public:
-	BinaryDag(const int n = 0): nodes() {
+	BinaryDag(const int n = 0) : nodes() {
 		nodes.reserve(n);
 		// add a dummy element that is guaranteed to not appear
 		// (we assume that -1 is used for leaves, never -2, except for this dummy)
-		nodes.emplace_back(-2, -2, (std::string*)NULL, NO_MERGE);
+		nodes.emplace_back(-2, -2, (std::string *)NULL, NO_MERGE);
 	}
 
 	int addNode(int left, int right, const DataType *label, MergeType mergeType) {
@@ -42,14 +42,14 @@ public:
 		return count;
 	}
 
-	template<typename T>
-	T inPostOrder(const function<T (const int, const T, const T)> &callback) {
+	template <typename T>
+	T inPostOrder(const function<T(const int, const T, const T)> &callback) {
 		return traverseDagPostOrder(nodes.size() - 1, callback);
 	}
 
-	template<typename T>
-	T traverseDagPostOrder(const int nodeId, const function<T (const int, const T, const T)> &callback) {
-		assert (nodeId != 0);  // 0 is the dummy not and should not be reachable
+	template <typename T>
+	T traverseDagPostOrder(const int nodeId, const function<T(const int, const T, const T)> &callback) {
+		assert(nodeId != 0); // 0 is the dummy not and should not be reachable
 		DagNode<DataType> &node = nodes[nodeId];
 		T left(-1), right(-1);
 		if (node.left >= 0) {
@@ -61,7 +61,7 @@ public:
 		return callback(nodeId, left, right);
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const BinaryDag<DataType> &dag) {
+	friend std::ostream &operator<<(std::ostream &os, const BinaryDag<DataType> &dag) {
 		os << "Binary Dag with " << dag.nodes.size() << " nodes";
 		for (uint i = 0; i < dag.nodes.size(); ++i) {
 			os << "; " << i << "=" << dag.nodes[i];

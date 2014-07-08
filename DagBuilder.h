@@ -11,9 +11,9 @@ using std::cout;
 using std::endl;
 using std::unordered_map;
 
-template<typename DataType>
+template <typename DataType>
 struct SubtreeEquality {
-	bool operator() (const DagNode<DataType> &node, const DagNode<DataType> &other) const {
+	bool operator()(const DagNode<DataType> &node, const DagNode<DataType> &other) const {
 		if ((node.label != NULL) && *(node.label) != *(other.label)) {
 			return false;
 		}
@@ -21,19 +21,19 @@ struct SubtreeEquality {
 	}
 };
 
-template<typename DataType>
+template <typename DataType>
 struct SubtreeHasher {
 	// adapted from: http://www.boost.org/doc/libs/1_55_0/doc/html/hash/reference.html#boost.hash_combine
 	// the magic number is the binary extension of the golden ratio
 	// the idea is that every bit is random. A more detailed explanation is available at
 	// http://stackoverflow.com/questions/4948780/magic-number-in-boosthash-combine
-	template<typename T>
-	static void boost_hash_combine(uint& seed, const T& val) {
+	template <typename T>
+	static void boost_hash_combine(uint &seed, const T &val) {
 		std::hash<T> hasher;
 		seed ^= hasher(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 	}
 
-	uint operator() (const DagNode<DataType> &node) const {
+	uint operator()(const DagNode<DataType> &node) const {
 		uint seed(0);
 		if (node.label != NULL)
 			boost_hash_combine(seed, *node.label);
@@ -46,20 +46,20 @@ struct SubtreeHasher {
 	}
 };
 
-template<typename DataType>
+template <typename DataType>
 class DagBuilder {
 public:
-	DagBuilder(TopTree &t, BinaryDag<DataType> &dag): topTree(t), dag(dag), nodeMap(), clusterToDag(t.clusters.size(), -1) {}
+	DagBuilder(TopTree &t, BinaryDag<DataType> &dag)
+		: topTree(t), dag(dag), nodeMap(), clusterToDag(t.clusters.size(), -1) {
+	}
 
 	void createDag() {
-		topTree.inPostOrder([&] (const int clusterId){
-			addClusterToDag(clusterId);
-		});
+		topTree.inPostOrder([&](const int clusterId) { addClusterToDag(clusterId); });
 	}
 
 	int addClusterToDag(const int clusterId) {
 		Cluster &cluster = topTree.clusters[clusterId];
-		assert ((cluster.left < 0) == (cluster.right < 0));
+		assert((cluster.left < 0) == (cluster.right < 0));
 
 		int left(-1), right(-1);
 		if (cluster.left != -1) {
@@ -75,17 +75,16 @@ public:
 		// hashmap anyway, so this way, we can avoid creating it twice.
 		int id = dag.addNode(left, right, cluster.label, cluster.mergeType);
 		DagNode<DataType> &node = dag.nodes[id];
-		assert(node.left == left && node.right == right && node.label == cluster.label && node.mergeType == cluster.mergeType);
+		assert(node.left == left && node.right == right && node.label == cluster.label &&
+			   node.mergeType == cluster.mergeType);
 		int nodeId = nodeMap[node];
 		if (nodeId == 0) {
 			// node is not yet in the hashmap (element 0 is the dummy)
 			nodeMap[node] = id;
 			clusterToDag[clusterId] = id;
 			// Increase the childrens' in-degree
-			if (left >= 0)
-				dag.nodes[left].inDegree++;
-			if (right >= 0)
-				dag.nodes[right].inDegree++;
+			if (left >= 0) dag.nodes[left].inDegree++;
+			if (right >= 0) dag.nodes[right].inDegree++;
 			return id;
 		} else {
 			// node is already in the hashmap, compression is happening!
@@ -102,17 +101,18 @@ public:
 	vector<int> clusterToDag;
 };
 
-
-template<typename DataType>
+template <typename DataType>
 class BinaryDagUnpacker {
 public:
-	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree &topTree): nextLeafId(0), dag(dag), topTree(topTree) {}
+	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree &topTree) : nextLeafId(0), dag(dag), topTree(topTree) {
+	}
 
 	void unpack() {
-		assert((int) topTree.clusters.size() == topTree.numLeaves);
-		dag.template inPostOrder<int>([&] (const int nodeId, const int left, const int right) {
-			return addNodeToTopTree(nodeId, left, right);
-		});
+		assert((int)topTree.clusters.size() == topTree.numLeaves);
+		dag.template inPostOrder<int>(
+			[&](const int nodeId, const int left, const int right) {
+				return addNodeToTopTree(nodeId, left, right);
+			});
 	}
 
 private:

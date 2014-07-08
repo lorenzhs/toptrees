@@ -4,7 +4,7 @@
 
 class Timer {
 public:
-	Timer(): start(timestamp()) {}
+	Timer() : start(timestamp()) {}
 
 	void reset() {
 		start = timestamp();
@@ -27,6 +27,6 @@ private:
 		timeval time;
 		gettimeofday(&time, nullptr);
 		double ms = double(time.tv_usec) / 1000.0;
-		return time.tv_sec*1000 + ms;
+		return time.tv_sec * 1000 + ms;
 	}
 };

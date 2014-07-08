@@ -16,14 +16,14 @@ using std::endl;
 using std::string;
 using std::vector;
 
-int main(int argc, char** argv) {
-	OrderedTree<TreeNode,TreeEdge> t;
+int main(int argc, char **argv) {
+	OrderedTree<TreeNode, TreeEdge> t;
 //*
 	Labels<string> labels;
 
 	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
 
-	XmlParser<OrderedTree<TreeNode,TreeEdge>> xml(filename, t, labels);
+	XmlParser<OrderedTree<TreeNode, TreeEdge>> xml(filename, t, labels);
 	xml.parse();
 
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
@@ -35,11 +35,11 @@ int main(int argc, char** argv) {
 	}
 
 	Timer timer;
-	t.doMerges([&] (const int u, const int v, const int n, const MergeType type) {
-		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
-	});
+	t.doMerges([&](const int u, const int v, const int n,
+				   const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); });
 
-	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
+		 << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
 
 	BinaryDag<string> dag;
 	DagBuilder<string> builder(topTree, dag);
@@ -47,9 +47,10 @@ int main(int argc, char** argv) {
 
 	const int edges = dag.countEdges();
 	const double percentage = (edges * 100.0) / topTree.numLeaves;
-	const double ratio = ((int)(1000/percentage))/10.0;
-	cout << "Top dag has " << dag.nodes.size() - 1<< " nodes, " << edges << " edges (" << percentage << "% of original tree, " << ratio << ":1)" << endl;
-	cout << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
+	const double ratio = ((int)(1000 / percentage)) / 10.0;
+	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
+		 << "% of original tree, " << ratio << ":1)" << endl
+		 << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
 
 /*/
 

@@ -10,9 +10,9 @@ struct TreeNode {
 	int parent;
 	int lastMergedIn;
 
-	TreeNode(): firstEdgeIndex(-1), lastEdgeIndex(-1), parent(-1), lastMergedIn(-1) {}
+	TreeNode() : firstEdgeIndex(-1), lastEdgeIndex(-1), parent(-1), lastMergedIn(-1) {}
 
-	int numEdges() const  {
+	int numEdges() const {
 		return lastEdgeIndex - firstEdgeIndex + 1;
 	}
 
@@ -33,24 +33,31 @@ struct TreeNode {
 		return firstEdgeIndex < lastEdgeIndex;
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const TreeNode &node) {
-		return os << "(" << node.parent << ";"  << node.firstEdgeIndex << "→" << node.lastEdgeIndex << ";" << node.lastMergedIn << ")";
+	friend std::ostream &operator<<(std::ostream &os, const TreeNode &node) {
+		return os << "(" << node.parent << ";" << node.firstEdgeIndex << "→" << node.lastEdgeIndex << ";"
+				  << node.lastMergedIn << ")";
 	}
 };
 
-template<typename T>
+template <typename T>
 struct DagNode {
 	int left;
 	int right;
 	int inDegree;
 	MergeType mergeType;
-	const T* label;
+	const T *label;
 
-	DagNode(): left(-1), right(-1), inDegree(0), mergeType(NO_MERGE), label(NULL) {}
-	DagNode(int l, int r, const T *la, MergeType t): left(l), right(r), inDegree(0), mergeType(t), label(la) {}
-	DagNode(const DagNode<T> &other): left(other.left), right(other.right), inDegree(other.inDegree), mergeType(other.mergeType), label(other.label) {}
+	DagNode() : left(-1), right(-1), inDegree(0), mergeType(NO_MERGE), label(NULL) {}
+	DagNode(int l, int r, const T *la, MergeType t) : left(l), right(r), inDegree(0), mergeType(t), label(la) {}
+	DagNode(const DagNode<T> &other)
+		: left(other.left),
+		  right(other.right),
+		  inDegree(other.inDegree),
+		  mergeType(other.mergeType),
+		  label(other.label) {}
 
-	friend std::ostream& operator<<(std::ostream& os, const DagNode &node) {
-		return os << "(" << node.left << ";"  << node.right << ";" << node.inDegree << ";" << (node.label == NULL ? "NULL" : *node.label) << ")";
+	friend std::ostream &operator<<(std::ostream &os, const DagNode &node) {
+		return os << "(" << node.left << ";" << node.right << ";" << node.inDegree << ";"
+				  << (node.label == NULL ? "NULL" : *node.label) << ")";
 	}
 };

@@ -6,16 +6,16 @@
 // This data structure is based on the following anonymous StackOverflow post:
 // http://stackoverflow.com/a/2562117
 // but extends it to indexing by original id
-template<typename Value>
+template <typename Value>
 struct Labels {
-	Labels(int sizeHint = 0): keys(sizeHint), valueIndex(), values() {}
+	Labels(int sizeHint = 0) : keys(sizeHint), valueIndex(), values() {}
 
-	const Value &operator[](int index) {
+	const Value &operator[](int index) const {
 		return *valueIndex[keys[index]];
 	}
 
 	void set(int id, const Value &value) {
-		if (id >= (int) keys.size()) {
+		if (id >= (int)keys.size()) {
 			keys.resize(id + 1);
 		}
 
@@ -37,6 +37,6 @@ struct Labels {
 	}
 
 	std::vector<int> keys;
-	std::vector<const Value*> valueIndex;
+	std::vector<const Value *> valueIndex;
 	std::unordered_map<Value, int> values;
 };

@@ -26,47 +26,50 @@ using std::vector;
 
 // #define awfulness
 #define FORALL_NODES(tree, node) for (int node = 0; node < tree._numNodes; ++node)
-#define FORALL_EDGES(tree, node, edge) for (int node = 0; node < tree._numNodes; ++node) for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
-#define FORALL_OUTGOING_EDGES(tree, node, edge) for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
+#define FORALL_EDGES(tree, node, edge)                                                                                 \
+	for (int node = 0; node < tree._numNodes; ++node)                                                                  \
+		for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
+#define FORALL_OUTGOING_EDGES(tree, node, edge)                                                                        \
+	for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
 
-template<typename NodeType, typename EdgeType>
+template <typename NodeType, typename EdgeType>
 class OrderedTree {
 public:
-	OrderedTree(const int n=0, const int m=0) {
+	OrderedTree(const int n = 0, const int m = 0) {
 		initialise(n, m);
 	}
 
-	EdgeType* firstEdge() {
+	EdgeType *firstEdge() {
 		return edges.data();
 	}
-	EdgeType* firstEdge(const int u) {
+	EdgeType *firstEdge(const int u) {
 		return edges.data() + nodes[u].firstEdgeIndex;
 	}
-	const EdgeType* firstEdge(const int u) const {
+	const EdgeType *firstEdge(const int u) const {
 		return edges.data() + nodes[u].firstEdgeIndex;
 	}
 
-	EdgeType* lastEdge() {
+	EdgeType *lastEdge() {
 		return edges.data() + _numEdges - 1;
 	}
-	EdgeType* lastEdge(const int u) {
+	EdgeType *lastEdge(const int u) {
 		return edges.data() + nodes[u].lastEdgeIndex;
 	}
-	const EdgeType* lastEdge(const int u) const {
+	const EdgeType *lastEdge(const int u) const {
 		return edges.data() + nodes[u].lastEdgeIndex;
 	}
 
 	// Get ID from pointer, woohoo for not doing this in Scala!
-	int nodeId(const NodeType* node) {
+	int nodeId(const NodeType *node) {
 		return (node - nodes.data());
 	}
-	int edgeId(const EdgeType* edge) {
+	int edgeId(const EdgeType *edge) {
 		return (edge - edges.data());
 	}
 
 	// Add a node and return its id
 	int addNode() {
-		if (_firstFreeNode <= (int) nodes.size()) {
+		if (_firstFreeNode <= (int)nodes.size()) {
 			nodes.resize(_firstFreeNode + 1);
 		}
 		nodes[_firstFreeNode].firstEdgeIndex = _firstFreeEdge;
@@ -84,14 +87,14 @@ public:
 	}
 
 	void isolateNode(const int u) {
-		for (EdgeType* edge = firstEdge(u); edge <= lastEdge(u); ++edge) {
+		for (EdgeType *edge = firstEdge(u); edge <= lastEdge(u); ++edge) {
 			edge->valid = false;
 		}
 		nodes[u].lastEdgeIndex = nodes[u].firstEdgeIndex - 1;
 	}
 
-	EdgeType* addEdge(const int from, const int to, const int extraSpace = 0) {
-		NodeType& node = nodes[from];
+	EdgeType *addEdge(const int from, const int to, const int extraSpace = 0) {
+		NodeType &node = nodes[from];
 		int newId = node.lastEdgeIndex + 1;
 		// Check for space to the right
 		if ((unsigned int)newId < edges.size() && !edges[newId].valid) {
@@ -107,7 +110,7 @@ public:
 		if (newId > 0 && !edges[newId].valid) {
 			node.firstEdgeIndex--;
 			for (int i = node.firstEdgeIndex; i < node.lastEdgeIndex; ++i) {
-				edges[i] = edges[i+1];
+				edges[i] = edges[i + 1];
 			}
 			return _prepareEdge(node.lastEdgeIndex, from, to);
 		}
@@ -141,7 +144,7 @@ public:
 	void removeEdge(const int from, const int edge, const bool compact = true) {
 		assert(edges[edge].valid);
 		edges[edge].valid = false;
-		NodeType& node = nodes[from];
+		NodeType &node = nodes[from];
 		// check if we can just move the boundaries of the node's edge space
 		if (edge == node.lastEdgeIndex) {
 			node.lastEdgeIndex--;
@@ -152,13 +155,13 @@ public:
 			if ((edge - node.firstEdgeIndex) >= (node.lastEdgeIndex - edge)) {
 				// there are morge edges on the left => move right side to the left
 				for (int i = edge; i < node.lastEdgeIndex; ++i) {
-					edges[i] = edges[i+1];
+					edges[i] = edges[i + 1];
 				}
 				edges[node.lastEdgeIndex--].valid = false;
 			} else {
 				// move edges on the left side to the right
 				for (int i = edge; i > node.firstEdgeIndex; --i) {
-					edges[i] = edges[i-1];
+					edges[i] = edges[i - 1];
 				}
 				edges[node.firstEdgeIndex++].valid = false;
 			}
@@ -168,7 +171,7 @@ public:
 
 	// find the first edge from node `from` to node `to` and remove it
 	void removeEdgeTo(const int from, const int to, const bool compact = true) {
-		NodeType& node = nodes[from];
+		NodeType &node = nodes[from];
 		for (int i = node.firstEdgeIndex; i <= node.lastEdgeIndex; ++i) {
 			if (edges[i].headNode == to) {
 				assert(nodes[edges[i].headNode].parent == from);
@@ -182,11 +185,12 @@ public:
 	// the callback is called for every pair of merged nodes (clusters)
 	// its arguments are the ids of the two merged nodes and the new id
 	// (usually one of the two old ones) as well as the type of the merge
-	void doMerges(const function<void (const int, const int, const int, const MergeType)> &mergeCallback, const bool verbose = true) {
+	void doMerges(const function<void(const int, const int, const int, const MergeType)> &mergeCallback,
+				  const bool verbose = true) {
 		int iteration = 0;
 		Timer timer;
 		const std::streamsize precision = cout.precision();
-		cout <<  std::fixed << std::setprecision(1);
+		cout << std::fixed << std::setprecision(1);
 		while (_numEdges > 1) {
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
 
@@ -214,16 +218,17 @@ public:
 	}
 
 	// do one iteration of horizontal merges (step 1)
-	void horizontalMerges(const int iteration, const function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
-		for (int nodeId = _numNodes-1; nodeId >= 0; --nodeId) {
-			const NodeType& node = nodes[nodeId];
+	void horizontalMerges(const int iteration,
+						  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
+		for (int nodeId = _numNodes - 1; nodeId >= 0; --nodeId) {
+			const NodeType &node = nodes[nodeId];
 			// merging children only make sense for nodes with ≥ 2 children
 			if (node.numEdges() < 2) {
 				continue;
 			}
 #ifndef NDEBUG
 			// verify that these edges indeed do belong to whoever claims to be their parent
-			for (EdgeType* edge = firstEdge(nodeId); edge < lastEdge(nodeId); ++edge) {
+			for (EdgeType *edge = firstEdge(nodeId); edge < lastEdge(nodeId); ++edge) {
 				assert(nodes[edge->headNode].parent == nodeId);
 			}
 #endif
@@ -253,17 +258,17 @@ public:
 				// merged in this iteration so far (because neither is a leaf)
 				leftEdge = lastEdge(nodeId);
 				left = leftEdge->headNode;
-				const NodeType& child = nodes[left];
-				if (!child.isLeaf() || node.numEdges() <= 2 || !(leftEdge-1)->valid || !(leftEdge-2)->valid) {
+				const NodeType &child = nodes[left];
+				if (!child.isLeaf() || node.numEdges() <= 2 || !(leftEdge - 1)->valid || !(leftEdge - 2)->valid) {
 					continue;
 				}
-				const int childMinusOne = (leftEdge-1)->headNode;
-				const int childMinusTwo = (leftEdge-2)->headNode;
+				const int childMinusOne = (leftEdge - 1)->headNode;
+				const int childMinusTwo = (leftEdge - 2)->headNode;
 				if (!nodes[childMinusOne].isLeaf() && !nodes[childMinusTwo].isLeaf()) {
 					// Everything is go for a merge in the "odd case"
 					nodes[left].lastMergedIn = iteration;
 					nodes[childMinusOne].lastMergedIn = iteration;
-					mergeSiblings(leftEdge-1, leftEdge, newNode, mergeType);
+					mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
 					mergeCallback(childMinusOne, left, newNode, mergeType);
 				}
 			}
@@ -271,13 +276,14 @@ public:
 	}
 
 	// Perform an iteration of vertical (chain) merges.
-	void verticalMerges(const int iteration, const function<void (const int, const int, const int, const MergeType)> &mergeCallback) {
+	void verticalMerges(const int iteration,
+						const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
 		// First, we collect all the vertices from which a merge chain can originate upwards
 		// This is needed to prevent repeated merges of the same chain in one iteration
 		// I guess we could do this with the .lastMergedIn attribute as well? XXX TODO
 		vector<int> nodesToMerge;
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
-			const NodeType& node = nodes[nodeId];
+			const NodeType &node = nodes[nodeId];
 			if (node.parent >= 0 && !node.hasOnlyOneChild() && nodes[node.parent].hasOnlyOneChild()) {
 				// only interested in nodes without siblings where the chain can't be extended further
 				nodesToMerge.push_back(nodeId);
@@ -291,8 +297,7 @@ public:
 			// b) parent has more than one child
 			// otherwise, merge the chain grandparent -> parent -> node
 			while (parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].parent >= 0 &&
-				nodes[parentId].lastMergedIn < iteration && nodes[nodes[parentId].parent].hasOnlyOneChild()) {
-				//cout << "merging " << parentId << " with its child " << nodeId << endl;
+				   nodes[parentId].lastMergedIn < iteration && nodes[nodes[parentId].parent].hasOnlyOneChild()) {
 				NodeType &node(nodes[nodeId]), &parent(nodes[parentId]);
 				node.lastMergedIn = iteration;
 				parent.lastMergedIn = iteration;
@@ -306,17 +311,13 @@ public:
 				if (nodeId >= 0) {
 					parentId = nodes[nodeId].parent;
 				} else {
-					break;  // break while loop
+					break; // break while loop
 				}
 			}
-			/*cout << "merging loop ended with nodeId = " << nodeId << " parentId = " << parentId;
-			if (nodeId >= 0) cout << " node = " << nodes[nodeId];
-			if (parentId >= 0) cout << " parent = " << nodes[parentId];
-			cout << endl;*/
 
-			if (nodeId >= 0 && parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].lastMergedIn < iteration && nodes[parentId].parent >= 0) {
+			if (nodeId >= 0 && parentId >= 0 && nodes[parentId].hasOnlyOneChild() &&
+				nodes[parentId].lastMergedIn < iteration && nodes[parentId].parent >= 0) {
 				// We hit the "odd case"
-				//cout << "ODD CASE: nodeId = " << nodeId << " " << nodes[nodeId] << " parentId = "<< parentId << " " << nodes[parentId] << endl;
 				assert(!nodes[nodes[parentId].parent].hasOnlyOneChild());
 				nodes[nodeId].lastMergedIn = iteration;
 				nodes[parentId].lastMergedIn = iteration;
@@ -329,7 +330,7 @@ public:
 
 	// Merge two descendants of the same node (i.e., siblings)
 	// Will *set* the newNode and mergeType parameters
-	void mergeSiblings(const EdgeType* leftEdge, const EdgeType* rightEdge, int& newNode, MergeType& mergeType) {
+	void mergeSiblings(const EdgeType *leftEdge, const EdgeType *rightEdge, int &newNode, MergeType &mergeType) {
 		// retrieve nodes and perform sanity checks
 		assert(leftEdge->valid && rightEdge->valid);
 		const int leftId(leftEdge->headNode), rightId(rightEdge->headNode);
@@ -365,13 +366,13 @@ public:
 	// where b and c are the only children of their parents
 	// Any potential children of c will be attached to b
 	// The parameter `middleId` is the ID of node b in this example
-	void mergeChain(const int middleId, MergeType& mergeType) {
+	void mergeChain(const int middleId, MergeType &mergeType) {
 		// Retrieve nodes and perform sanity checks
 		assert(0 <= middleId && middleId < _numNodes);
-		NodeType& middle = nodes[middleId];
+		NodeType &middle = nodes[middleId];
 		assert(middle.hasOnlyOneChild());
 		int childId = firstEdge(middleId)->headNode;
-		NodeType& child = nodes[childId];
+		NodeType &child = nodes[childId];
 
 		// Cut off the child. As middle has only one, its first edge goes to its child.
 		removeEdge(middleId, middle.firstEdgeIndex);
@@ -386,7 +387,7 @@ public:
 				nodes[edge->headNode].parent = middleId;
 			}
 			middle.firstEdgeIndex = child.firstEdgeIndex;
-			middle.lastEdgeIndex  = child.lastEdgeIndex;
+			middle.lastEdgeIndex = child.lastEdgeIndex;
 			child.lastEdgeIndex = child.firstEdgeIndex - 1;
 
 			mergeType = VERT_WITH_BBN;
@@ -412,7 +413,7 @@ public:
 		return os.str();
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const OrderedTree<NodeType, EdgeType> &tree) {
+	friend std::ostream &operator<<(std::ostream &os, const OrderedTree<NodeType, EdgeType> &tree) {
 		os << tree.summary() << endl << "Nodes:";
 		for (uint i = 0; i < tree.nodes.size(); ++i) {
 			os << " " << tree.nodes[i];
@@ -438,17 +439,18 @@ public:
 
 	void compact(const bool verbose = true, const int factor = 1) {
 		Timer timer;
-		if (_numEdges + 1 == (int) edges.size()) {
+		if (_numEdges + 1 == (int)edges.size()) {
 			if (verbose) cout << "GC: nothing to do" << endl;
 			return;
 		}
 		vector<EdgeType> newEdges;
 		// Guess the amount of space needed for extra empty edges
-		const int numEdgesReserved(_numEdges*factor + 1);
+		const int numEdgesReserved(_numEdges * factor + 1);
 		if (verbose)
-			cout << "GC: allocating " << numEdgesReserved << " edges (" << numEdgesReserved*sizeof(EdgeType)/1e6 << "MB); " << flush;
+			cout << "GC: allocating " << numEdgesReserved << " edges (" << numEdgesReserved * sizeof(EdgeType) / 1e6
+				 << "MB); " << flush;
 		newEdges.reserve(numEdgesReserved);
-		newEdges.push_back(edges[0]);  // dummy edge
+		newEdges.push_back(edges[0]); // dummy edge
 		uint oldSize;
 		// Copy each node's valid edges to the new array
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
@@ -463,15 +465,15 @@ public:
 				}
 			}
 			nodes[nodeId].firstEdgeIndex = oldSize;
-			nodes[nodeId].lastEdgeIndex  = newEdges.size() - 1;
-			if (nodes[nodeId].hasChildren())
-				newEdges.resize(newEdges.size() + nodes[nodeId].numEdges() * (factor - 1));
+			nodes[nodeId].lastEdgeIndex = newEdges.size() - 1;
+			if (nodes[nodeId].hasChildren()) newEdges.resize(newEdges.size() + nodes[nodeId].numEdges() * (factor - 1));
 		}
 		_firstFreeEdge = newEdges.size();
 		edges.swap(newEdges);
 
-		if (verbose) cout << timer.elapsedMillis() << "ms, " << edges.size() << " / "
-			<< newEdges.size() << " edges left (" << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
+		if (verbose)
+			cout << timer.elapsedMillis() << "ms, " << edges.size() << " / " << newEdges.size() << " edges left ("
+				 << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
 	// Do an inplace compaction of each node's vertices
@@ -499,55 +501,56 @@ public:
 			}
 			node.lastEdgeIndex = freeEdgeId - 1;
 		}
-		if (verbose) cout << "Inplace compaction moved " << count << " edges (" << (count * 100.0 / _numEdges) << "%) in " << timer.elapsedMillis() << "ms" << endl;
+		if (verbose)
+			cout << "Inplace compaction moved " << count << " edges (" << (count * 100.0 / _numEdges) << "%) in "
+				 << timer.elapsedMillis() << "ms" << endl;
 	}
 
-	template<typename T>
-	const T inPostOrder(const function<const T (const int, const list<T>&)> &callback) const {
+	template <typename T>
+	const T inPostOrder(const function<const T(const int, const list<T> &)> &callback) const {
 		return traverseTreePostOrder(0, callback);
 	}
 
-	template<typename T>
-	const T foldLeftPostOrder(const function<const T (const T)> &callback, const function<const T(const T, const T)> &fold, const T initial) const {
+	template <typename T>
+	const T foldLeftPostOrder(const function<const T(const T)> &callback,
+							  const function<const T(const T, const T)> &fold, const T initial) const {
 		return traverseFoldLeftPostOrder(0, callback, fold, initial);
 	}
 
 	// Statistics
-	template<typename T>
-	const T traverseTreePostOrder(const int nodeId, const function<const T (const int, const list<T>&)> &callback) const {
-		assert (0 <= nodeId && nodeId < _numNodes);
+	template <typename T>
+	const T traverseTreePostOrder(const int nodeId,
+								  const function<const T(const int, const list<T> &)> &callback) const {
+		assert(0 <= nodeId && nodeId < _numNodes);
 		list<T> results;
-		for (const EdgeType* edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
+		for (const EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
 			results.push_back(traverseTreePostOrder(edge->headNode, callback));
 		}
 		return callback(nodeId, results);
 	}
 
-	template<typename T>
-	const T traverseFoldLeftPostOrder(const int nodeId, const function<const T (const T)> &callback, const function<const T(const T, const T)> &fold, const T initial) const {
-		assert (0 <= nodeId && nodeId < _numNodes);
+	template <typename T>
+	const T traverseFoldLeftPostOrder(const int nodeId, const function<const T(const T)> &callback,
+									  const function<const T(const T, const T)> &fold, const T initial) const {
+		assert(0 <= nodeId && nodeId < _numNodes);
 		T last(initial);
-		for (const EdgeType* edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
+		for (const EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
 			last = fold(last, traverseFoldLeftPostOrder(edge->headNode, callback, fold, initial));
 		}
 		return callback(last);
 	}
 
-	int height() {
-		return foldLeftPostOrder<int>([](const int depth) {
-			return depth + 1;
-		}, [](const int p1, const int p2) {
-			return std::max(p1, p2);
-		}, 0);
+	int height() const {
+		return foldLeftPostOrder<int>(
+			[](const int depth) { return depth + 1; },
+			[](const int p1, const int p2) { return std::max(p1, p2); }, 0);
 	}
 
-	double avgDepth() {
+	double avgDepth() const {
 		typedef pair<int, int> P;
-		P countAndSum = foldLeftPostOrder<P>([](const P countAndSum) {
-			return P(countAndSum.first + 1, countAndSum.second + countAndSum.first);
-		}, [](const P p1, const P p2) {
-			return P(p1.first + p2.first, p1.second + p2.second);
-		}, P(1, 1));
+		P countAndSum = foldLeftPostOrder<P>(
+			[](const P countAndSum) { return P(countAndSum.first + 1, countAndSum.second + countAndSum.first); },
+			[](const P p1, const P p2) { return P(p1.first + p2.first, p1.second + p2.second); }, P(1, 1));
 		return (countAndSum.second * 1.0) / countAndSum.first;
 	}
 
@@ -570,7 +573,7 @@ protected:
 	}
 
 	// Helper method for inserting new edges in order to remove repetition
-	EdgeType* _prepareEdge(const int edgeId, const int from, const int to) {
+	EdgeType *_prepareEdge(const int edgeId, const int from, const int to) {
 		_numEdges++;
 		nodes[to].parent = from;
 		edges[edgeId].valid = true;
@@ -578,9 +581,9 @@ protected:
 		return edges.data() + edgeId;
 	}
 
-// just make all this stuff public, I know what I'm doing [TM]
-// ...said everyone in history who then promptly proceeded
-// to shoot themselves in the food catastrophically
+	// just make all this stuff public, I know what I'm doing [TM]
+	// ...said everyone in history who then promptly proceeded
+	// to shoot themselves in the food catastrophically
 public:
 	vector<NodeType> nodes;
 	vector<EdgeType> edges;

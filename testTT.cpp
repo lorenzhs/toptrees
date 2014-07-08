@@ -16,8 +16,8 @@ using std::endl;
 using std::string;
 using std::vector;
 
-int main(int argc, char** argv) {
-	OrderedTree<TreeNode,TreeEdge> t;
+int main(int argc, char **argv) {
+	OrderedTree<TreeNode, TreeEdge> t;
 
 	Labels<string> labels;
 
@@ -25,12 +25,12 @@ int main(int argc, char** argv) {
 	string outputfolder = argc > 2 ? string(argv[2]) : "/tmp";
 
 	// Read input file
-	XmlParser<OrderedTree<TreeNode,TreeEdge>> xml(filename, t, labels);
+	XmlParser<OrderedTree<TreeNode, TreeEdge>> xml(filename, t, labels);
 	xml.parse();
 
 	// Dump input file for comparison of output
 	Timer timer;
-	XmlWriter<OrderedTree<TreeNode,TreeEdge>> origWriter(t, labels);
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>> origWriter(t, labels);
 	origWriter.write(outputfolder + "/orig.xml");
 
 	cout << "Wrote orginial trimmed XML file in " << timer.getAndReset() << "ms: " << t.summary() << endl;
@@ -44,18 +44,19 @@ int main(int argc, char** argv) {
 
 	// construct top tree
 	timer.reset();
-	t.doMerges([&] (const int u, const int v, const int n, const MergeType type) {
+	t.doMerges([&](const int u, const int v, const int n, const MergeType type) {
 		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
 	});
 
-	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
+		 << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
 
 	// Construct top DAG
 	BinaryDag<string> dag;
 	DagBuilder<string> builder(topTree, dag);
 	builder.createDag();
 
-	cout << "Top DAG has " << dag.nodes.size() - 1<< " nodes, " << dag.countEdges() << " edges" << endl;
+	cout << "Top DAG has " << dag.nodes.size() - 1 << " nodes, " << dag.countEdges() << " edges" << endl;
 	cout << "Top DAG construction took in " << timer.getAndReset() << "ms" << endl;
 
 	// Unpack top DAG to recoveredTopTree
@@ -63,17 +64,18 @@ int main(int argc, char** argv) {
 	BinaryDagUnpacker<string> dagUnpacker(dag, recoveredTopTree);
 	dagUnpacker.unpack();
 
-	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << recoveredTopTree.clusters.size() << " clusters" << endl;
-	cout << "Equality check... " << topTree.isEqual(recoveredTopTree) << endl;
+	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << recoveredTopTree.clusters.size()
+		 << " clusters" << endl
+		 << "Equality check... " << topTree.isEqual(recoveredTopTree) << endl;
 
 	// unpack recovered top tree
-	OrderedTree<TreeNode,TreeEdge> recoveredTree;
+	OrderedTree<TreeNode, TreeEdge> recoveredTree;
 	Labels<string> newLabels(labels.numKeys());
-	TopTreeUnpacker<OrderedTree<TreeNode,TreeEdge>> unpacker(recoveredTopTree, recoveredTree, newLabels);
+	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>> unpacker(recoveredTopTree, recoveredTree, newLabels);
 	unpacker.unpack();
 	cout << "Unpacked recovered top tree in " << timer.getAndReset() << "ms: " << recoveredTree.summary() << endl;
 
-	XmlWriter<OrderedTree<TreeNode,TreeEdge>> unpackedWriter(recoveredTree, newLabels);
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>> unpackedWriter(recoveredTree, newLabels);
 	unpackedWriter.write(outputfolder + "/unpacked.xml");
 	cout << "Wrote recovered tree in " << timer.getAndReset() << "ms" << endl;
 

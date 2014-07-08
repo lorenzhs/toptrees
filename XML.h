@@ -18,12 +18,12 @@ using std::flush;
 using std::string;
 using std::vector;
 
-template<typename TreeType>
+template <typename TreeType>
 class XmlParser {
 public:
-	// TODO figure out if we can keep the char pointers instead of converting them to string
-	// this currently uses more than half of the parsing time
-	XmlParser(const string& fn, TreeType &t, Labels<string> &l): filename(fn), tree(t), labels(l) {}
+	// TODO figure out if we can keep the char pointers instead of converting them
+	// to string, this currently uses more than half of the parsing time
+	XmlParser(const string &fn, TreeType &t, Labels<string> &l) : filename(fn), tree(t), labels(l) {}
 
 	void parse(const bool verbose = true) {
 		if (verbose) cout << "Reading " << filename << "… " << flush;
@@ -34,7 +34,7 @@ public:
 		if (verbose) cout << " " << timer.getAndReset() << "ms; parsing… " << flush;
 
 		xml.parse<rapidxml::parse_no_data_nodes>(file.data());
-		rapidxml::xml_node<>* root = xml.first_node();
+		rapidxml::xml_node<> *root = xml.first_node();
 		if (verbose) cout << timer.getAndReset() << "ms; building tree… " << flush;
 
 		int rootId = tree.addNode();
@@ -46,8 +46,8 @@ public:
 	}
 
 private:
-	void parseStructure(rapidxml::xml_node<>* node, int id) {
-		rapidxml::xml_node<>* child = node->first_node();
+	void parseStructure(rapidxml::xml_node<> *node, int id) {
+		rapidxml::xml_node<> *child = node->first_node();
 		int numChildren(0), childId;
 		while (child != NULL) {
 			numChildren++;
@@ -71,13 +71,13 @@ private:
 	Labels<string> &labels;
 };
 
-template<typename TreeType>
+template <typename TreeType>
 class XmlWriter {};
 
-template<>
+template <>
 class XmlWriter<TopTree> {
 public:
-	XmlWriter(TopTree &tree): tree(tree) {}
+	XmlWriter(TopTree &tree) : tree(tree) {}
 
 	void write(const string &filename) {
 		std::ofstream out(filename.c_str());
@@ -92,7 +92,7 @@ public:
 private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
 		const Cluster &node = tree.clusters[nodeId];
-		const string& label(node.label != NULL ? *node.label : std::to_string(node.mergeType));
+		const string &label(node.label != NULL ? *node.label : std::to_string(node.mergeType));
 		for (int i = 0; i < depth; ++i) out << " ";
 		out << "<" << label << ">";
 
@@ -116,10 +116,10 @@ private:
 	TopTree &tree;
 };
 
-template<typename NodeType, typename EdgeType>
+template <typename NodeType, typename EdgeType>
 class XmlWriter<OrderedTree<NodeType, EdgeType>> {
 public:
-	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<string> &labels): tree(tree), labels(labels) {}
+	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<string> &labels) : tree(tree), labels(labels) {}
 
 	void write(const string &filename) {
 		std::ofstream out(filename.c_str());
