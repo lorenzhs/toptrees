@@ -20,12 +20,12 @@ struct Labels {
 		}
 
 		typename std::unordered_map<Value, int>::iterator it = values.find(value);
-    	if (it == values.end()) {
-       		it = values.insert(typename std::unordered_map<Value, int>::value_type(value, (int)values.size())).first;
-        	valueIndex.push_back(&it->first);
-    	}
+		if (it == values.end()) {
+			it = values.insert(typename std::unordered_map<Value, int>::value_type(value, (int)values.size())).first;
+			valueIndex.push_back(&it->first);
+		}
 
-    	keys[id] = it->second;
+		keys[id] = it->second;
 	}
 
 	int size() const {
