@@ -43,8 +43,8 @@ public:
 	}
 
 	template<typename T>
-	void inPostOrder(const function<T (const int, const T, const T)> &callback) {
-		traverseDagPostOrder(nodes.size() - 1, callback);
+	T inPostOrder(const function<T (const int, const T, const T)> &callback) {
+		return traverseDagPostOrder(nodes.size() - 1, callback);
 	}
 
 	template<typename T>

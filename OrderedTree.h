@@ -1,10 +1,13 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <functional>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <utility>
+#include <list>
 #include <vector>
 
 #include "Common.h"
@@ -14,7 +17,9 @@ using std::cout;
 using std::endl;
 using std::function;
 using std::flush;
+using std::list;
 using std::ostream;
+using std::pair;
 using std::string;
 using std::stringstream;
 using std::vector;
@@ -37,11 +42,17 @@ public:
 	EdgeType* firstEdge(const int u) {
 		return edges.data() + nodes[u].firstEdgeIndex;
 	}
+	const EdgeType* firstEdge(const int u) const {
+		return edges.data() + nodes[u].firstEdgeIndex;
+	}
 
 	EdgeType* lastEdge() {
 		return edges.data() + _numEdges - 1;
 	}
 	EdgeType* lastEdge(const int u) {
+		return edges.data() + nodes[u].lastEdgeIndex;
+	}
+	const EdgeType* lastEdge(const int u) const {
 		return edges.data() + nodes[u].lastEdgeIndex;
 	}
 
@@ -489,6 +500,55 @@ public:
 			node.lastEdgeIndex = freeEdgeId - 1;
 		}
 		if (verbose) cout << "Inplace compaction moved " << count << " edges (" << (count * 100.0 / _numEdges) << "%) in " << timer.elapsedMillis() << "ms" << endl;
+	}
+
+	template<typename T>
+	const T inPostOrder(const function<const T (const int, const list<T>&)> &callback) const {
+		return traverseTreePostOrder(0, callback);
+	}
+
+	template<typename T>
+	const T foldLeftPostOrder(const function<const T (const T)> &callback, const function<const T(const T, const T)> &fold, const T initial) const {
+		return traverseFoldLeftPostOrder(0, callback, fold, initial);
+	}
+
+	// Statistics
+	template<typename T>
+	const T traverseTreePostOrder(const int nodeId, const function<const T (const int, const list<T>&)> &callback) const {
+		assert (0 <= nodeId && nodeId < _numNodes);
+		list<T> results;
+		for (const EdgeType* edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
+			results.push_back(traverseTreePostOrder(edge->headNode, callback));
+		}
+		return callback(nodeId, results);
+	}
+
+	template<typename T>
+	const T traverseFoldLeftPostOrder(const int nodeId, const function<const T (const T)> &callback, const function<const T(const T, const T)> &fold, const T initial) const {
+		assert (0 <= nodeId && nodeId < _numNodes);
+		T last(initial);
+		for (const EdgeType* edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
+			last = fold(last, traverseFoldLeftPostOrder(edge->headNode, callback, fold, initial));
+		}
+		return callback(last);
+	}
+
+	int height() {
+		return foldLeftPostOrder<int>([](const int depth) {
+			return depth + 1;
+		}, [](const int p1, const int p2) {
+			return std::max(p1, p2);
+		}, 0);
+	}
+
+	double avgDepth() {
+		typedef pair<int, int> P;
+		P countAndSum = foldLeftPostOrder<P>([](const P countAndSum) {
+			return P(countAndSum.first + 1, countAndSum.second + countAndSum.first);
+		}, [](const P p1, const P p2) {
+			return P(p1.first + p2.first, p1.second + p2.second);
+		}, P(1, 1));
+		return (countAndSum.second * 1.0) / countAndSum.first;
 	}
 
 protected:

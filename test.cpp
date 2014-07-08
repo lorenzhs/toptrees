@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 	XmlParser<OrderedTree<TreeNode,TreeEdge>> xml(filename, t, labels);
 	xml.parse();
 
-	cout << t.summary() << endl;
+	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
 	TopTree topTree(t._numNodes, labels);
 	vector<int> nodeIds(t._numNodes);
