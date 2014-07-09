@@ -37,7 +37,7 @@ public:
 		selectionSampling(sequence, numNodes, 2*numNodes);
 		result.assign(numNodes * 2, false);
 
-		phi(sequence.cbegin(), sequence.cend(), result.begin());
+		phi<vector<bool>>(sequence.cbegin(), sequence.cend(), result.begin());
 
 		assert(isWellFormed<vector<bool>>(result.begin(), result.end()));
 	}
@@ -45,24 +45,26 @@ public:
 private:
 	// transform a balanced word into a well-formed balanced word. Algorithm from
 	// Atkinson, Michael D., and J-R. Sack. "Generating binary trees at random." Information Processing Letters 41.1 (1992): 21-23.
-	vector<bool>::iterator phi(vector<bool>::const_iterator begin, vector<bool>::const_iterator end, vector<bool>::iterator outIt) {
+	template<typename T>
+	static typename T::iterator phi(typename T::const_iterator begin, typename T::const_iterator end, typename T::iterator outIt) {
 		if (end <= begin) {
 			return outIt;
 		}
 
-		vector<bool>::const_iterator index = reducibleIndex<vector<bool>>(begin, end);
+		typename T::const_iterator index = reducibleIndex<T>(begin, end);
 
-		if (isWellFormed<vector<bool>>(begin, index)) {
+		if (isWellFormed<T>(begin, index)) {
 			outIt = std::copy(begin, index, outIt);
-			outIt = phi(index, end, outIt);
+			outIt = phi<T>(index, end, outIt);
 		} else {
 			*outIt = 1;
 			++outIt;
-			outIt = phi(index, end, outIt);
+			outIt = phi<T>(index, end, outIt);
 			*outIt = 0;
 			++outIt;
 
 			++begin;
+			--index;
 			while(begin != index) {
 				*outIt = !*begin;
 				++outIt; ++begin;
@@ -73,7 +75,7 @@ private:
 	}
 
 	// is [begin, end) balanced, i.e. same number of opening and closing parentheses?
-	bool isBalanced(vector<bool>::const_iterator begin, vector<bool>::const_iterator end) {
+	static bool isBalanced(vector<bool>::const_iterator begin, vector<bool>::const_iterator end) {
 		// an odd-length sequence can't be balanced
 		if ((end - begin) % 2 == 1) {
 			return false;
@@ -87,7 +89,7 @@ private:
 
 	// is [begin, end) well-formed?
 	template <typename T>
-	bool isWellFormed(typename T::const_iterator begin, typename T::const_iterator end) {
+	static bool isWellFormed(typename T::const_iterator begin, typename T::const_iterator end) {
 		int balance(0);
 		for (typename T::const_iterator it = begin; it < end; ++it) {
 			balance += *it ? 1 : -1;
@@ -99,7 +101,7 @@ private:
 
 	// separate [begin, end) into [begin, result) (irreducible) and [result, end)
 	template <typename T>
-	typename T::const_iterator reducibleIndex(typename T::const_iterator begin, typename T::const_iterator end) {
+	static typename T::const_iterator reducibleIndex(typename T::const_iterator begin, typename T::const_iterator end) {
 		assert(isBalanced(begin, end));
 		int delta(0);
 		for (typename T::const_iterator it = begin; it < end; ++it) {
