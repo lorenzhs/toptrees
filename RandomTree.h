@@ -42,7 +42,45 @@ public:
 		assert(isWellFormed<vector<bool>>(result.begin(), result.end()));
 	}
 
+	template <typename TreeType>
+	void generateTree(TreeType &tree, const int numNodes, const int seed = 12345678, const bool verbose = false) {
+		vector<bool> bitstring;
+		// numNodes - 1 because the root is not included
+		randomBalancedParenthesisBitstring(bitstring, numNodes - 1, seed);
+
+		if (verbose) {
+			cout << "Bitstring: (";
+			for (bool b: bitstring) {
+				cout << (b ? "(" : ")");
+			}
+			cout << ")" << endl;
+		}
+
+		const int root = tree.addNode();
+		createTree<vector<bool>>(bitstring.cbegin(), bitstring.cend(), root, tree);
+		tree.compact(false);
+	}
+
 private:
+	template <typename T, typename TreeType>
+	static typename T::const_iterator createTree(typename T::const_iterator begin, typename T::const_iterator end, const int parentId, TreeType &tree) {
+		if (*begin == false) {
+			return ++begin;
+		}
+		while (begin < end) {
+			if (*begin == true) {
+				int nodeId = tree.addNode();
+				tree.addEdge(parentId, nodeId);
+				++begin;
+				begin = createTree<T, TreeType>(begin, end, nodeId, tree);
+			} else {
+				++begin;
+				break;
+			}
+		}
+		return begin;
+	}
+
 	// transform a balanced word into a well-formed balanced word. Algorithm from
 	// Atkinson, Michael D., and J-R. Sack. "Generating binary trees at random." Information Processing Letters 41.1 (1992): 21-23.
 	template<typename T>
