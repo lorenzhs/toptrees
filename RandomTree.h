@@ -38,6 +38,8 @@ public:
 		result.assign(numNodes * 2, false);
 
 		phi(sequence.cbegin(), sequence.cend(), result.begin());
+
+		assert(isWellFormed<vector<bool>>(result.begin(), result.end()));
 	}
 
 private:
