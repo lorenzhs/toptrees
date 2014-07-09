@@ -12,7 +12,7 @@ using std::vector;
 
 class RandomTreeGenerator {
 public:
-	RandomTreeGenerator(int seed = 12345678): generator(seed), distribution(0.0, 1.0) {}
+	RandomTreeGenerator(): generator(), distribution(0.0, 1.0) {}
 
 	// Knuth random sampling algorithm from page 137 of
 	// D.E. Knuth, Semi-numerical Algorithms, The Art of Computer Programming, Vol. 2 (Addision-Wesley, Reading, MA, 2nd ed., 1981).
@@ -30,7 +30,9 @@ public:
 		}
 	}
 
-	void randomBalancedParenthesisBitstring(vector<bool> &result, const int numNodes) {
+	void randomBalancedParenthesisBitstring(vector<bool> &result, const int numNodes, const int seed = 12345678) {
+		generator.seed(seed);
+
 		vector<bool> sequence;
 		selectionSampling(sequence, numNodes, 2*numNodes);
 		result.assign(numNodes * 2, false);

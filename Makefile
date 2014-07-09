@@ -5,7 +5,7 @@ BASEFLAGS=-std=c++11 -Wall -Wextra -Werror
 FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 
-EXECS=test testTT
+EXECS=test testTT random
 #EXECS
 
 all: $(EXECS)
@@ -29,6 +29,15 @@ testTTDebug:
 
 testTTNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) -o testTT testTT.cpp
+
+random:
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp
+
+randomDebug:
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp
+
+randomNoDebug:
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o random$(EXRTA) random.cpp
 
 #RULES
 
