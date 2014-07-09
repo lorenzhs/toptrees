@@ -39,7 +39,7 @@ struct Cluster {
 };
 
 struct TopTree {
-	TopTree(const int numLeaves, Labels<string> &labels) : clusters(numLeaves), numLeaves(numLeaves) {
+	TopTree(const int numLeaves, LabelsT<string> &labels) : clusters(numLeaves), numLeaves(numLeaves) {
 		for (int i = 0; i < numLeaves; ++i) {
 			clusters[i].label = &labels[i];
 		}
@@ -131,7 +131,7 @@ struct TopTree {
 template <typename TreeType>
 class TopTreeUnpacker {
 public:
-	TopTreeUnpacker(TopTree &topTree, TreeType &tree, Labels<string> &labels)
+	TopTreeUnpacker(TopTree &topTree, TreeType &tree, LabelsT<string> &labels)
 		: topTree(topTree), tree(tree), labels(labels) {
 		assert(tree._numNodes == 0);
 	}
@@ -240,6 +240,6 @@ private:
 
 	TopTree &topTree;
 	TreeType &tree;
-	Labels<string> &labels;
+	LabelsT<string> &labels;
 	const int extraSpace = 50;
 };

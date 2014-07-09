@@ -7,8 +7,25 @@
 // http://stackoverflow.com/a/2562117
 // but extends it to indexing by original id
 template <typename Value>
-struct Labels {
-	Labels(int sizeHint = 0) : keys(sizeHint), valueIndex(), values() {}
+struct LabelsT {
+	LabelsT(Value retval): retval(retval) {}
+
+	virtual const Value &operator[](int index) const {
+		(void)index;
+		return retval;
+	};
+
+	virtual void set(int id, const Value &value) {
+		(void)id;
+		(void)value;
+	};
+
+	Value retval;
+};
+
+template <typename Value>
+struct Labels : LabelsT<Value> {
+	Labels(int sizeHint = 0) : LabelsT<Value>(""), keys(sizeHint), valueIndex(), values() {}
 
 	const Value &operator[](int index) const {
 		return *valueIndex[keys[index]];

@@ -11,6 +11,12 @@
 
 #include "DotGraphExporter.h"
 
+#include "TopTree.h"
+#include "Labels.h"
+
+#include "BinaryDag.h"
+#include "DagBuilder.h"
+
 using std::cout;
 using std::endl;
 
@@ -36,4 +42,28 @@ int main(int argc, char** argv) {
 		DotGraphExporter::drawSvg("/tmp/tree.dot", "/tmp/tree.svg");
 		cout << "Graphed DOT file in " << timer.getAndReset() << "ms" << endl;
 	}
+
+	LabelsT<string> labels("foo");
+	TopTree topTree(tree._numNodes, labels);
+	vector<int> nodeIds(tree._numNodes);
+	for (int i = 0; i < tree._numNodes; ++i) {
+		nodeIds[i] = i;
+	}
+
+	timer.reset();
+	tree.doMerges([&](const int u, const int v, const int n,
+				   const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); });
+	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
+		 << " clusters (" << topTree.clusters.size() - tree._numNodes << " non-leaves)" << endl;
+
+	BinaryDag<string> dag;
+	DagBuilder<string> builder(topTree, dag);
+	builder.createDag();
+
+	const int edges = dag.countEdges();
+	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const double ratio = ((int)(1000 / percentage)) / 10.0;
+	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
+		 << "% of original tree, " << ratio << ":1)" << endl
+		 << "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
 }
