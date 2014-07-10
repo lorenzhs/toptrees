@@ -3,9 +3,11 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Common.h"
+
 template <typename Value>
 struct LabelsT {
-	virtual const Value &operator[](int index) const = 0;
+	virtual const Value &operator[](uint index) const = 0;
 	virtual void set(int id, const Value &value) = 0;
 };
 
@@ -13,7 +15,7 @@ template <typename Value>
 struct FakeLabels : LabelsT<Value> {
 	FakeLabels(Value retval): retval(retval) {}
 
-	const Value &operator[](int index) const {
+	const Value &operator[](uint index) const {
 		(void)index;
 		return retval;
 	};
@@ -27,17 +29,19 @@ struct FakeLabels : LabelsT<Value> {
 };
 
 struct IdLabels : LabelsT<int> {
-	IdLabels(int modulo) : LabelsT<int>(), modulo(modulo), pointlessInts(modulo) {
-		for (int i = 0; i < modulo; ++i) {
+	IdLabels(uint modulo) : LabelsT<int>(), modulo(modulo), pointlessInts(modulo) {
+		for (uint i = 0; i < modulo; ++i) {
 			pointlessInts[i] = i;
 		}
 	}
 
-	const int &operator[](int index) const {
+	const int &operator[](uint index) const {
 		// a little bit of hashing
-		index = index + 0x9e3779b9 + (index << 6) + (index >> 2);
-		index = index % modulo + modulo;  // ensure non-negativity
-		return pointlessInts[index % modulo];
+		// TODO: something that makes this uniformly at random
+		uint res(0);
+		boost_hash_combine(res, index);
+		res = res % modulo + modulo;  // ensure non-negativity
+		return pointlessInts[res % modulo];
 	}
 
 	void set(int id, const int &value) {
@@ -45,7 +49,7 @@ struct IdLabels : LabelsT<int> {
 		(void)value;
 	}
 
-	int modulo;
+	uint modulo;
 	std::vector<int> pointlessInts;
 };
 
@@ -55,7 +59,7 @@ template <typename Value>
 struct Labels : LabelsT<Value> {
 	Labels(int sizeHint = 0) : LabelsT<Value>(), keys(sizeHint), valueIndex(), values() {}
 
-	const Value &operator[](int index) const {
+	const Value &operator[](uint index) const {
 		return *valueIndex[keys[index]];
 	}
 

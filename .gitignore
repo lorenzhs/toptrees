@@ -3,6 +3,7 @@
 *.ii
 *.s
 callgrind.out.*
+perf.data*
 
 test
 test-*
@@ -15,3 +16,4 @@ testTT-*
 *.txt
 *.log
 random
+randomEval

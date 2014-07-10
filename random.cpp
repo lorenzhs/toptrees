@@ -27,7 +27,8 @@ int main(int argc, char** argv) {
 	OrderedTree<TreeNode, TreeEdge> tree;
 
 	Timer timer;
-	rand.generateTree(tree, size, seed, (size < 1000));
+	rand.seed(seed);
+	rand.generateTree(tree, size, (size < 1000));
 	cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 
 	if (size <= 30)

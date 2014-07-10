@@ -4,6 +4,7 @@
 #include <functional>
 #include <unordered_map>
 
+#include "Common.h"
 #include "BinaryDag.h"
 #include "TopTree.h"
 
@@ -26,16 +27,6 @@ struct SubtreeEquality {
 
 template <typename DataType>
 struct SubtreeHasher {
-	// adapted from: http://www.boost.org/doc/libs/1_55_0/doc/html/hash/reference.html#boost.hash_combine
-	// the magic number is the binary extension of the golden ratio
-	// the idea is that every bit is random. A more detailed explanation is available at
-	// http://stackoverflow.com/questions/4948780/magic-number-in-boosthash-combine
-	template <typename T>
-	static void boost_hash_combine(uint &seed, const T &val) {
-		std::hash<T> hasher;
-		seed ^= hasher(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	}
-
 	uint operator()(const DagNode<DataType> &node) const {
 		uint seed(0);
 		if (node.label != NULL)

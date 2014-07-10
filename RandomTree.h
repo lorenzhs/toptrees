@@ -14,6 +14,10 @@ class RandomTreeGenerator {
 public:
 	RandomTreeGenerator(): generator(), distribution(0.0, 1.0) {}
 
+	void seed(uint seed) {
+		generator.seed(seed);
+	}
+
 	// Knuth random sampling algorithm from page 137 of
 	// D.E. Knuth, Semi-numerical Algorithms, The Art of Computer Programming, Vol. 2 (Addision-Wesley, Reading, MA, 2nd ed., 1981).
 	void selectionSampling(vector<bool> &result, const int n, const int N) {
@@ -30,9 +34,7 @@ public:
 		}
 	}
 
-	void randomBalancedParenthesisBitstring(vector<bool> &result, const int numNodes, const int seed = 12345678) {
-		generator.seed(seed);
-
+	void randomBalancedParenthesisBitstring(vector<bool> &result, const int numNodes) {
 		vector<bool> sequence;
 		selectionSampling(sequence, numNodes, 2*numNodes);
 		result.assign(numNodes * 2, false);
@@ -43,10 +45,10 @@ public:
 	}
 
 	template <typename TreeType>
-	void generateTree(TreeType &tree, const int numNodes, const int seed = 12345678, const bool verbose = false) {
+	void generateTree(TreeType &tree, const int numNodes, const bool verbose = false) {
 		vector<bool> bitstring;
 		// numNodes - 1 because the root is not included
-		randomBalancedParenthesisBitstring(bitstring, numNodes - 1, seed);
+		randomBalancedParenthesisBitstring(bitstring, numNodes - 1);
 
 		if (verbose) {
 			cout << "Bitstring: (";
