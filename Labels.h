@@ -5,14 +5,20 @@
 
 template <typename Value>
 struct LabelsT {
-	LabelsT(Value retval): retval(retval) {}
+	virtual const Value &operator[](int index) const = 0;
+	virtual void set(int id, const Value &value) = 0;
+};
 
-	virtual const Value &operator[](int index) const {
+template <typename Value>
+struct FakeLabels : LabelsT<Value> {
+	FakeLabels(Value retval): retval(retval) {}
+
+	const Value &operator[](int index) const {
 		(void)index;
 		return retval;
 	};
 
-	virtual void set(int id, const Value &value) {
+	void set(int id, const Value &value) {
 		(void)id;
 		(void)value;
 	};
@@ -21,7 +27,7 @@ struct LabelsT {
 };
 
 struct IdLabels : LabelsT<int> {
-	IdLabels(int modulo) : LabelsT<int>(0), modulo(modulo), pointlessInts(modulo) {
+	IdLabels(int modulo) : LabelsT<int>(), modulo(modulo), pointlessInts(modulo) {
 		for (int i = 0; i < modulo; ++i) {
 			pointlessInts[i] = i;
 		}
@@ -30,7 +36,13 @@ struct IdLabels : LabelsT<int> {
 	const int &operator[](int index) const {
 		// a little bit of hashing
 		index = index + 0x9e3779b9 + (index << 6) + (index >> 2);
+		index = index % modulo + modulo;  // ensure non-negativity
 		return pointlessInts[index % modulo];
+	}
+
+	void set(int id, const int &value) {
+		(void)id;
+		(void)value;
 	}
 
 	int modulo;
@@ -41,7 +53,7 @@ struct IdLabels : LabelsT<int> {
 // http://stackoverflow.com/a/2562117
 template <typename Value>
 struct Labels : LabelsT<Value> {
-	Labels(int sizeHint = 0) : LabelsT<Value>(""), keys(sizeHint), valueIndex(), values() {}
+	Labels(int sizeHint = 0) : LabelsT<Value>(), keys(sizeHint), valueIndex(), values() {}
 
 	const Value &operator[](int index) const {
 		return *valueIndex[keys[index]];

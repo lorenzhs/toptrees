@@ -35,7 +35,7 @@ struct Cluster {
 
 	friend ostream &operator<<(ostream &os, const Cluster &cluster) {
 		return os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; "
-				  << (cluster.label == NULL ? "NULL" : *cluster.label) << ")";
+				  << (cluster.label == NULL ? "NULL" : std::to_string(*cluster.label)) << ")";
 	}
 };
 
