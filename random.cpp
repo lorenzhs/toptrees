@@ -20,7 +20,7 @@
 using std::cout;
 using std::endl;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	int size = argc > 1 ? std::stoi(argv[1]) : 10;
 	int seed = argc > 2 ? std::stoi(argv[2]) : 12345678;
 	RandomTreeGenerator rand;
@@ -31,8 +31,7 @@ int main(int argc, char** argv) {
 	rand.generateTree(tree, size, (size < 1000));
 	cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 
-	if (size <= 30)
-		cout << tree << endl;
+	if (size <= 30) cout << tree << endl;
 
 	if (size <= 10000) {
 		DotGraphExporter::template write<OrderedTree<TreeNode, TreeEdge>>(tree, "/tmp/tree.dot");
@@ -53,7 +52,7 @@ int main(int argc, char** argv) {
 
 	timer.reset();
 	tree.doMerges([&](const int u, const int v, const int n,
-				   const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); });
+					  const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); });
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
 		 << " clusters (" << topTree.clusters.size() - tree._numNodes << " non-leaves)" << endl;
 

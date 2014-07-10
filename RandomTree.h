@@ -12,7 +12,7 @@ using std::vector;
 
 class RandomTreeGenerator {
 public:
-	RandomTreeGenerator(): generator(), distribution(0.0, 1.0) {}
+	RandomTreeGenerator() : generator(), distribution(0.0, 1.0) {}
 
 	void seed(uint seed) {
 		generator.seed(seed);
@@ -36,7 +36,7 @@ public:
 
 	void randomBalancedParenthesisBitstring(vector<bool> &result, const int numNodes) {
 		vector<bool> sequence;
-		selectionSampling(sequence, numNodes, 2*numNodes);
+		selectionSampling(sequence, numNodes, 2 * numNodes);
 		result.assign(numNodes * 2, false);
 
 		phi<vector<bool>>(sequence.cbegin(), sequence.cend(), result.begin());
@@ -52,7 +52,7 @@ public:
 
 		if (verbose) {
 			cout << "Bitstring: (";
-			for (bool b: bitstring) {
+			for (bool b : bitstring) {
 				cout << (b ? "(" : ")");
 			}
 			cout << ")" << endl;
@@ -65,7 +65,8 @@ public:
 
 private:
 	template <typename T, typename TreeType>
-	static typename T::const_iterator createTree(typename T::const_iterator begin, typename T::const_iterator end, const int parentId, TreeType &tree) {
+	static typename T::const_iterator createTree(typename T::const_iterator begin, typename T::const_iterator end,
+												 const int parentId, TreeType &tree) {
 		if (*begin == false) {
 			return ++begin;
 		}
@@ -85,8 +86,9 @@ private:
 
 	// transform a balanced word into a well-formed balanced word. Algorithm from
 	// Atkinson, Michael D., and J-R. Sack. "Generating binary trees at random." Information Processing Letters 41.1 (1992): 21-23.
-	template<typename T>
-	static typename T::iterator phi(typename T::const_iterator begin, typename T::const_iterator end, typename T::iterator outIt) {
+	template <typename T>
+	static typename T::iterator phi(typename T::const_iterator begin, typename T::const_iterator end,
+									typename T::iterator outIt) {
 		if (end <= begin) {
 			return outIt;
 		}
@@ -105,7 +107,7 @@ private:
 
 			++begin;
 			--index;
-			while(begin != index) {
+			while (begin != index) {
 				*outIt = !*begin;
 				++outIt; ++begin;
 			}
@@ -133,8 +135,7 @@ private:
 		int balance(0);
 		for (typename T::const_iterator it = begin; it < end; ++it) {
 			balance += *it ? 1 : -1;
-			if (balance < 0)
-				return false;
+			if (balance < 0) return false;
 		}
 		return true;
 	}

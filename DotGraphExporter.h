@@ -26,6 +26,7 @@ struct DotGraphExporter {
 		s << "dot -Tsvg " << dotfile << " -o " << outfilename;
 		system(s.str().c_str());
 	}
+
 private:
 	template <typename TreeType>
 	static void writeNode(ofstream &out, const TreeType &tree, const int nodeId) {

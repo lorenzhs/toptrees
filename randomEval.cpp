@@ -24,7 +24,7 @@
 using std::cout;
 using std::endl;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	int size = argc > 1 ? std::stoi(argv[1]) : 1000;
 	int numIterations = argc > 2 ? std::stoi(argv[2]) : 100;
 	uint numLabels = argc > 3 ? std::stoi(argv[3]) : 1;
@@ -61,10 +61,13 @@ int main(int argc, char** argv) {
 		TopTree<int> topTree(tree._numNodes, labels);
 
 		tree.doMerges([&](const int u, const int v, const int n,
-					   const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); }, verbose);
+						  const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); },
+					  verbose);
 		debugInfo.mergeDuration = timer.elapsedMillis();
-		if (verbose) cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
-			 << " clusters (" << topTree.clusters.size() - tree._numNodes << " non-leaves)" << endl;
+		if (verbose)
+			cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "
+				 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
+				 << " non-leaves)" << endl;
 
 		BinaryDag<int> dag;
 		DagBuilder<int> builder(topTree, dag);
@@ -74,9 +77,10 @@ int main(int argc, char** argv) {
 		const double percentage = (edges * 100.0) / topTree.numLeaves;
 		const double ratio = ((int)(1000 / percentage)) / 10.0;
 		debugInfo.dagDuration = timer.elapsedMillis();
-		if (verbose) cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-			 << "% of original tree, " << ratio << ":1)" << endl
-		 	<< "Top dag construction took in " << timer.elapsedMillis() << "ms" << endl;
+		if (verbose)
+			cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
+				 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took in "
+				 << timer.elapsedMillis() << "ms" << endl;
 
 		debugInfo.numDagEdges = edges;
 		debugInfo.numDagNodes = dag.nodes.size() - 1;

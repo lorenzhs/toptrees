@@ -13,7 +13,7 @@ struct LabelsT {
 
 template <typename Value>
 struct FakeLabels : LabelsT<Value> {
-	FakeLabels(Value retval): retval(retval) {}
+	FakeLabels(Value retval) : retval(retval) {}
 
 	const Value &operator[](uint index) const {
 		(void)index;
@@ -40,7 +40,7 @@ struct IdLabels : LabelsT<int> {
 		// TODO: something that makes this uniformly at random
 		uint res(0);
 		boost_hash_combine(res, index);
-		res = res % modulo + modulo;  // ensure non-negativity
+		res = res % modulo + modulo; // ensure non-negativity
 		return pointlessInts[res % modulo];
 	}
 
