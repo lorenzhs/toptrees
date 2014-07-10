@@ -15,6 +15,10 @@ struct DebugInfo {
 
 	DebugInfo() : generationDuration(0.0), mergeDuration(0.0), dagDuration(0.0), numDagEdges(0), numDagNodes(0), height(0) {}
 
+	double totalDuration() const {
+		return generationDuration + mergeDuration + dagDuration;
+	}
+
 	void add(const DebugInfo &other) {
 		generationDuration += other.generationDuration;
 		mergeDuration += other.mergeDuration;
@@ -52,7 +56,8 @@ struct DebugInfo {
 	}
 
 	void dump(std::ostream &os) const {
-		os << generationDuration << "\t"
+		os << totalDuration() << "\t"
+		   << generationDuration << "\t"
 		   << mergeDuration << "\t"
 		   << dagDuration << "\t"
 		   << numDagEdges << "\t"
@@ -62,7 +67,8 @@ struct DebugInfo {
 	}
 
 	static void dumpHeader(std::ostream &os) {
-		os << "generationDuration" << "\t"
+		os << "totalDuration" << "\t"
+		   << "generationDuration" << "\t"
 		   << "mergeDuration" << "\t"
 		   << "dagDuration" << "\t"
 		   << "numDagEdges" << "\t"
@@ -95,6 +101,7 @@ struct Statistics {
 	void dump(std::ostream &os) {
 		os << std::fixed << std::setprecision(2);
 		os << std::endl << "Statistics:" << std::endl << std::endl
+		   << "Total duration p. tree: " << avg.totalDuration() << "ms (avg), " << min.totalDuration() << "ms (min), " << max.totalDuration() << "ms (max)" << std::endl
 		   << "Random tree generation: " << avg.generationDuration << "ms (avg), " << min.generationDuration << "ms (min), " << max.generationDuration << "ms (max)" << std::endl
 		   << "Top Tree construction:  " << avg.mergeDuration << "ms (avg), " << min.mergeDuration << "ms (min), " << max.mergeDuration << "ms (max)" << std::endl
 		   << "Top DAG compression:    " << avg.dagDuration << "ms (avg), " << min.dagDuration << "ms (min), " << max.dagDuration << "ms (max)" << std::endl
