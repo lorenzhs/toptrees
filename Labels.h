@@ -21,7 +21,7 @@ struct LabelsT {
 };
 
 struct IdLabels : LabelsT<int> {
-	IdLabels(int modulo = 1) : LabelsT<int>(0), modulo(modulo), pointlessInts(modulo) {
+	IdLabels(int modulo) : LabelsT<int>(0), modulo(modulo), pointlessInts(modulo) {
 		for (int i = 0; i < modulo; ++i) {
 			pointlessInts[i] = i;
 		}
