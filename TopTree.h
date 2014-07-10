@@ -15,6 +15,7 @@ using std::ostream;
 using std::string;
 using std::vector;
 
+template <typename DataType>
 struct Cluster {
 	Cluster()
 		: mergeType(NO_MERGE),
@@ -30,7 +31,7 @@ struct Cluster {
 	}
 	MergeType mergeType;
 	int left, right /*, rLeft, lRight, rRight, height, size, distTBleft, distTBright*/;
-	const string *label;
+	const DataType *label;
 
 	friend ostream &operator<<(ostream &os, const Cluster &cluster) {
 		return os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; "
@@ -38,8 +39,9 @@ struct Cluster {
 	}
 };
 
+template <typename DataType>
 struct TopTree {
-	TopTree(const int numLeaves, LabelsT<string> &labels) : clusters(numLeaves), numLeaves(numLeaves) {
+	TopTree(const int numLeaves, LabelsT<DataType> &labels) : clusters(numLeaves), numLeaves(numLeaves) {
 		for (int i = 0; i < numLeaves; ++i) {
 			clusters[i].label = &labels[i];
 		}
@@ -48,7 +50,7 @@ struct TopTree {
 	TopTree(const int numLeaves) : clusters(numLeaves), numLeaves(numLeaves) {}
 
 	int addCluster(const int left, const int right, const MergeType mergeType) {
-		clusters.push_back(Cluster(left, right, mergeType));
+		clusters.push_back(Cluster<DataType>(left, right, mergeType));
 		return clusters.size() - 1;
 	}
 
@@ -57,7 +59,7 @@ struct TopTree {
 	}
 
 	void traverseTreePostOrder(const int clusterId, const function<void(const int)> &callback) {
-		Cluster &cluster = clusters[clusterId];
+		Cluster<DataType> &cluster = clusters[clusterId];
 		if (cluster.left != -1) {
 			traverseTreePostOrder(cluster.left, callback);
 		}
@@ -67,7 +69,7 @@ struct TopTree {
 		callback(clusterId);
 	}
 
-	bool isEqual(const TopTree &other) const {
+	bool isEqual(const TopTree<DataType> &other) const {
 		if (numLeaves != other.numLeaves || clusters.size() != other.clusters.size()) {
 			return false;
 		}
@@ -75,9 +77,9 @@ struct TopTree {
 		return nodesEqual(other, clusters.size() - 1, clusters.size() - 1);
 	}
 
-	bool nodesEqual(const TopTree &other, const int clusterId, const int otherClusterId) const {
-		const Cluster &cluster = clusters[clusterId];
-		const Cluster &otherCluster = other.clusters[otherClusterId];
+	bool nodesEqual(const TopTree<DataType> &other, const int clusterId, const int otherClusterId) const {
+		const Cluster<DataType> &cluster = clusters[clusterId];
+		const Cluster<DataType> &otherCluster = other.clusters[otherClusterId];
 		if ((cluster.label == NULL) != (otherCluster.label == NULL)) {
 			cout << "Difference in clusters " << clusterId << " / " << cluster << " and " << otherClusterId << " / "
 				 << otherCluster << " (label NULL)" << endl;
@@ -112,10 +114,10 @@ struct TopTree {
 		return true;
 	}
 
-	friend ostream &operator<<(ostream &os, const TopTree &toptree) {
+	friend ostream &operator<<(ostream &os, const TopTree<DataType> &toptree) {
 		os << "Top tree with " << toptree.clusters.size() << " clusters. Non-leaves:" << endl;
 		uint count = 0;
-		for (const Cluster &cluster : toptree.clusters) {
+		for (const Cluster<DataType> &cluster : toptree.clusters) {
 			if (cluster.left >= 0) {
 				os << "\t" << count << ": " << cluster << endl;
 			}
@@ -124,14 +126,14 @@ struct TopTree {
 		return os;
 	}
 
-	vector<Cluster> clusters;
+	vector<Cluster<DataType>> clusters;
 	int numLeaves;
 };
 
-template <typename TreeType>
+template <typename TreeType, typename DataType>
 class TopTreeUnpacker {
 public:
-	TopTreeUnpacker(TopTree &topTree, TreeType &tree, LabelsT<string> &labels)
+	TopTreeUnpacker(TopTree<DataType> &topTree, TreeType &tree, LabelsT<DataType> &labels)
 		: topTree(topTree), tree(tree), labels(labels) {
 		assert(tree._numNodes == 0);
 	}
@@ -141,8 +143,8 @@ public:
 		assert(firstId == 0);
 		int rootClusterId = topTree.clusters.size() - 1;
 
-		Cluster &rootCluster = topTree.clusters[rootClusterId];
-		const string *label = topTree.clusters[rootCluster.left].label;
+		Cluster<DataType> &rootCluster = topTree.clusters[rootClusterId];
+		const DataType *label = topTree.clusters[rootCluster.left].label;
 		assert(label != NULL);
 		labels.set(0, *label);
 		unpackCluster(rootCluster.right, firstId);
@@ -154,13 +156,13 @@ private:
 	}
 
 	void handleLeaf(const int leafId) {
-		const string *label = topTree.clusters[leafId].label;
+		const DataType *label = topTree.clusters[leafId].label;
 		assert(label != NULL);
 		labels.set(leafId, *label);
 	}
 
 	int unpackCluster(const int clusterId, const int nodeId) {
-		const Cluster &cluster = topTree.clusters[clusterId];
+		const Cluster<DataType> &cluster = topTree.clusters[clusterId];
 		int leafId;
 		switch (cluster.mergeType) {
 		case VERT_NO_BBN:
@@ -187,7 +189,7 @@ private:
 	}
 
 	int unpackVertCluster(const int clusterId, const int nodeId) {
-		const Cluster &cluster = topTree.clusters[clusterId];
+		const Cluster<DataType> &cluster = topTree.clusters[clusterId];
 		int boundaryNode(nodeId);
 		if (isLeaf(cluster.left)) {
 			tree.addEdge(nodeId, cluster.left, extraSpace);
@@ -212,7 +214,7 @@ private:
 	}
 
 	int unpackHorzCluster(const int clusterId, const int nodeId) {
-		const Cluster &cluster = topTree.clusters[clusterId];
+		const Cluster<DataType> &cluster = topTree.clusters[clusterId];
 		int left, right;
 		if (isLeaf(cluster.left)) {
 			tree.addEdge(nodeId, cluster.left, extraSpace);
@@ -238,8 +240,8 @@ private:
 			return -1;
 	}
 
-	TopTree &topTree;
+	TopTree<DataType> &topTree;
 	TreeType &tree;
-	LabelsT<string> &labels;
+	LabelsT<DataType> &labels;
 	const int extraSpace = 50;
 };

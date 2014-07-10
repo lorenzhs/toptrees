@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
-	TopTree topTree(t._numNodes, labels);
+	TopTree<string> topTree(t._numNodes, labels);
 	vector<int> nodeIds(t._numNodes);
 	for (int i = 0; i < t._numNodes; ++i) {
 		nodeIds[i] = i;

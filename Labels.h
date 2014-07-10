@@ -3,9 +3,6 @@
 #include <vector>
 #include <unordered_map>
 
-// This data structure is based on the following anonymous StackOverflow post:
-// http://stackoverflow.com/a/2562117
-// but extends it to indexing by original id
 template <typename Value>
 struct LabelsT {
 	LabelsT(Value retval): retval(retval) {}
@@ -23,6 +20,25 @@ struct LabelsT {
 	Value retval;
 };
 
+struct IdLabels : LabelsT<int> {
+	IdLabels(int modulo = 1) : LabelsT<int>(0), modulo(modulo), pointlessInts(modulo) {
+		for (int i = 0; i < modulo; ++i) {
+			pointlessInts[i] = i;
+		}
+	}
+
+	const int &operator[](int index) const {
+		// a little bit of hashing
+		index = index + 0x9e3779b9 + (index << 6) + (index >> 2);
+		return pointlessInts[index % modulo];
+	}
+
+	int modulo;
+	std::vector<int> pointlessInts;
+};
+
+// This data structure is based on the following anonymous StackOverflow post:
+// http://stackoverflow.com/a/2562117
 template <typename Value>
 struct Labels : LabelsT<Value> {
 	Labels(int sizeHint = 0) : LabelsT<Value>(""), keys(sizeHint), valueIndex(), values() {}

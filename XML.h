@@ -74,10 +74,10 @@ private:
 template <typename TreeType>
 class XmlWriter {};
 
-template <>
-class XmlWriter<TopTree> {
+template <typename DataType>
+class XmlWriter<TopTree<DataType>> {
 public:
-	XmlWriter(TopTree &tree) : tree(tree) {}
+	XmlWriter(TopTree<DataType> &tree) : tree(tree) {}
 
 	void write(const string &filename) {
 		std::ofstream out(filename.c_str());
@@ -91,8 +91,8 @@ public:
 
 private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
-		const Cluster &node = tree.clusters[nodeId];
-		const string &label(node.label != NULL ? *node.label : std::to_string(node.mergeType));
+		const Cluster<DataType> &node = tree.clusters[nodeId];
+		const DataType &label(node.label != NULL ? *node.label : std::to_string(node.mergeType));
 		for (int i = 0; i < depth; ++i) out << " ";
 		out << "<" << label << ">";
 
@@ -113,7 +113,7 @@ private:
 		out << "</" << label << ">" << endl;
 	}
 
-	TopTree &tree;
+	TopTree<DataType> &tree;
 };
 
 template <typename NodeType, typename EdgeType>

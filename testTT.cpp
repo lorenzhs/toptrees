@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	cout << "Wrote orginial trimmed XML file in " << timer.getAndReset() << "ms: " << t.summary() << endl;
 
 	// Prepare for construction of top tree
-	TopTree topTree(t._numNodes, labels);
+	TopTree<string> topTree(t._numNodes, labels);
 	vector<int> nodeIds(t._numNodes);
 	for (int i = 0; i < t._numNodes; ++i) {
 		nodeIds[i] = i;
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 	cout << "Top DAG construction took in " << timer.getAndReset() << "ms" << endl;
 
 	// Unpack top DAG to recoveredTopTree
-	TopTree recoveredTopTree(t._numNodes);
+	TopTree<string> recoveredTopTree(t._numNodes);
 	BinaryDagUnpacker<string> dagUnpacker(dag, recoveredTopTree);
 	dagUnpacker.unpack();
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 	// unpack recovered top tree
 	OrderedTree<TreeNode, TreeEdge> recoveredTree;
 	Labels<string> newLabels(labels.numKeys());
-	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>> unpacker(recoveredTopTree, recoveredTree, newLabels);
+	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>, string> unpacker(recoveredTopTree, recoveredTree, newLabels);
 	unpacker.unpack();
 	cout << "Unpacked recovered top tree in " << timer.getAndReset() << "ms: " << recoveredTree.summary() << endl;
 

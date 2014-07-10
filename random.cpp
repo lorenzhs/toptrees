@@ -43,8 +43,8 @@ int main(int argc, char** argv) {
 		cout << "Graphed DOT file in " << timer.getAndReset() << "ms" << endl;
 	}
 
-	LabelsT<string> labels("foo");
-	TopTree topTree(tree._numNodes, labels);
+	IdLabels labels(10);
+	TopTree<int> topTree(tree._numNodes, labels);
 	vector<int> nodeIds(tree._numNodes);
 	for (int i = 0; i < tree._numNodes; ++i) {
 		nodeIds[i] = i;
@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
 		 << " clusters (" << topTree.clusters.size() - tree._numNodes << " non-leaves)" << endl;
 
-	BinaryDag<string> dag;
-	DagBuilder<string> builder(topTree, dag);
+	BinaryDag<int> dag;
+	DagBuilder<int> builder(topTree, dag);
 	builder.createDag();
 
 	const int edges = dag.countEdges();
