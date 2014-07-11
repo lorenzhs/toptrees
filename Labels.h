@@ -9,7 +9,7 @@
 template <typename Value>
 struct LabelsT {
 	virtual const Value &operator[](uint index) const = 0;
-	virtual void set(int id, const Value &value) = 0;
+	virtual void set(uint id, const Value &value) = 0;
 };
 
 template <typename Value>
@@ -21,7 +21,7 @@ struct FakeLabels : LabelsT<Value> {
 		return retval;
 	};
 
-	void set(int id, const Value &value) {
+	void set(uint id, const Value &value) {
 		(void)id;
 		(void)value;
 	};
@@ -45,7 +45,7 @@ struct IdLabels : LabelsT<int> {
 		return pointlessInts[res % modulo];
 	}
 
-	void set(int id, const int &value) {
+	void set(uint id, const int &value) {
 		(void)id;
 		(void)value;
 	}
@@ -67,7 +67,7 @@ struct RandomLabels : LabelsT<int> {
 		return labels[index];
 	}
 
-	void set(int id, const int &value) {
+	void set(uint id, const int &value) {
 		(void)id;
 		(void)value;
 	}
@@ -85,8 +85,8 @@ struct Labels : LabelsT<Value> {
 		return *valueIndex[keys[index]];
 	}
 
-	void set(int id, const Value &value) {
-		if (id >= (int)keys.size()) {
+	void set(uint id, const Value &value) {
+		if (id >= keys.size()) {
 			keys.resize(id + 1);
 		}
 
