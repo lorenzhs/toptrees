@@ -27,7 +27,7 @@ using std::endl;
 int main(int argc, char **argv) {
 	int size = argc > 1 ? std::stoi(argv[1]) : 1000;
 	int numIterations = argc > 2 ? std::stoi(argv[2]) : 100;
-	uint numLabels = argc > 3 ? std::stoi(argv[3]) : 1;
+	uint numLabels = argc > 3 ? std::stoi(argv[3]) : 2;
 	uint seed = argc > 4 ? std::stoi(argv[4]) : 12345678;
 	const bool verbose = false;
 
