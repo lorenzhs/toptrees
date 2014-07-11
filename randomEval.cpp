@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 			nodeIds[i] = i;
 		}
 
-
+		boost_hash_combine(seed, iteration);
 		RandomLabels labels(size, numLabels, seed);
 		TopTree<int> topTree(tree._numNodes, labels);
 
