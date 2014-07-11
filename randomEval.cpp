@@ -39,10 +39,14 @@ int main(int argc, char **argv) {
 
 	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels << " different labels" << endl;
 
+	// Generate seeds deterministically from the input parameters
+	std::seed_seq seedSeq({(uint)size, (uint)numIterations, numLabels, seed});
+	vector<uint> seeds(numIterations*2);
+	seedSeq.generate(seeds.begin(), seeds.end());
+
 	for (int iteration = 0; iteration < numIterations; ++iteration) {
 		DebugInfo debugInfo;
-		boost_hash_combine(seed, iteration);
-		rand.seed(seed);
+		rand.seed(seeds[iteration*2]);
 
 		OrderedTree<TreeNode, TreeEdge> tree;
 		timer.reset();
@@ -57,8 +61,7 @@ int main(int argc, char **argv) {
 			nodeIds[i] = i;
 		}
 
-		boost_hash_combine(seed, iteration);
-		RandomLabels labels(size, numLabels, seed);
+		RandomLabels labels(size, numLabels, seeds[iteration*2 + 1]);
 		TopTree<int> topTree(tree._numNodes, labels);
 
 		tree.doMerges([&](const int u, const int v, const int n,
