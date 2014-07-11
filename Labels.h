@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include <vector>
 #include <unordered_map>
 
@@ -51,6 +52,27 @@ struct IdLabels : LabelsT<int> {
 
 	uint modulo;
 	std::vector<int> pointlessInts;
+};
+
+struct RandomLabels : LabelsT<int> {
+	RandomLabels(uint numLabels, uint maxLabel, uint seed = 42) : LabelsT<int>(), labels(numLabels) {
+		std::default_random_engine generator(seed);
+		std::uniform_int_distribution<int> distribution(0, maxLabel - 1);
+		for (uint i = 0; i < numLabels; ++i) {
+			labels[i] = distribution(generator);
+		}
+	}
+
+	const int &operator[](uint index) const {
+		return labels[index];
+	}
+
+	void set(int id, const int &value) {
+		(void)id;
+		(void)value;
+	}
+
+	std::vector<int> labels;
 };
 
 // This data structure is based on the following anonymous StackOverflow post:

@@ -31,7 +31,6 @@ int main(int argc, char **argv) {
 	uint seed = argc > 4 ? std::stoi(argv[4]) : 12345678;
 	const bool verbose = false;
 
-	IdLabels labels(numLabels);
 	RandomTreeGenerator rand;
 
 	Timer timer;
@@ -58,6 +57,8 @@ int main(int argc, char **argv) {
 			nodeIds[i] = i;
 		}
 
+
+		RandomLabels labels(size, numLabels, seed);
 		TopTree<int> topTree(tree._numNodes, labels);
 
 		tree.doMerges([&](const int u, const int v, const int n,
