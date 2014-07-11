@@ -10,13 +10,10 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+template <typename RNG>
 class RandomTreeGenerator {
 public:
-	RandomTreeGenerator() : generator(), distribution(0.0, 1.0) {}
-
-	void seed(uint seed) {
-		generator.seed(seed);
-	}
+	RandomTreeGenerator(RNG &gen) : generator(gen), distribution(0.0, 1.0) {}
 
 	// Knuth random sampling algorithm from page 137 of
 	// D.E. Knuth, Semi-numerical Algorithms, The Art of Computer Programming, Vol. 2 (Addision-Wesley, Reading, MA, 2nd ed., 1981).
@@ -154,6 +151,6 @@ private:
 		return end;
 	}
 
-	std::default_random_engine generator;
+	RNG &generator;
 	std::uniform_real_distribution<double> distribution;
 };

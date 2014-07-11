@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <random>
 
 // for std::setw
 #define NUM_DIGITS(v) ((v >= 1000000000) ? 10 : (v >= 100000000) ? 9 : (v >= 10000000) ? 8 : (v >= 1000000) ? 7 : (v >= 100000) ? 6 : (v >= 10000) ? 5 : (v >= 1000) ? 4 : (v >= 100) ? 3 : (v >= 10) ? 2 : 1)
@@ -16,4 +17,11 @@ template <typename T>
 static void boost_hash_combine(uint &seed, const T &val) {
 	std::hash<T> hasher;
 	seed ^= hasher(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
+// shared random generator
+typedef std::mt19937 RandomGeneratorType;
+std::mt19937 &getRandomGenerator() {
+	static std::mt19937 engine{};
+	return engine;
 }

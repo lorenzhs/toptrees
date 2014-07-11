@@ -23,11 +23,11 @@ using std::endl;
 int main(int argc, char **argv) {
 	int size = argc > 1 ? std::stoi(argv[1]) : 10;
 	int seed = argc > 2 ? std::stoi(argv[2]) : 12345678;
-	RandomTreeGenerator rand;
+	getRandomGenerator().seed(seed);
+	RandomTreeGenerator<RandomGeneratorType> rand(getRandomGenerator());
 	OrderedTree<TreeNode, TreeEdge> tree;
 
 	Timer timer;
-	rand.seed(seed);
 	rand.generateTree(tree, size, (size < 1000));
 	cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 

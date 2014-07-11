@@ -31,7 +31,6 @@ int main(int argc, char **argv) {
 	uint seed = argc > 4 ? std::stoi(argv[4]) : 12345678;
 	const bool verbose = false;
 
-	RandomTreeGenerator rand;
 
 	Timer timer;
 	Statistics statistics;
@@ -41,16 +40,21 @@ int main(int argc, char **argv) {
 
 	// Generate seeds deterministically from the input parameters
 	std::seed_seq seedSeq({(uint)size, (uint)numIterations, numLabels, seed});
-	vector<uint> seeds(numIterations*2);
+	vector<uint> seeds(numIterations);
 	seedSeq.generate(seeds.begin(), seeds.end());
 
 	for (int iteration = 0; iteration < numIterations; ++iteration) {
-		DebugInfo debugInfo;
-		rand.seed(seeds[iteration*2]);
+		// Seed RNG
+		getRandomGenerator().seed(seeds[iteration]);
 
+		DebugInfo debugInfo;
 		OrderedTree<TreeNode, TreeEdge> tree;
+		RandomTreeGenerator<RandomGeneratorType> rand(getRandomGenerator());
 		timer.reset();
+
+		// Generate random tree
 		rand.generateTree(tree, size);
+
 		debugInfo.generationDuration = timer.elapsedMillis();
 		if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 		debugInfo.height = tree.height();
@@ -61,7 +65,7 @@ int main(int argc, char **argv) {
 			nodeIds[i] = i;
 		}
 
-		RandomLabels labels(size, numLabels, seeds[iteration*2 + 1]);
+		RandomLabels<RandomGeneratorType> labels(size, numLabels, getRandomGenerator());
 		TopTree<int> topTree(tree._numNodes, labels);
 
 		tree.doMerges([&](const int u, const int v, const int n,

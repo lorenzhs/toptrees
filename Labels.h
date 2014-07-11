@@ -54,9 +54,9 @@ struct IdLabels : LabelsT<int> {
 	std::vector<int> pointlessInts;
 };
 
+template<typename RNG>
 struct RandomLabels : LabelsT<int> {
-	RandomLabels(uint numLabels, uint maxLabel, uint seed = 42) : LabelsT<int>(), labels(numLabels) {
-		std::default_random_engine generator(seed);
+	RandomLabels(uint numLabels, uint maxLabel, RNG &generator) : LabelsT<int>(), labels(numLabels) {
 		std::uniform_int_distribution<int> distribution(0, maxLabel - 1);
 		for (uint i = 0; i < numLabels; ++i) {
 			labels[i] = distribution(generator);
