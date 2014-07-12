@@ -13,6 +13,7 @@
 
 #include "TopTree.h"
 #include "Labels.h"
+#include "TopTreeConstructor.h"
 
 #include "BinaryDag.h"
 #include "DagBuilder.h"
@@ -45,14 +46,10 @@ int main(int argc, char **argv) {
 
 	IdLabels labels(10);
 	TopTree<int> topTree(tree._numNodes, labels);
-	vector<int> nodeIds(tree._numNodes);
-	for (int i = 0; i < tree._numNodes; ++i) {
-		nodeIds[i] = i;
-	}
+	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
 
 	timer.reset();
-	tree.doMerges([&](const int u, const int v, const int n,
-					  const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); });
+	topTreeConstructor.construct();
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
 		 << " clusters (" << topTree.clusters.size() - tree._numNodes << " non-leaves)" << endl;
 

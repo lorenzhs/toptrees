@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <sstream>
 #include <utility>
-#include <list>
 #include <vector>
 
 #include "Common.h"
@@ -17,7 +16,6 @@ using std::cout;
 using std::endl;
 using std::function;
 using std::flush;
-using std::list;
 using std::ostream;
 using std::pair;
 using std::string;
@@ -35,6 +33,9 @@ using std::vector;
 template <typename NodeType, typename EdgeType>
 class OrderedTree {
 public:
+	typedef NodeType nodeType;
+	typedef EdgeType edgeType;
+
 	OrderedTree(const int n = 0, const int m = 0) {
 		initialise(n, m);
 	}
@@ -177,153 +178,6 @@ public:
 				assert(nodes[edges[i].headNode].parent == from);
 				removeEdge(from, i, compact);
 				return;
-			}
-		}
-	}
-
-	// do iterated merges to construct a top tree
-	// the callback is called for every pair of merged nodes (clusters)
-	// its arguments are the ids of the two merged nodes and the new id
-	// (usually one of the two old ones) as well as the type of the merge
-	void doMerges(const function<void(const int, const int, const int, const MergeType)> &mergeCallback,
-				  const bool verbose = true) {
-		int iteration = 0;
-		Timer timer;
-		const std::streamsize precision = cout.precision();
-		cout << std::fixed << std::setprecision(1);
-		while (_numEdges > 1) {
-			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
-
-			horizontalMerges(iteration, mergeCallback);
-			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
-
-			// We need to compact here because the horizontal merges don't but
-			// the vertical merges need correct edge counts, so this is important!
-			// And it turns out that rebuild compation is faster than inplace,
-			// maybe because of subsequent cache efficiency?
-			compact(false);
-			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
-
-			verticalMerges(iteration, mergeCallback);
-			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << summary() << endl;
-
-			iteration++;
-			checkConsistency();
-		}
-		mergeCallback(0, edges[nodes[0].firstEdgeIndex].headNode, 0, VERT_WITH_BBN);
-		// reset the output stream
-		cout.unsetf(std::ios_base::fixed);
-		cout << std::setprecision(precision);
-		if (verbose) cout << summary() << endl;
-	}
-
-	// do one iteration of horizontal merges (step 1)
-	void horizontalMerges(const int iteration,
-						  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
-		for (int nodeId = _numNodes - 1; nodeId >= 0; --nodeId) {
-			const NodeType &node = nodes[nodeId];
-			// merging children only make sense for nodes with ≥ 2 children
-			if (node.numEdges() < 2) {
-				continue;
-			}
-#ifndef NDEBUG
-			// verify that these edges indeed do belong to whoever claims to be their parent
-			for (EdgeType *edge = firstEdge(nodeId); edge < lastEdge(nodeId); ++edge) {
-				assert(nodes[edge->headNode].parent == nodeId);
-			}
-#endif
-			EdgeType *leftEdge, *rightEdge, *baseEdge(firstEdge(nodeId));
-			int left, right, newNode, edgeNum, numEdges(node.numEdges());
-			MergeType mergeType;
-			// iterate over pairs of children by index
-			for (edgeNum = 0; edgeNum < (numEdges - 1); edgeNum += 2) {
-				leftEdge = baseEdge + edgeNum;
-				rightEdge = leftEdge + 1;
-				assert(leftEdge->valid && rightEdge->valid);
-				left = leftEdge->headNode;
-				right = rightEdge->headNode;
-				// We can only merge if at least one of the two is a leaf
-				if (nodes[left].isLeaf() || nodes[right].isLeaf()) {
-					nodes[left].lastMergedIn = iteration;
-					nodes[right].lastMergedIn = iteration;
-					mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
-					mergeCallback(left, right, newNode, mergeType);
-				}
-			}
-
-			if (edgeNum == numEdges - 1) {
-				// the node has an odd number of children. check if the conditions for an odd
-				// merge at the end are satisfied. We need the last child to be a leaf and the
-				// two previous children to be non-leaves. This implies that they have not been
-				// merged in this iteration so far (because neither is a leaf)
-				leftEdge = lastEdge(nodeId);
-				left = leftEdge->headNode;
-				const NodeType &child = nodes[left];
-				if (!child.isLeaf() || node.numEdges() <= 2 || !(leftEdge - 1)->valid || !(leftEdge - 2)->valid) {
-					continue;
-				}
-				const int childMinusOne = (leftEdge - 1)->headNode;
-				const int childMinusTwo = (leftEdge - 2)->headNode;
-				if (!nodes[childMinusOne].isLeaf() && !nodes[childMinusTwo].isLeaf()) {
-					// Everything is go for a merge in the "odd case"
-					nodes[left].lastMergedIn = iteration;
-					nodes[childMinusOne].lastMergedIn = iteration;
-					mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
-					mergeCallback(childMinusOne, left, newNode, mergeType);
-				}
-			}
-		}
-	}
-
-	// Perform an iteration of vertical (chain) merges.
-	void verticalMerges(const int iteration,
-						const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
-		// First, we collect all the vertices from which a merge chain can originate upwards
-		// This is needed to prevent repeated merges of the same chain in one iteration
-		// I guess we could do this with the .lastMergedIn attribute as well? XXX TODO
-		vector<int> nodesToMerge;
-		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
-			const NodeType &node = nodes[nodeId];
-			if (node.parent >= 0 && !node.hasOnlyOneChild() && nodes[node.parent].hasOnlyOneChild()) {
-				// only interested in nodes without siblings where the chain can't be extended further
-				nodesToMerge.push_back(nodeId);
-			}
-		}
-
-		for (int nodeId : nodesToMerge) {
-			int parentId = nodes[nodeId].parent;
-			// Follow the chain upwards until we hit a node where it has to end. Possible cases:
-			// a) node or parent is the root node
-			// b) parent has more than one child
-			// otherwise, merge the chain grandparent -> parent -> node
-			while (parentId >= 0 && nodes[parentId].hasOnlyOneChild() && nodes[parentId].parent >= 0 &&
-				   nodes[parentId].lastMergedIn < iteration && nodes[nodes[parentId].parent].hasOnlyOneChild()) {
-				NodeType &node(nodes[nodeId]), &parent(nodes[parentId]);
-				node.lastMergedIn = iteration;
-				parent.lastMergedIn = iteration;
-
-				MergeType mergeType;
-				mergeChain(parentId, mergeType);
-				mergeCallback(parentId, nodeId, parentId, mergeType);
-
-				// Follow the chain upwards if possible
-				nodeId = parent.parent;
-				if (nodeId >= 0) {
-					parentId = nodes[nodeId].parent;
-				} else {
-					break; // break while loop
-				}
-			}
-
-			if (nodeId >= 0 && parentId >= 0 && nodes[parentId].hasOnlyOneChild() &&
-				nodes[parentId].lastMergedIn < iteration && nodes[parentId].parent >= 0) {
-				// We hit the "odd case"
-				assert(!nodes[nodes[parentId].parent].hasOnlyOneChild());
-				nodes[nodeId].lastMergedIn = iteration;
-				nodes[parentId].lastMergedIn = iteration;
-				MergeType mergeType;
-				mergeChain(parentId, mergeType);
-				mergeCallback(parentId, nodeId, parentId, mergeType);
 			}
 		}
 	}
@@ -506,27 +360,11 @@ public:
 				 << timer.elapsedMillis() << "ms" << endl;
 	}
 
-	template <typename T>
-	const T inPostOrder(const function<const T(const int, const list<T> &)> &callback) const {
-		return traverseTreePostOrder(0, callback);
-	}
-
+	// for statistics, mainly
 	template <typename T>
 	const T foldLeftPostOrder(const function<const T(const T)> &callback,
 							  const function<const T(const T, const T)> &fold, const T initial) const {
 		return traverseFoldLeftPostOrder(0, callback, fold, initial);
-	}
-
-	// Statistics
-	template <typename T>
-	const T traverseTreePostOrder(const int nodeId,
-								  const function<const T(const int, const list<T> &)> &callback) const {
-		assert(0 <= nodeId && nodeId < _numNodes);
-		list<T> results;
-		for (const EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
-			results.push_back(traverseTreePostOrder(edge->headNode, callback));
-		}
-		return callback(nodeId, results);
 	}
 
 	template <typename T>

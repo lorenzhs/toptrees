@@ -22,13 +22,13 @@ testNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
 testTT:
-	$(CC) $(FLAGS) $(BASEFLAGS) -o testTT testTT.cpp
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
 testTTDebug:
-	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) -o testTT testTT.cpp
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
 testTTNoDebug:
-	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) -o testTT testTT.cpp
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
 random:
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp

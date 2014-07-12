@@ -6,6 +6,7 @@
 #include "OrderedTree.h"
 
 #include "TopTree.h"
+#include "TopTreeConstructor.h"
 #include "XML.h"
 #include "Timer.h"
 
@@ -29,15 +30,10 @@ int main(int argc, char **argv) {
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
 	TopTree<string> topTree(t._numNodes, labels);
-	vector<int> nodeIds(t._numNodes);
-	for (int i = 0; i < t._numNodes; ++i) {
-		nodeIds[i] = i;
-	}
 
+	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 	Timer timer;
-	t.doMerges([&](const int u, const int v, const int n,
-				   const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); });
-
+	topTreeConstructor.construct();
 	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
 		 << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
 

@@ -10,7 +10,7 @@
 
 #include "Timer.h"
 
-#include "DotGraphExporter.h"
+#include "TopTreeConstructor.h"
 
 #include "TopTree.h"
 #include "Labels.h"
@@ -31,12 +31,12 @@ int main(int argc, char **argv) {
 	uint seed = argc > 4 ? std::stoi(argv[4]) : 12345678;
 	const bool verbose = false;
 
-
 	Timer timer;
 	Statistics statistics;
 	ProgressBar bar(numIterations);
 
-	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels << " different labels" << endl;
+	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels
+		 << " different labels" << endl;
 
 	// Generate seeds deterministically from the input parameters
 	std::seed_seq seedSeq({(uint)size, (uint)numIterations, numLabels, seed});
@@ -54,23 +54,17 @@ int main(int argc, char **argv) {
 
 		// Generate random tree
 		rand.generateTree(tree, size);
+		RandomLabels<RandomGeneratorType> labels(size, numLabels, getRandomGenerator());
 
 		debugInfo.generationDuration = timer.elapsedMillis();
 		if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 		debugInfo.height = tree.height();
 		timer.reset();
 
-		vector<int> nodeIds(size);
-		for (int i = 0; i < size; ++i) {
-			nodeIds[i] = i;
-		}
-
-		RandomLabels<RandomGeneratorType> labels(size, numLabels, getRandomGenerator());
 		TopTree<int> topTree(tree._numNodes, labels);
+		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
+		topTreeConstructor.construct(verbose);
 
-		tree.doMerges([&](const int u, const int v, const int n,
-						  const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); },
-					  verbose);
 		debugInfo.mergeDuration = timer.elapsedMillis();
 		if (verbose)
 			cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "
