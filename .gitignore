@@ -4,6 +4,7 @@
 *.s
 callgrind.out.*
 perf.data*
+Doxyfile
 
 test
 test-*
@@ -15,5 +16,6 @@ testTT
 testTT-*
 *.txt
 *.log
+r
 random
 randomEval
