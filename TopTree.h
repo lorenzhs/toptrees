@@ -26,23 +26,12 @@ struct Cluster {
 	const DataType *label;
 
 	friend ostream &operator<<(ostream &os, const Cluster &cluster) {
-		return os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; "
-				  << (cluster.label == NULL ? "NULL" : std::to_string(*cluster.label)) << ")";
-	}
-};
-
-template <>
-struct Cluster<string> {
-	Cluster() : mergeType(NO_MERGE), left(-1), right(-1), label(NULL)
-		/*, rLeft(-1), lRight(-1), rRight(-1), height(-1), size(-1), distTBleft(-1), distTBright(-1)*/ {}
-	Cluster(int l, int r, MergeType t) : mergeType(t), left(l), right(r), label(NULL)
-		/*, rLeft(-1), lRight(-1), rRight(-1), height(-1), size(-1), distTBleft(-1), distTBright(-1)*/ {}
-	MergeType mergeType;
-	int left, right /*, rLeft, lRight, rRight, height, size, distTBleft, distTBright*/;
-	const string *label;
-	friend ostream &operator<<(ostream &os, const Cluster<string> &cluster) {
-		return os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; "
-				  << (cluster.label == NULL ? "NULL" : *cluster.label) << ")";
+		os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; ";
+		if (cluster.label == NULL)
+			os << "NULL";
+		else
+			os << *cluster.label;
+		return os << ")";
 	}
 };
 
