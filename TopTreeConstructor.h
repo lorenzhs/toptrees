@@ -75,9 +75,9 @@ protected:
 
 			int oldNumEdges = tree._numEdges;
 #ifdef SWEEP
-			horizontalMergesAllPairs(iteration);
+			horizontalMergesAllPairs();
 #else
-			horizontalMerges(iteration);
+			horizontalMerges();
 #endif
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
@@ -89,7 +89,7 @@ protected:
 			tree.compact(false);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
-			verticalMerges(iteration);
+			verticalMerges();
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
@@ -110,7 +110,7 @@ protected:
 	}
 
 	/// Do one iteration of horizontal merges (step 1)
-	void horizontalMerges(const int iteration) {
+	void horizontalMerges() {
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
 			// merging children only make sense for nodes with ≥ 2 children
 			const int numEdges(tree.nodes[nodeId].numEdges());
@@ -135,10 +135,6 @@ protected:
 				right = rightEdge->headNode;
 				// We can only merge if at least one of the two is a leaf
 				if (tree.nodes[left].isLeaf() || tree.nodes[right].isLeaf()) {
-					assert(tree.nodes[left].lastMergedIn < iteration);
-					assert(tree.nodes[right].lastMergedIn < iteration);
-					tree.nodes[left].lastMergedIn = iteration;
-					tree.nodes[right].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
 					mergeCallback(left, right, newNode, mergeType);
 				}
@@ -158,10 +154,6 @@ protected:
 				const int childMinusTwo = (leftEdge - 2)->headNode;
 				if (!tree.nodes[childMinusOne].isLeaf() && !tree.nodes[childMinusTwo].isLeaf()) {
 					// Everything is go for a merge in the "odd case"
-					assert(tree.nodes[left].lastMergedIn < iteration);
-					assert(tree.nodes[childMinusOne].lastMergedIn < iteration);
-					tree.nodes[left].lastMergedIn = iteration;
-					tree.nodes[childMinusOne].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
 					mergeCallback(childMinusOne, left, newNode, mergeType);
 				}
@@ -171,7 +163,7 @@ protected:
 
 	/// Do one iteration of horizontal merges (step 1)
 	/// Modified to look at (1,2), (2,3), (3,4) etc instead of (1,2), (3,4), etc
-	void horizontalMergesAllPairs(const int iteration) {
+	void horizontalMergesAllPairs() {
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
 			const NodeType &node = tree.nodes[nodeId];
 			// merging children only make sense for nodes with ≥ 2 children
@@ -196,10 +188,6 @@ protected:
 				const int right = rightEdge->headNode;
 				// We can only merge if at least one of the two is a leaf
 				if (tree.nodes[left].isLeaf() || tree.nodes[right].isLeaf()) {
-					assert(tree.nodes[left].lastMergedIn < iteration);
-					assert(tree.nodes[right].lastMergedIn < iteration);
-					tree.nodes[left].lastMergedIn = iteration;
-					tree.nodes[right].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
 					mergeCallback(left, right, newNode, mergeType);
 					++edgeNum;
@@ -209,10 +197,9 @@ protected:
 	}
 
 	/// Perform an iteration of vertical (chain) merges (step 2)
-	void verticalMerges(const int iteration) {
+	void verticalMerges() {
 		// First, we collect all the vertices from which a merge chain can originate upwards
 		// This is needed to prevent repeated merges of the same chain in one iteration
-		// I guess we could do this with the .lastMergedIn attribute as well? XXX TODO
 		vector<int> nodesToMerge;
 		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
 			const NodeType &node = tree.nodes[nodeId];
@@ -230,27 +217,12 @@ protected:
 			// otherwise, merge the chain grandparent -> parent -> node
 			while (parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() && tree.nodes[parentId].parent >= 0 &&
 				   tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild()) {
-				NodeType &node(tree.nodes[nodeId]), &parent(tree.nodes[parentId]);
-
-				if (node.lastMergedIn == iteration) {
-					nodeId = parentId;
-					parentId = parent.parent;
-					continue;
-				}
-
-				if (parent.lastMergedIn < iteration) {
-					assert(node.lastMergedIn < iteration);
-					assert(parent.lastMergedIn < iteration);
-					node.lastMergedIn = iteration;
-					parent.lastMergedIn = iteration;
-
-					MergeType mergeType;
-					tree.mergeChain(parentId, mergeType);
-					mergeCallback(parentId, nodeId, parentId, mergeType);
-				}
+				MergeType mergeType;
+				tree.mergeChain(parentId, mergeType);
+				mergeCallback(parentId, nodeId, parentId, mergeType);
 
 				// Follow the chain upwards if possible
-				nodeId = parent.parent;
+				nodeId = tree.nodes[parentId].parent;
 				if (nodeId >= 0) {
 					parentId = tree.nodes[nodeId].parent;
 				} else {
@@ -259,12 +231,9 @@ protected:
 			}
 
 			if (nodeId >= 0 && parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() &&
-				tree.nodes[nodeId].lastMergedIn < iteration && tree.nodes[parentId].lastMergedIn < iteration &&
 				tree.nodes[parentId].parent >= 0) {
 				// We hit the "odd case"
 				assert(!tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild());
-				tree.nodes[nodeId].lastMergedIn = iteration;
-				tree.nodes[parentId].lastMergedIn = iteration;
 				MergeType mergeType;
 				tree.mergeChain(parentId, mergeType);
 				mergeCallback(parentId, nodeId, parentId, mergeType);
