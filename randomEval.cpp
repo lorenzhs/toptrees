@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 
 		TopTree<int> topTree(tree._numNodes, labels);
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
-		topTreeConstructor.construct(verbose);
+		topTreeConstructor.construct(&debugInfo, verbose);
 
 		debugInfo.mergeDuration = timer.elapsedMillis();
 		if (verbose)

@@ -9,6 +9,7 @@
 #include "Common.h"
 #include "Timer.h"
 #include "TopTree.h"
+#include "Statistics.h"
 
 using std::cout;
 using std::endl;
@@ -22,10 +23,9 @@ class TopTreeConstructor {
 	typedef typename TreeType::edgeType EdgeType;
 
 public:
-	TopTreeConstructor(TreeType &tree, TopTree<DataType> &topTree) : tree(tree), topTree(topTree) {
-	}
+	TopTreeConstructor(TreeType &tree, TopTree<DataType> &topTree) : tree(tree), topTree(topTree) {}
 
-	void construct(const bool verbose = true) {
+	void construct(DebugInfo *debugInfo = NULL, const bool verbose = true) {
 		vector<int> nodeIds(tree._numNodes);
 		for (int i = 0; i < tree._numNodes; ++i) {
 			nodeIds[i] = i;
@@ -33,7 +33,7 @@ public:
 
 		doMerges([&](const int u, const int v, const int n,
 					 const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); },
-				 verbose);
+				 debugInfo, verbose);
 	}
 
 protected:
@@ -42,7 +42,7 @@ protected:
 	// its arguments are the ids of the two merged nodes and the new id
 	// (usually one of the two old ones) as well as the type of the merge
 	void doMerges(const function<void(const int, const int, const int, const MergeType)> &mergeCallback,
-				  const bool verbose = true) {
+				  DebugInfo *debugInfo = NULL, const bool verbose = true) {
 		int iteration = 0;
 		Timer timer;
 		const std::streamsize precision = cout.precision();
@@ -50,6 +50,7 @@ protected:
 		while (tree._numEdges > 1) {
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
 
+			int oldNumEdges = tree._numEdges;
 			horizontalMerges(iteration, mergeCallback);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
 
@@ -63,6 +64,9 @@ protected:
 			verticalMerges(iteration, mergeCallback);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary() << endl;
 
+			double ratio = (oldNumEdges * 1.0) / tree._numEdges;
+			if (debugInfo != NULL)
+				debugInfo->addEdgeRatio(ratio);
 			iteration++;
 			tree.checkConsistency();
 		}
