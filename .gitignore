@@ -20,5 +20,6 @@ testTT-*
 *.txt
 *.log
 r
+r-*
 random
 randomEval
