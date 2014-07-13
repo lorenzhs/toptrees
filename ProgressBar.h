@@ -8,7 +8,7 @@
 class ProgressBar {
 public:
 	ProgressBar(const long long max, std::ostream &out = std::cout, int barwidth = 70)
-	    : max(max), pos(0), lastprogress(0), out(out), barwidth(barwidth) {}
+	    : max(max), pos(0), lastprogress(-1), out(out), barwidth(barwidth) {}
 
 	void step() {
 		++pos;
