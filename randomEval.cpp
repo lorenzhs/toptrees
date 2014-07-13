@@ -39,13 +39,19 @@ int main(int argc, char **argv) {
 		 << " different labels" << endl;
 
 	// Generate seeds deterministically from the input parameters
-	std::seed_seq seedSeq({(uint)size, (uint)numIterations, numLabels, seed});
 	vector<uint> seeds(numIterations);
-	seedSeq.generate(seeds.begin(), seeds.end());
+	if (numIterations > 1) {
+		std::seed_seq seedSeq({(uint)size, (uint)numIterations, numLabels, seed});
+		seedSeq.generate(seeds.begin(), seeds.end());
+	} else {
+		// Allow reconstructing a single tree
+		seeds[0] = seed;
+	}
 
 	for (int iteration = 0; iteration < numIterations; ++iteration) {
 		// Seed RNG
 		getRandomGenerator().seed(seeds[iteration]);
+		if (verbose) cout << endl << "Round " << iteration << ", seed is " << seeds[iteration] << endl;
 
 		DebugInfo debugInfo;
 		OrderedTree<TreeNode, TreeEdge> tree;
