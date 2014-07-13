@@ -21,19 +21,24 @@
 #include "Statistics.h"
 #include "ProgressBar.h"
 
+#include "ArgParser.h"
+
 using std::cout;
 using std::endl;
 
 int main(int argc, char **argv) {
-	int size = argc > 1 ? std::stoi(argv[1]) : 1000;
-	int numIterations = argc > 2 ? std::stoi(argv[2]) : 100;
-	uint numLabels = argc > 3 ? std::stoi(argv[3]) : 2;
-	uint seed = argc > 4 ? std::stoi(argv[4]) : 12345678;
-	const bool verbose = (numIterations == 1);
+	ArgParser argParser(argc, argv);
+
+	int size = argParser.get<int>("m", 1000);
+	int numIterations = argParser.get<int>("n", 100);
+	uint numLabels = argParser.get<uint>("l", 2);
+	uint seed = argParser.get<uint>("s", 12345678);
+	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
+	const bool extraVerbose = argParser.isSet("vv");
 
 	Timer timer;
 	Statistics statistics;
-	ProgressBar bar(numIterations);
+	ProgressBar bar(numIterations, std::cerr);
 
 	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels
 		 << " different labels" << endl;
@@ -69,7 +74,7 @@ int main(int argc, char **argv) {
 
 		TopTree<int> topTree(tree._numNodes, labels);
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
-		topTreeConstructor.construct(&debugInfo, verbose);
+		topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
 
 		debugInfo.mergeDuration = timer.elapsedMillis();
 		if (verbose)
@@ -99,6 +104,6 @@ int main(int argc, char **argv) {
 	bar.undraw();
 
 	statistics.compute();
-	statistics.dump(cout);
+	statistics.dump(std::cerr);
 	statistics.dumpEdgeRatioDistribution("ratios.dat");
 }

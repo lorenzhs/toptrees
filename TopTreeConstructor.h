@@ -25,7 +25,7 @@ class TopTreeConstructor {
 public:
 	TopTreeConstructor(TreeType &tree, TopTree<DataType> &topTree) : tree(tree), topTree(topTree) {}
 
-	void construct(DebugInfo *debugInfo = NULL, const bool verbose = true) {
+	void construct(DebugInfo *debugInfo = NULL, const bool verbose = true, const bool extraVerbose = false) {
 		vector<int> nodeIds(tree._numNodes);
 		for (int i = 0; i < tree._numNodes; ++i) {
 			nodeIds[i] = i;
@@ -33,7 +33,7 @@ public:
 
 		doMerges([&](const int u, const int v, const int n,
 					 const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); },
-				 debugInfo, verbose);
+				 debugInfo, verbose, extraVerbose);
 	}
 
 protected:
@@ -42,13 +42,15 @@ protected:
 	// its arguments are the ids of the two merged nodes and the new id
 	// (usually one of the two old ones) as well as the type of the merge
 	void doMerges(const function<void(const int, const int, const int, const MergeType)> &mergeCallback,
-				  DebugInfo *debugInfo = NULL, const bool verbose = true) {
+				  DebugInfo *debugInfo, const bool verbose, const bool extraVerbose) {
 		int iteration = 0;
 		Timer timer;
 		const std::streamsize precision = cout.precision();
 		cout << std::fixed << std::setprecision(1);
 		while (tree._numEdges > 1) {
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
+
+			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
 			int oldNumEdges = tree._numEdges;
 			horizontalMerges(iteration, mergeCallback);
@@ -65,7 +67,7 @@ protected:
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
 			double ratio = (oldNumEdges * 1.0) / tree._numEdges;
-			if (verbose && ratio < 1.2) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
+			if (verbose && ratio < 1.25) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
 			if (verbose) cout << std::endl;
 
 			if (debugInfo != NULL)
