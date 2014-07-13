@@ -6,6 +6,9 @@ callgrind.out.*
 perf.data*
 Doxyfile
 
+*.dat
+*.svg
+
 test
 test-*
 

@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	int numIterations = argc > 2 ? std::stoi(argv[2]) : 100;
 	uint numLabels = argc > 3 ? std::stoi(argv[3]) : 2;
 	uint seed = argc > 4 ? std::stoi(argv[4]) : 12345678;
-	const bool verbose = false;
+	const bool verbose = (numIterations == 1);
 
 	Timer timer;
 	Statistics statistics;
@@ -100,4 +100,5 @@ int main(int argc, char **argv) {
 
 	statistics.compute();
 	statistics.dump(cout);
+	statistics.dumpEdgeRatioDistribution("ratios.dat");
 }
