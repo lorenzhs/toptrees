@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 	t.addEdge(3, 8);
 	t.addEdge(3, 9);
 	t.addEdge(3, 10);
-	t.addEdge(10, 11);
+	t.addEdge(9, 11);
 	cout << t << endl << endl;
 
 	FakeLabels<int> labels(0);
@@ -79,11 +79,17 @@ int main(int argc, char **argv) {
 	topTreeConstructor.construct(NULL, true, true);
 
 	cout << endl << t << endl;
-	cout << topTree << endl;
+	//cout << topTree << endl;
 	BinaryDag<int> dag;
 	DagBuilder<int> builder(topTree, dag);
 	builder.createDag();
-	cout << dag << endl;
+	//cout << dag << endl;
+
+	const int edges = dag.countEdges();
+	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const double ratio = ((int)(1000 / percentage)) / 10.0;
+	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
+		 << "% of original tree, " << ratio << ":1)" << endl;
 
 	XmlWriter<TopTree<int>, int> writer(topTree);
 	writer.write("/tmp/toptree.xml");
@@ -91,7 +97,7 @@ int main(int argc, char **argv) {
 	TopTree<int> newTopTree(t._numNodes);
 	BinaryDagUnpacker<int> dagUnpacker(dag, newTopTree);
 	dagUnpacker.unpack();
-	cout << newTopTree << endl;
+	//cout << newTopTree << endl;
 
 	OrderedTree<TreeNode, TreeEdge> newTree;
 	Labels<int> newLabels;
