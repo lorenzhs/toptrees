@@ -62,9 +62,12 @@ protected:
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
 			verticalMerges(iteration, mergeCallback);
-			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary() << endl;
+			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
 			double ratio = (oldNumEdges * 1.0) / tree._numEdges;
+			if (verbose && ratio < 1.2) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
+			if (verbose) cout << std::endl;
+
 			if (debugInfo != NULL)
 				debugInfo->addEdgeRatio(ratio);
 			iteration++;
@@ -157,7 +160,7 @@ protected:
 			// b) parent has more than one child
 			// otherwise, merge the chain grandparent -> parent -> node
 			while (parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() && tree.nodes[parentId].parent >= 0 &&
-				   tree.nodes[parentId].lastMergedIn < iteration &&
+				   //tree.nodes[parentId].lastMergedIn < iteration &&
 				   tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild()) {
 				NodeType &node(tree.nodes[nodeId]), &parent(tree.nodes[parentId]);
 				node.lastMergedIn = iteration;
