@@ -71,11 +71,11 @@ private:
 	Labels<string> &labels;
 };
 
-template <typename TreeType>
+template <typename TreeType, typename DataType>
 class XmlWriter {};
 
 template <typename DataType>
-class XmlWriter<TopTree<DataType>> {
+class XmlWriter<TopTree<DataType>, DataType> {
 public:
 	XmlWriter(TopTree<DataType> &tree) : tree(tree) {}
 
@@ -92,12 +92,15 @@ public:
 private:
 	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
 		const Cluster<DataType> &node = tree.clusters[nodeId];
-		const DataType &label(node.label != NULL ? *node.label : std::to_string(node.mergeType));
 		for (int i = 0; i < depth; ++i) out << " ";
-		out << "<" << label << ">";
+		out << "<";
+		if (node.label == NULL) out << node.mergeType; else out << *node.label;
+		out << ">";
 
 		if (node.left < 0 && node.right < 0) {
-			out << "</" << label << ">" << endl;
+			out << "</";
+			if (node.label == NULL) out << node.mergeType; else out << *node.label;
+			out << ">";
 			return;
 		}
 		out << endl;
@@ -110,16 +113,18 @@ private:
 		}
 
 		for (int i = 0; i < depth; ++i) out << " ";
-		out << "</" << label << ">" << endl;
+		out << "</";
+		if (node.label == NULL) out << node.mergeType; else out << *node.label;
+		out << ">";
 	}
 
 	TopTree<DataType> &tree;
 };
 
-template <typename NodeType, typename EdgeType>
-class XmlWriter<OrderedTree<NodeType, EdgeType>> {
+template <typename NodeType, typename EdgeType, typename DataType>
+class XmlWriter<OrderedTree<NodeType, EdgeType>, DataType> {
 public:
-	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<string> &labels) : tree(tree), labels(labels) {}
+	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<DataType> &labels) : tree(tree), labels(labels) {}
 
 	void write(const string &filename) {
 		std::ofstream out(filename.c_str());
@@ -150,5 +155,5 @@ private:
 	}
 
 	OrderedTree<NodeType, EdgeType> &tree;
-	Labels<string> &labels;
+	Labels<DataType> &labels;
 };

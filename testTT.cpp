@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
 	// Dump input file for comparison of output
 	Timer timer;
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>> origWriter(t, labels);
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>, string> origWriter(t, labels);
 	origWriter.write(outputfolder + "/orig.xml");
 
 	cout << "Wrote orginial trimmed XML file in " << timer.getAndReset() << "ms: " << t.summary() << endl;
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 	unpacker.unpack();
 	cout << "Unpacked recovered top tree in " << timer.getAndReset() << "ms: " << recoveredTree.summary() << endl;
 
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>> unpackedWriter(recoveredTree, newLabels);
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>, string> unpackedWriter(recoveredTree, newLabels);
 	unpackedWriter.write(outputfolder + "/unpacked.xml");
 	cout << "Wrote recovered tree in " << timer.getAndReset() << "ms" << endl;
 

@@ -57,7 +57,11 @@ struct DagNode {
 		  label(other.label) {}
 
 	friend std::ostream &operator<<(std::ostream &os, const DagNode &node) {
-		return os << "(" << node.left << ";" << node.right << ";" << node.inDegree << ";"
-				  << (node.label == NULL ? "NULL" : *node.label) << ")";
+		os << "(" << node.left << ";" << node.right << ";" << node.inDegree << ";";
+		if (node.label == NULL)
+			os << "NULL";
+		else
+			os << *node.label;
+		return os << ")";
 	}
 };
