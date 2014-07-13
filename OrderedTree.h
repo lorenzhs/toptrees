@@ -254,6 +254,20 @@ public:
 		return s.str();
 	}
 
+	string shortString() const {
+		stringstream os;
+		os << summary() << endl << "Nodes:";
+		for (uint i = 0; i < nodes.size(); ++i) {
+			if (nodes[i].hasChildren())
+				os << " " << i << "/" << nodes[i];
+		}
+		os << endl << "Edges:";
+		for (uint i = 0; i < edges.size(); ++i) {
+			os << " " << edges[i];
+		}
+		return os.str();
+	}
+
 	string toString() const {
 		stringstream os;
 		os << summary() << endl << "Nodes:";
