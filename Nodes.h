@@ -34,8 +34,9 @@ struct TreeNode {
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const TreeNode &node) {
-		return os << "(" << node.parent << ";" << node.firstEdgeIndex << "→" << node.lastEdgeIndex << ";"
-				  << node.lastMergedIn << ")";
+		return os << "(" << node.parent << ";" << node.firstEdgeIndex << "→" << node.lastEdgeIndex
+			//<< ";"  << node.lastMergedIn
+			 << ")";
 	}
 };
 
