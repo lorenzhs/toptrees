@@ -162,15 +162,17 @@ protected:
 			// b) parent has more than one child
 			// otherwise, merge the chain grandparent -> parent -> node
 			while (parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() && tree.nodes[parentId].parent >= 0 &&
-				   tree.nodes[parentId].lastMergedIn < iteration &&
 				   tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild()) {
 				NodeType &node(tree.nodes[nodeId]), &parent(tree.nodes[parentId]);
-				node.lastMergedIn = iteration;
-				parent.lastMergedIn = iteration;
 
-				MergeType mergeType;
-				tree.mergeChain(parentId, mergeType);
-				mergeCallback(parentId, nodeId, parentId, mergeType);
+				if (tree.nodes[parentId].lastMergedIn < iteration) {
+					node.lastMergedIn = iteration;
+					parent.lastMergedIn = iteration;
+
+					MergeType mergeType;
+					tree.mergeChain(parentId, mergeType);
+					mergeCallback(parentId, nodeId, parentId, mergeType);
+				}
 
 				// Follow the chain upwards if possible
 				nodeId = parent.parent;
