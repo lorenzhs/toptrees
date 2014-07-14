@@ -8,15 +8,36 @@
 #include <fstream>
 #include <vector>
 
-std::mutex &getMutex() {
-	static std::mutex mutex{};
-	return mutex;
-}
 
-std::ofstream &getStatStream() {
-	static std::ofstream out{};
-	return out;
-}
+struct StatWriter {
+	static void open(const std::string &filename) {
+		mutex.lock();
+		out.open(filename.c_str());
+		mutex.unlock();
+	}
+
+	static void close() {
+		mutex.lock();
+		if (out.is_open())
+			out.close();
+		mutex.unlock();
+	}
+
+	template <typename T>
+	static void write(const T &data) {
+		mutex.lock();
+		if (out.is_open())
+			out << data;
+		mutex.unlock();
+	}
+
+	static std::mutex mutex;
+	static std::ofstream out;
+};
+
+// Need to instantiate these, ugly
+std::mutex StatWriter::mutex;
+std::ofstream StatWriter::out;
 
 struct DebugInfo {
 	double generationDuration;
@@ -58,11 +79,7 @@ struct DebugInfo {
 		if (ratio > maxEdgeRatio) {
 			maxEdgeRatio = ratio;
 		}
-		if (getStatStream().is_open()) {
-			getMutex().lock();
-			getStatStream() << ratio;
-			getMutex().unlock();
-		}
+		StatWriter::write(ratio);
 	}
 
 	double avgEdgeRatio() const {
@@ -137,17 +154,13 @@ struct DebugInfo {
 
 struct Statistics {
 	Statistics(const std::string filename = "") : numDebugInfos(0) {
-		assert (!getStatStream().is_open());
 		if (filename != "") {
-			getStatStream().open(filename.c_str());
-			assert(getStatStream().is_open());
+			StatWriter::open(filename);
 		}
 	}
 
 	~Statistics() {
-		if (getStatStream().is_open()) {
-			getStatStream().close();
-		}
+		StatWriter::close();
 	}
 
 	void addDebugInfo(const DebugInfo &info) {
