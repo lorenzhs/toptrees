@@ -164,5 +164,6 @@ int main(int argc, char **argv) {
 
 	bar.undraw();
 
+	statistics.compute();
 	statistics.dump(std::cerr);
 }

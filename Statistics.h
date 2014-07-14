@@ -124,7 +124,6 @@ struct DebugInfo {
 		generationDuration /= factor;
 		mergeDuration /= factor;
 		dagDuration /= factor;
-		edgeRatios /= factor;
 		numDagEdges /= factor;
 		numDagNodes /= factor;
 		height /= factor;
@@ -174,6 +173,10 @@ struct Statistics {
 			avg.add(info);
 		}
 		++numDebugInfos;
+	}
+
+	void compute() {
+		avg.divide(numDebugInfos);
 	}
 
 	void dump(std::ostream &os) {
