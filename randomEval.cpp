@@ -68,9 +68,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const int
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
 	topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
 
-	auto minRatio = std::min_element(debugInfo.edgeRatios.begin(), debugInfo.edgeRatios.end());
-	if (minRatio != debugInfo.edgeRatios.end() && *minRatio < 1.2) {
-		cout << "minRatio = " << *minRatio << " for seed " << seed << endl;
+	if (debugInfo.minEdgeRatio < 1.2) {
+		cout << "minRatio = " << debugInfo.minEdgeRatio << " for seed " << seed << endl;
 	}
 
 	debugInfo.mergeDuration = timer.elapsedMillis();
@@ -165,6 +164,5 @@ int main(int argc, char **argv) {
 
 	bar.undraw();
 
-	statistics.compute();
 	statistics.dump(std::cerr);
 }
