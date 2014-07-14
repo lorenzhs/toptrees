@@ -46,7 +46,7 @@ struct DebugInfo {
 	double minEdgeRatio;
 	double maxEdgeRatio;
 	double edgeRatios;
-	short numEdgeRatios;
+	int numEdgeRatios;
 	int numDagEdges;
 	int numDagNodes;
 	int height;
