@@ -26,15 +26,32 @@
 using std::cout;
 using std::endl;
 
+void usage(char* name) {
+	cout << "Usage: " << name << " <options>" << endl
+		 << "  -m <int>  tree size (nodes) (default: 1000)" << endl
+		 << "  -n <int>  number of trees to test (default: 100)" << endl
+		 << "  -l <int>  number of different labels to assign to the nodes (default: 2)" << endl
+		 << "  -s <int>  seed (default: 12345678)" << endl
+		 << "  -o <file> set output file for edge compression ratios (empty for no output)" << endl
+		 << "  -v        verbose" << endl
+		 << "  -vv       extra verbose" << endl;
+}
+
 int main(int argc, char **argv) {
 	ArgParser argParser(argc, argv);
 
-	int size = argParser.get<int>("m", 1000);
-	int numIterations = argParser.get<int>("n", 100);
-	uint numLabels = argParser.get<uint>("l", 2);
-	uint seed = argParser.get<uint>("s", 12345678);
+	if (argParser.isSet("h") || argParser.isSet("-help")) {
+		usage(argv[0]);
+		return 0;
+	}
+
+	const int size = argParser.get<int>("m", 1000);
+	const int numIterations = argParser.get<int>("n", 100);
+	const uint numLabels = argParser.get<uint>("l", 2);
+	const uint seed = argParser.get<uint>("s", 12345678);
 	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
 	const bool extraVerbose = argParser.isSet("vv");
+	const string filename = argParser.get<string>("o", "ratios.dat");
 
 	Timer timer;
 	Statistics statistics;
@@ -106,5 +123,6 @@ int main(int argc, char **argv) {
 
 	statistics.compute();
 	statistics.dump(std::cerr);
-	statistics.dumpEdgeRatioDistribution("ratios.dat");
+	if (filename != "")
+		statistics.dumpEdgeRatioDistribution(filename);
 }

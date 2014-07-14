@@ -30,10 +30,14 @@ public:
 
 	template <typename T>
 	T get(const string &key, const T defaultValue = T()) {
-		T retval(defaultValue);
+		T retval;
 		if (namedArgs.find(key) != namedArgs.end()) {
 			istringstream s(namedArgs[key]);
 			s >> retval;
+		} else {
+			// do this in the else case, otherwise empty string arguments
+			// would return the default value instead of ""
+			retval = defaultValue;
 		}
 		return retval;
 	}
