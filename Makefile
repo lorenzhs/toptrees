@@ -4,6 +4,7 @@ CC=clang++
 BASEFLAGS=-std=c++11 -Wall -Wextra -Werror
 FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
+MULTI=-pthread
 
 EXECS=test testTT random randomEval
 #EXECS
@@ -40,13 +41,13 @@ randomNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp
 
 randomEval:
-	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
+	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
 randomEvalDebug:
-	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
 randomEvalNoDebug:
-	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
 #RULES
 

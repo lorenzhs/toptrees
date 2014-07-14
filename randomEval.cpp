@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 
+#include <thread>
+#include <mutex>
+
 #include "Common.h"
 #include "RandomTree.h"
 
@@ -37,6 +40,66 @@ void usage(char* name) {
 		 << "  -vv       extra verbose" << endl;
 }
 
+std::mutex debugMutex;
+
+void runIteration(const int iteration, RandomGeneratorType &generator, const int seed, const int size, const int numLabels, const bool verbose, const bool extraVerbose, Statistics &statistics, ProgressBar &bar) {
+	// Seed RNG
+	generator.seed(seed);
+	if (verbose) cout << endl << "Round " << iteration << ", seed is " <<seed << endl;
+
+	DebugInfo debugInfo;
+	OrderedTree<TreeNode, TreeEdge> tree;
+	RandomTreeGenerator<RandomGeneratorType> rand(generator);
+
+	Timer timer;
+
+	// Generate random tree
+	rand.generateTree(tree, size);
+	RandomLabels<RandomGeneratorType> labels(size, numLabels, generator);
+
+	debugInfo.generationDuration = timer.elapsedMillis();
+	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
+	debugInfo.height = tree.height();
+	debugInfo.avgDepth = tree.avgDepth();
+	timer.reset();
+
+	TopTree<int> topTree(tree._numNodes, labels);
+	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
+	topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
+
+	auto minRatio = std::min_element(debugInfo.edgeRatios.begin(), debugInfo.edgeRatios.end());
+	if (minRatio != debugInfo.edgeRatios.end() && *minRatio < 1.2) {
+		cout << "minRatio = " << *minRatio << " for seed " << seed << endl;
+	}
+
+	debugInfo.mergeDuration = timer.elapsedMillis();
+	if (verbose)
+		cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "
+			 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
+			 << " non-leaves)" << endl;
+
+	BinaryDag<int> dag;
+	DagBuilder<int> builder(topTree, dag);
+	builder.createDag();
+
+	const int edges = dag.countEdges();
+	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const double ratio = ((int)(1000 / percentage)) / 10.0;
+	debugInfo.dagDuration = timer.elapsedMillis();
+	if (verbose)
+		cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
+			 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took in "
+			 << timer.elapsedMillis() << "ms" << endl;
+
+	debugInfo.numDagEdges = edges;
+	debugInfo.numDagNodes = dag.nodes.size() - 1;
+
+	debugMutex.lock();
+	statistics.addDebugInfo(debugInfo);
+	++bar;
+	debugMutex.unlock();
+}
+
 int main(int argc, char **argv) {
 	ArgParser argParser(argc, argv);
 
@@ -70,60 +133,32 @@ int main(int argc, char **argv) {
 		seeds[0] = seed;
 	}
 
-	for (int iteration = 0; iteration < numIterations; ++iteration) {
-		// Seed RNG
-		getRandomGenerator().seed(seeds[iteration]);
-		if (verbose) cout << endl << "Round " << iteration << ", seed is " << seeds[iteration] << endl;
-
-		DebugInfo debugInfo;
-		OrderedTree<TreeNode, TreeEdge> tree;
-		RandomTreeGenerator<RandomGeneratorType> rand(getRandomGenerator());
-		timer.reset();
-
-		// Generate random tree
-		rand.generateTree(tree, size);
-		RandomLabels<RandomGeneratorType> labels(size, numLabels, getRandomGenerator());
-
-		debugInfo.generationDuration = timer.elapsedMillis();
-		if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
-		debugInfo.height = tree.height();
-		debugInfo.avgDepth = tree.avgDepth();
-		timer.reset();
-
-		TopTree<int> topTree(tree._numNodes, labels);
-		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
-		topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
-
-		auto minRatio = std::min_element(debugInfo.edgeRatios.begin(), debugInfo.edgeRatios.end());
-		if (minRatio != debugInfo.edgeRatios.end() && *minRatio < 1.2) {
-			cout << "minRatio = " << *minRatio << " for seed " << seeds[iteration] << endl;
+	// function that the threads will execute
+	auto worker = [&](int start, int end) {
+		RandomGeneratorType engine{};
+		for (int i = start; i < end; ++i) {
+			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, statistics, bar);
 		}
+	};
 
-		debugInfo.mergeDuration = timer.elapsedMillis();
-		if (verbose)
-			cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "
-				 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
-				 << " non-leaves)" << endl;
+	const int numWorkers(std::thread::hardware_concurrency());
+	const int treesPerThread = numIterations / numWorkers;
+	const int extraForFirst = numIterations % numWorkers;
 
-		BinaryDag<int> dag;
-		DagBuilder<int> builder(topTree, dag);
-		builder.createDag();
+	vector<std::thread> workers;
 
-		const int edges = dag.countEdges();
-		const double percentage = (edges * 100.0) / topTree.numLeaves;
-		const double ratio = ((int)(1000 / percentage)) / 10.0;
-		debugInfo.dagDuration = timer.elapsedMillis();
-		if (verbose)
-			cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-				 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took in "
-				 << timer.elapsedMillis() << "ms" << endl;
-
-		debugInfo.numDagEdges = edges;
-		debugInfo.numDagNodes = dag.nodes.size() - 1;
-		statistics.addDebugInfo(debugInfo);
-
-		++bar;
+	for (int i = 0; i < numWorkers; ++i) {
+		int min = i * treesPerThread;
+		int max = min + treesPerThread;
+		if (i == 0) max += extraForFirst;
+		cout << "Worker " << i << ": trees [" << min << ", " << max << ")" << endl;
+		workers.push_back(std::thread(worker, min, max));
 	}
+
+	for (std::thread &worker : workers) {
+		worker.join();
+	}
+
 	bar.undraw();
 
 	statistics.compute();
