@@ -36,6 +36,7 @@ void usage(char* name) {
 		 << "  -l <int>  number of different labels to assign to the nodes (default: 2)" << endl
 		 << "  -s <int>  seed (default: 12345678)" << endl
 		 << "  -o <file> set output file for edge compression ratios (empty for no output)" << endl
+		 << "  -t <int>  number of threads to use (default: #cores)" << endl
 		 << "  -v        verbose" << endl
 		 << "  -vv       extra verbose" << endl;
 }
@@ -116,6 +117,9 @@ int main(int argc, char **argv) {
 	const bool extraVerbose = argParser.isSet("vv");
 	const string filename = argParser.get<string>("o", "ratios.dat");
 
+	int numWorkers(std::thread::hardware_concurrency());
+	numWorkers = argParser.get<int>("t", numWorkers);
+
 	Timer timer;
 	Statistics statistics;
 	ProgressBar bar(numIterations, std::cerr);
@@ -141,7 +145,6 @@ int main(int argc, char **argv) {
 		}
 	};
 
-	const int numWorkers(std::thread::hardware_concurrency());
 	const int treesPerThread = numIterations / numWorkers;
 	const int extraForFirst = numIterations % numWorkers;
 
