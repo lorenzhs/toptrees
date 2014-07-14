@@ -94,6 +94,11 @@ int main(int argc, char **argv) {
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
 		topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
 
+		auto minRatio = std::min_element(debugInfo.edgeRatios.begin(), debugInfo.edgeRatios.end());
+		if (minRatio != debugInfo.edgeRatios.end() && *minRatio < 1.2) {
+			cout << "minRatio = " << *minRatio << " for seed " << seeds[iteration] << endl;
+		}
+
 		debugInfo.mergeDuration = timer.elapsedMillis();
 		if (verbose)
 			cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "

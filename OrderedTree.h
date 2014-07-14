@@ -259,11 +259,12 @@ public:
 		os << summary() << endl << "Nodes:";
 		for (uint i = 0; i < nodes.size(); ++i) {
 			if (nodes[i].hasChildren() || nodes[i].parent != -1)
-				os << " " << i << "/" << nodes[i];
+				os << "  " << i << "/" << nodes[i];
 		}
 		os << endl << "Edges:";
 		for (uint i = 0; i < edges.size(); ++i) {
-			os << " " << edges[i];
+			if (edges[i].valid)
+				os << "  " << i << "/" << edges[i];
 		}
 		return os.str();
 	}
