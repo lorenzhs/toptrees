@@ -86,7 +86,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 		topTreeConstructor.construct(&debugInfo);
 	}
 
-	if (debugInfo.minEdgeRatio < 1.2) {
+	if (debugInfo.minEdgeRatio < 1.25) {
 		cout << "minRatio = " << debugInfo.minEdgeRatio << " for seed " << seed << endl;
 	}
 

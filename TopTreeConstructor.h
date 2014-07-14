@@ -94,7 +94,7 @@ protected:
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
 			double ratio = (oldNumEdges * 1.0) / tree._numEdges;
-			if (verbose && ratio < 1.2) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
+			if (verbose && ratio < 1.25) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
 			if (verbose) cout << std::endl;
 
 			if (debugInfo != NULL)
