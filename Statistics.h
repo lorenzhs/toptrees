@@ -124,23 +124,35 @@ struct DebugInfo {
 };
 
 struct Statistics {
-	void addDebugInfo(const DebugInfo &info) {
-		debugInfos.push_back(info);
+	Statistics(const std::string filename = "") : numDebugInfos(0) {
+		if (filename != "") {
+			out.open(filename.c_str());
+			assert(out.is_open());
+		}
 	}
 
-	void compute() {
-		if (debugInfos.empty()) return;
+	~Statistics() {
+		if (out.is_open()) {
+			out.close();
+		}
+	}
 
-		min = debugInfos[0];
-		max = debugInfos[0];
-		avg = DebugInfo();
-
-		for (DebugInfo &info : debugInfos) {
+	void addDebugInfo(const DebugInfo &info) {
+		info.dumpEdgeRatioDistribution(out);
+		if (numDebugInfos == 0) {
+			min = info;
+			max = info;
+			avg = info;
+		} else {
 			min.min(info);
 			max.max(info);
 			avg.add(info);
 		}
-		avg.divide(debugInfos.size());
+		++numDebugInfos;
+	}
+
+	void compute() {
+		avg.divide(numDebugInfos);
 	}
 
 	void dump(std::ostream &os) {
@@ -159,15 +171,7 @@ struct Statistics {
 		   << "Avg node depth: " << avg.avgDepth << " (avg), " << min.avgDepth << " (min), " << max.avgDepth << " (max)" << std::endl;
 	}
 
-	void dumpEdgeRatioDistribution(const std::string &filename) {
-		std::ofstream out(filename.c_str());
-		assert(out.is_open());
-		for (DebugInfo &debugInfo : debugInfos) {
-			debugInfo.dumpEdgeRatioDistribution(out);
-		}
-		out.close();
-	}
-
-	std::vector<DebugInfo> debugInfos;
 	DebugInfo min, max, avg;
+	std::ofstream out;
+	int numDebugInfos;
 };

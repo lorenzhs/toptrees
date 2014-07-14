@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 	numWorkers = argParser.get<int>("t", numWorkers);
 
 	Timer timer;
-	Statistics statistics;
+	Statistics statistics(filename);
 	ProgressBar bar(numIterations, std::cerr);
 
 	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels
@@ -167,6 +167,4 @@ int main(int argc, char **argv) {
 
 	statistics.compute();
 	statistics.dump(std::cerr);
-	if (filename != "")
-		statistics.dumpEdgeRatioDistribution(filename);
 }
