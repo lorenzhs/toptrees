@@ -258,7 +258,7 @@ public:
 		stringstream os;
 		os << summary() << endl << "Nodes:";
 		for (uint i = 0; i < nodes.size(); ++i) {
-			if (nodes[i].hasChildren())
+			if (nodes[i].hasChildren() || nodes[i].parent != -1)
 				os << " " << i << "/" << nodes[i];
 		}
 		os << endl << "Edges:";
@@ -284,11 +284,11 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const OrderedTree<NodeType, EdgeType> &tree) {
 		os << tree.summary() << endl << "Nodes:";
 		for (uint i = 0; i < tree.nodes.size(); ++i) {
-			os << " " << tree.nodes[i];
+			os << "  " << i << "/" << tree.nodes[i];
 		}
 		os << endl << "Edges:";
 		for (uint i = 0; i < tree.edges.size(); ++i) {
-			os << " " << tree.edges[i];
+			os << "  " << i << "/" << tree.edges[i];
 		}
 		return os;
 	}
