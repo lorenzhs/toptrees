@@ -138,7 +138,8 @@ struct Statistics {
 	}
 
 	void addDebugInfo(const DebugInfo &info) {
-		info.dumpEdgeRatioDistribution(out);
+		if (out.is_open())
+			info.dumpEdgeRatioDistribution(out);
 		if (numDebugInfos == 0) {
 			min = info;
 			max = info;
