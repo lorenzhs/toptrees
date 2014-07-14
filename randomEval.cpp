@@ -70,6 +70,7 @@ int main(int argc, char **argv) {
 		debugInfo.generationDuration = timer.elapsedMillis();
 		if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 		debugInfo.height = tree.height();
+		debugInfo.avgDepth = tree.avgDepth();
 		timer.reset();
 
 		TopTree<int> topTree(tree._numNodes, labels);

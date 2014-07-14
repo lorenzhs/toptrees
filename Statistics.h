@@ -15,8 +15,9 @@ struct DebugInfo {
 	int numDagEdges;
 	int numDagNodes;
 	int height;
+	double avgDepth;
 
-	DebugInfo() : generationDuration(0.0), mergeDuration(0.0), dagDuration(0.0), edgeRatios(), numDagEdges(0), numDagNodes(0), height(0) {}
+	DebugInfo() : generationDuration(0.0), mergeDuration(0.0), dagDuration(0.0), edgeRatios(), numDagEdges(0), numDagNodes(0), height(0), avgDepth(0.0) {}
 
 	double totalDuration() const {
 		return generationDuration + mergeDuration + dagDuration;
@@ -43,6 +44,7 @@ struct DebugInfo {
 		numDagEdges += other.numDagEdges;
 		numDagNodes += other.numDagNodes;
 		height += other.height;
+		avgDepth += other.avgDepth;
 	}
 
 	void min(const DebugInfo &other) {
@@ -52,6 +54,7 @@ struct DebugInfo {
 		numDagEdges = std::min(numDagEdges, other.numDagEdges);
 		numDagNodes = std::min(numDagNodes, other.numDagNodes);
 		height = std::min(height, other.height);
+		avgDepth = std::min(avgDepth, other.avgDepth);
 
 		auto minHere = std::min_element(edgeRatios.begin(), edgeRatios.end());
 		auto minThere = std::min_element(other.edgeRatios.begin(), other.edgeRatios.end());
@@ -68,6 +71,7 @@ struct DebugInfo {
 		numDagEdges = std::max(numDagEdges, other.numDagEdges);
 		numDagNodes = std::max(numDagNodes, other.numDagNodes);
 		height = std::max(height, other.height);
+		avgDepth = std::max(avgDepth, other.avgDepth);
 
 		auto maxHere = std::max_element(edgeRatios.begin(), edgeRatios.end());
 		auto maxThere = std::max_element(other.edgeRatios.begin(), other.edgeRatios.end());
@@ -83,6 +87,7 @@ struct DebugInfo {
 		numDagEdges /= factor;
 		numDagNodes /= factor;
 		height /= factor;
+		avgDepth /= factor;
 	}
 
 	void dump(std::ostream &os) const {
@@ -93,13 +98,14 @@ struct DebugInfo {
 		   << avgEdgeRatio() << "\t"
 		   << numDagEdges << "\t"
 		   << numDagNodes << "\t"
-		   << height
+		   << height << "\t"
+		   << avgDepth
 		   << std::endl;
 	}
 
 	void dumpEdgeRatioDistribution(std::ostream &os) const {
-		for (double ratio : edgeRatios) {
-			os << ratio << std::endl;
+		for (auto it = edgeRatios.begin(); it != edgeRatios.end(); ++it) {
+			os << *it << std::endl;
 		}
 	}
 
@@ -111,7 +117,8 @@ struct DebugInfo {
 		   << "edgeRatio" << "\t"
 		   << "numDagEdges" << "\t"
 		   << "numDagNodes" << "\t"
-		   << "height"
+		   << "height" << "\t"
+		   << "avgDepth"
 		   << std::endl;
 	}
 };
@@ -148,7 +155,8 @@ struct Statistics {
 		   << std::setprecision(2)
 		   << "DAG Edges: " << avg.numDagEdges << " (avg), " << min.numDagEdges << " (min), " << max.numDagEdges << " (max)" << std::endl
 		   << "DAG Nodes: " << avg.numDagNodes << " (avg), " << min.numDagNodes << " (min), " << max.numDagNodes << " (max)" << std::endl
-		   << "Tree height: " << avg.height << " (avg), " << min.height << " (min), " << max.height << " (max)" << std::endl;
+		   << "Tree height:    " << avg.height << " (avg), " << min.height << " (min), " << max.height << " (max)" << std::endl
+		   << "Avg node depth: " << avg.avgDepth << " (avg), " << min.avgDepth << " (min), " << max.avgDepth << " (max)" << std::endl;
 	}
 
 	void dumpEdgeRatioDistribution(const std::string &filename) {
