@@ -163,7 +163,7 @@ struct Statistics {
 		   << "Top Tree construction:  " << avg.mergeDuration << "ms (avg), " << min.mergeDuration << "ms (min), " << max.mergeDuration << "ms (max)" << std::endl
 		   << "Top DAG compression:    " << avg.dagDuration << "ms (avg), " << min.dagDuration << "ms (min), " << max.dagDuration << "ms (max)" << std::endl
 		   << std::setprecision(6)
-		   << "Min edge comp. ratio: " << avg.avgEdgeRatio() << " (avg), " << min.avgEdgeRatio() << " (min), " << max.avgEdgeRatio() << " (max)" << std::endl
+		   << "Edge comp. ratio: " << avg.avgEdgeRatio() << " (avg), " << min.avgEdgeRatio() << " (min), " << max.avgEdgeRatio() << " (max)" << std::endl
 		   << std::setprecision(2)
 		   << "DAG Edges: " << avg.numDagEdges << " (avg), " << min.numDagEdges << " (min), " << max.numDagEdges << " (max)" << std::endl
 		   << "DAG Nodes: " << avg.numDagNodes << " (avg), " << min.numDagNodes << " (min), " << max.numDagNodes << " (max)" << std::endl
