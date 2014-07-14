@@ -67,7 +67,6 @@ struct DebugInfo {
 		generationDuration = std::max(generationDuration, other.generationDuration);
 		mergeDuration = std::max(mergeDuration, other.mergeDuration);
 		dagDuration = std::max(dagDuration, other.dagDuration);
-		edgeRatios.insert(edgeRatios.end(), other.edgeRatios.begin(), other.edgeRatios.end());
 		numDagEdges = std::max(numDagEdges, other.numDagEdges);
 		numDagNodes = std::max(numDagNodes, other.numDagNodes);
 		height = std::max(height, other.height);
@@ -164,7 +163,7 @@ struct Statistics {
 		   << "Top Tree construction:  " << avg.mergeDuration << "ms (avg), " << min.mergeDuration << "ms (min), " << max.mergeDuration << "ms (max)" << std::endl
 		   << "Top DAG compression:    " << avg.dagDuration << "ms (avg), " << min.dagDuration << "ms (min), " << max.dagDuration << "ms (max)" << std::endl
 		   << std::setprecision(6)
-		   << "Edge comp. ratio: " << avg.avgEdgeRatio() << " (avg), " << min.avgEdgeRatio() << " (min), " << max.avgEdgeRatio() << " (max)" << std::endl
+		   << "Min edge comp. ratio: " << avg.avgEdgeRatio() << " (avg), " << min.avgEdgeRatio() << " (min), " << max.avgEdgeRatio() << " (max)" << std::endl
 		   << std::setprecision(2)
 		   << "DAG Edges: " << avg.numDagEdges << " (avg), " << min.numDagEdges << " (min), " << max.numDagEdges << " (max)" << std::endl
 		   << "DAG Nodes: " << avg.numDagNodes << " (avg), " << min.numDagNodes << " (min), " << max.numDagNodes << " (max)" << std::endl
