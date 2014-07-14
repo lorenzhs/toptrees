@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 	ProgressBar bar(numIterations, std::cerr);
 
 	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels
-		 << " different labels" << endl;
+		 << " different labels" << flush;
 
 	// Generate seeds deterministically from the input parameters
 	vector<uint> seeds(numIterations);
@@ -147,11 +147,12 @@ int main(int argc, char **argv) {
 
 	vector<std::thread> workers;
 
+	cout << " using " << numWorkers << " threads" << endl;
+
 	for (int i = 0; i < numWorkers; ++i) {
 		int min = i * treesPerThread;
 		int max = min + treesPerThread;
 		if (i == 0) max += extraForFirst;
-		cout << "Worker " << i << ": trees [" << min << ", " << max << ")" << endl;
 		workers.push_back(std::thread(worker, min, max));
 	}
 
