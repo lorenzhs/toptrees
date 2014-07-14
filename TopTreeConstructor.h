@@ -165,7 +165,13 @@ protected:
 				   tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild()) {
 				NodeType &node(tree.nodes[nodeId]), &parent(tree.nodes[parentId]);
 
-				if (tree.nodes[parentId].lastMergedIn < iteration) {
+				if (node.lastMergedIn == iteration) {
+					nodeId = parentId;
+					parentId = parent.parent;
+					continue;
+				}
+
+				if (parent.lastMergedIn < iteration) {
 					node.lastMergedIn = iteration;
 					parent.lastMergedIn = iteration;
 
