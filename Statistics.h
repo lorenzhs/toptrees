@@ -152,7 +152,7 @@ struct DebugInfo {
 };
 
 struct Statistics {
-	Statistics(const std::string filename = "") : numDebugInfos(0) {
+	Statistics(const std::string &filename = "") : numDebugInfos(0) {
 		if (filename != "") {
 			StatWriter::open(filename);
 		}
@@ -179,7 +179,7 @@ struct Statistics {
 		avg.divide(numDebugInfos);
 	}
 
-	void dump(std::ostream &os) {
+	void dump(std::ostream &os) const {
 		os << std::fixed << std::setprecision(2);
 		os << std::endl << "Statistics:" << std::endl << std::endl
 		   << "Total duration p. tree: " << avg.totalDuration() << "ms (avg), " << min.totalDuration() << "ms (min), " << max.totalDuration() << "ms (max)" << std::endl

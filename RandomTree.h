@@ -19,10 +19,9 @@ public:
 	// D.E. Knuth, Semi-numerical Algorithms, The Art of Computer Programming, Vol. 2 (Addision-Wesley, Reading, MA, 2nd ed., 1981).
 	void selectionSampling(vector<bool> &result, const int n, const int N) {
 		int t(0), m(0);
-		double U;
 		result.assign(N, false);
 		while (m < n) {
-			U = distribution(generator);
+			double U = distribution(generator);
 			if (((N - t) * U) < (n - m)) {
 				m++;
 				result[t] = true;

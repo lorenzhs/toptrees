@@ -79,7 +79,7 @@ class XmlWriter<TopTree<DataType>, DataType> {
 public:
 	XmlWriter(TopTree<DataType> &tree) : tree(tree) {}
 
-	void write(const string &filename) {
+	void write(const string &filename) const {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());
 
@@ -90,7 +90,7 @@ public:
 	}
 
 private:
-	void writeNode(std::ofstream &out, const int nodeId, const int depth) {
+	void writeNode(std::ofstream &out, const int nodeId, const int depth) const {
 		const Cluster<DataType> &node = tree.clusters[nodeId];
 		for (int i = 0; i < depth; ++i) out << " ";
 		out << "<";
@@ -126,7 +126,7 @@ class XmlWriter<OrderedTree<NodeType, EdgeType>, DataType> {
 public:
 	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<DataType> &labels) : tree(tree), labels(labels) {}
 
-	void write(const string &filename) {
+	void write(const string &filename) const {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());
 
