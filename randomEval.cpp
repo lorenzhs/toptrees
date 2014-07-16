@@ -36,7 +36,8 @@ void usage(char* name) {
 		 << "  -n <int>  number of trees to test (default: 100)" << endl
 		 << "  -l <int>  number of different labels to assign to the nodes (default: 2)" << endl
 		 << "  -s <int>  seed (default: 12345678)" << endl
-		 << "  -o <file> set output file for edge compression ratios (empty for no output)" << endl
+		 << "  -r <file> set output file for edge compression ratios (default: no output)" << endl
+		 << "  -o <file> set output file for debug information (default: no output)" << endl
 		 << "  -w <path> set output folder for generated trees as XML files (default: don't write)" << endl
 		 << "  -t <int>  number of threads to use (default: #cores)" << endl
 		 << "  -v        verbose" << endl
@@ -122,7 +123,8 @@ int main(int argc, char **argv) {
 	const uint seed = argParser.get<uint>("s", 12345678);
 	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
 	const bool extraVerbose = argParser.isSet("vv");
-	const string filename = argParser.get<string>("o", "ratios.dat");
+	const string ratioFilename = argParser.get<string>("r", "");
+	const string debugFilename = argParser.get<string>("o", "");
 	const string treePath = argParser.get<string>("w", "");
 
 	if (treePath != "") {
@@ -133,7 +135,7 @@ int main(int argc, char **argv) {
 	numWorkers = argParser.get<int>("t", numWorkers);
 
 	Timer timer;
-	Statistics statistics(filename);
+	Statistics statistics(ratioFilename, debugFilename);
 	ProgressBar bar(numIterations, std::cerr);
 
 	cout << "Running experiments with " << numIterations << " trees of size " << size << " with " << numLabels

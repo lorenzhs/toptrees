@@ -9,14 +9,16 @@
 #include <vector>
 
 
+/// A statistics writer (thread-safe)
+/// Uses locking for all operations, feel free to do crazy things with threads
 struct StatWriter {
-	static void open(const std::string &filename) {
+	void open(const std::string &filename) {
 		mutex.lock();
 		out.open(filename.c_str());
 		mutex.unlock();
 	}
 
-	static void close() {
+	void close() {
 		mutex.lock();
 		if (out.is_open())
 			out.close();
@@ -24,32 +26,46 @@ struct StatWriter {
 	}
 
 	template <typename T>
-	static void write(const T &data) {
+	void write(const T &data, const bool newLine = true) {
 		mutex.lock();
-		if (out.is_open())
+		if (out.is_open()) {
 			out << data;
+			if (newLine)
+				out << std::endl;
+		}
 		mutex.unlock();
 	}
 
-	static std::mutex mutex;
-	static std::ofstream out;
+	std::mutex mutex;
+	std::ofstream out;
 };
 
-// Need to instantiate these, ugly
-std::mutex StatWriter::mutex;
-std::ofstream StatWriter::out;
+static StatWriter edgeRatioWriter;
+static StatWriter debugInfoWriter;
 
+/// Holds debug information about a tree compression run
 struct DebugInfo {
+	/// the time it took to generate the tree (in milliseconds)
 	double generationDuration;
+	/// the time it took to transform the tree into its top tree (in milliseconds)
 	double mergeDuration;
+	/// the time it took to compute the top tree's minimal DAG (in milliseconds)
 	double dagDuration;
+	/// the minimum ratio of edges before and after an iteration (there are theoretical bounds on this)
 	double minEdgeRatio;
+	/// the maximum ratio of edges before and after an iteration
 	double maxEdgeRatio;
+	/// the sum of the edge ratios
 	double edgeRatios;
+	/// the number of edge ratios summed up in ::edgeRatios
 	int numEdgeRatios;
+	/// number of edges in the minimal DAG
 	int numDagEdges;
+	/// number of nodes in the minimal DAG
 	int numDagNodes;
+	/// height of the tree
 	int height;
+	/// average depth of the tree's nodes
 	double avgDepth;
 
 	DebugInfo()
@@ -63,13 +79,14 @@ struct DebugInfo {
 		  numDagEdges(0),
 		  numDagNodes(0),
 		  height(0),
-		  avgDepth(0.0) {
-	}
+		  avgDepth(0.0) {}
 
+	/// the total time it took to perform the relevant (i.e., non-statistical) operations
 	double totalDuration() const {
 		return generationDuration + mergeDuration + dagDuration;
 	}
 
+	/// add a ratio of edges before and after an iteration
 	void addEdgeRatio(double ratio) {
 		++numEdgeRatios;
 		edgeRatios += ratio;
@@ -79,13 +96,15 @@ struct DebugInfo {
 		if (ratio > maxEdgeRatio) {
 			maxEdgeRatio = ratio;
 		}
-		StatWriter::write(ratio);
+		edgeRatioWriter.write(ratio);
 	}
 
+	/// the average ratio of edges compressed in all iterations
 	double avgEdgeRatio() const {
 		return edgeRatios / numEdgeRatios;
 	}
 
+	/// add another DebugInfo object to this
 	void add(const DebugInfo &other) {
 		generationDuration += other.generationDuration;
 		mergeDuration += other.mergeDuration;
@@ -98,6 +117,7 @@ struct DebugInfo {
 		avgDepth += other.avgDepth;
 	}
 
+	/// calculate element-wise minimum with another DebugInfo object in-place
 	void min(const DebugInfo &other) {
 		generationDuration = std::min(generationDuration, other.generationDuration);
 		mergeDuration = std::min(mergeDuration, other.mergeDuration);
@@ -109,6 +129,7 @@ struct DebugInfo {
 		avgDepth = std::min(avgDepth, other.avgDepth);
 	}
 
+	/// calculate element-wise maximum with another DebugInfo object in-place
 	void max(const DebugInfo &other) {
 		generationDuration = std::max(generationDuration, other.generationDuration);
 		mergeDuration = std::max(mergeDuration, other.mergeDuration);
@@ -120,6 +141,7 @@ struct DebugInfo {
 		avgDepth = std::max(avgDepth, other.avgDepth);
 	}
 
+	/// divide all (reasonable) elements for statistics aggregation
 	void divide(const int factor) {
 		generationDuration /= factor;
 		mergeDuration /= factor;
@@ -130,12 +152,23 @@ struct DebugInfo {
 		avgDepth /= factor;
 	}
 
+	/// Dump this debugInfo object to an output stream (tab-separated values)
 	void dump(std::ostream &os) const {
-		os << totalDuration() << "\t" << generationDuration << "\t" << mergeDuration << "\t" << dagDuration << "\t"
-		   << minEdgeRatio << "\t" << maxEdgeRatio << "\t" << avgEdgeRatio() << "\t" << numDagEdges << "\t"
-		   << numDagNodes << "\t" << height << "\t" << avgDepth << std::endl;
+		os << totalDuration() << "\t"
+		   << generationDuration << "\t"
+		   << mergeDuration << "\t"
+		   << dagDuration << "\t"
+		   << minEdgeRatio << "\t"
+		   << maxEdgeRatio << "\t"
+		   << avgEdgeRatio() << "\t"
+		   << numDagEdges << "\t"
+		   << numDagNodes << "\t"
+		   << height << "\t"
+		   << avgDepth
+		   << std::endl;
 	}
 
+	/// Write an explanative header (tab-separated)
 	static void dumpHeader(std::ostream &os) {
 		os << "totalDuration" << "\t"
 		   << "generationDuration" << "\t"
@@ -149,19 +182,30 @@ struct DebugInfo {
 		   << "height" << "\t"
 		   << "avgDepth" << std::endl;
 	}
+
+	friend std::ostream& operator<<(std::ostream &os, const DebugInfo &info) {
+		info.dump(os);
+		return os;
+	}
 };
 
+/// A statistics aggregator
 struct Statistics {
-	Statistics(const std::string &filename = "") : numDebugInfos(0) {
-		if (filename != "") {
-			StatWriter::open(filename);
+	Statistics(const std::string &edgeRatioFilename = "", const std::string &debugInfoFilename = "") : numDebugInfos(0) {
+		if (edgeRatioFilename != "") {
+			edgeRatioWriter.open(edgeRatioFilename);
+		}
+		if (debugInfoFilename != "") {
+			debugInfoWriter.open(debugInfoFilename);
+			DebugInfo::dumpHeader(debugInfoWriter.out);
 		}
 	}
 
 	~Statistics() {
-		StatWriter::close();
+		edgeRatioWriter.close();
 	}
 
+	/// add a debug info object
 	void addDebugInfo(const DebugInfo &info) {
 		if (numDebugInfos == 0) {
 			min = info;
@@ -172,6 +216,7 @@ struct Statistics {
 			max.max(info);
 			avg.add(info);
 		}
+		debugInfoWriter.write(info, false);
 		++numDebugInfos;
 	}
 
