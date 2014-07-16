@@ -4,6 +4,14 @@
 
 #include "Common.h"
 
+/// A node for an OrderedTree
+/**
+ * Node type for use in OrderedTree
+ * You can write other nodes that suit your needs
+ *
+ * Note that the member functions do not distinguish between valid
+ * and invalid edges!
+ */
 struct TreeNode {
 	int firstEdgeIndex;
 	int lastEdgeIndex;
@@ -12,23 +20,30 @@ struct TreeNode {
 
 	TreeNode() : firstEdgeIndex(-1), lastEdgeIndex(-1), parent(-1), lastMergedIn(-1) {}
 
+	/// Get the number of outgoing edges (both valid and invalid)
 	int numEdges() const {
 		return lastEdgeIndex - firstEdgeIndex + 1;
 	}
 
+	/// Check whether the node is a leaf, i.e., has no outgoing edges
 	bool isLeaf() const {
 		return lastEdgeIndex < firstEdgeIndex;
 	}
 
 	// These are faster than comparing numEdges against a constant
+
+	/// Check wether the node has only one child. Does not check edge validity
+	/// \return true iff the node has exactly one outgoing edge
 	bool hasOnlyOneChild() const {
 		return firstEdgeIndex == lastEdgeIndex;
 	}
 
+	/// Check wether the node has outgoing edges (valid or invalid)
 	int hasChildren() const {
 		return firstEdgeIndex <= lastEdgeIndex;
 	}
 
+	/// Check wether the node has at last two outgoing edges (valid or invalid)
 	bool hasMoreThanOneChild() const {
 		return firstEdgeIndex < lastEdgeIndex;
 	}
@@ -40,6 +55,7 @@ struct TreeNode {
 	}
 };
 
+/// This is a node type for use in a DAG
 template <typename T>
 struct DagNode {
 	int left;

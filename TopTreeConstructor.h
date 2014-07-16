@@ -17,14 +17,30 @@ using std::flush;
 using std::function;
 using std::vector;
 
+/// Transform a tree into its top tree
+/**
+ * Given a tree (currently, only OrderedTree is supported), construct
+ * its top tree iteratively.
+ *
+ * The original tree will be modified heavily in the process!
+ * When transformation is complete, only one edge will remain
+ * and nodes' parent values will be lost as well.
+ * In short, this destroys the input tree.
+ */
 template <typename TreeType, typename DataType>
 class TopTreeConstructor {
 	typedef typename TreeType::nodeType NodeType;
 	typedef typename TreeType::edgeType EdgeType;
 
 public:
+	/// Instantiate a top tree constructor
+	/// \param tree the tree which shall be transformed. WILL BE MODIFIED
 	TopTreeConstructor(TreeType &tree, TopTree<DataType> &topTree) : tree(tree), topTree(topTree) {}
 
+	/// Perform the top tree construction procedure
+	/// \param debugInfo pointer to a DebugInfo object, should you wish logging of debug information
+	/// \param verbose whether to print detailed information about the iterations
+	/// \param extraVerbose whether to print the tree in each iteration
 	void construct(DebugInfo *debugInfo = NULL, const bool verbose = true, const bool extraVerbose = false) {
 		vector<int> nodeIds(tree._numNodes);
 		for (int i = 0; i < tree._numNodes; ++i) {
@@ -37,10 +53,13 @@ public:
 	}
 
 protected:
-	// do iterated merges to construct a top tree
-	// the callback is called for every pair of merged nodes (clusters)
-	// its arguments are the ids of the two merged nodes and the new id
-	// (usually one of the two old ones) as well as the type of the merge
+	/// do iterated merges to construct a top tree
+	/// \param mergeCallback the callback that will be called for every pair of merged nodes (clusters).
+	/// Its arguments are the ids of the two merged nodes and the new id
+	/// (usually one of the two old ones) as well as the type of the merge
+	/// \param debugInfo the DebugInfo object or NULL
+	/// \param verbose whether to print detailed information about the iterations
+	/// \param extraVerbose whether to print the tree in each iteration
 	void doMerges(const function<void(const int, const int, const int, const MergeType)> &mergeCallback,
 				  DebugInfo *debugInfo, const bool verbose, const bool extraVerbose) {
 		int iteration = 0;
@@ -82,7 +101,7 @@ protected:
 		if (verbose) cout << tree.summary() << endl;
 	}
 
-	// do one iteration of horizontal merges (step 1)
+	/// Do one iteration of horizontal merges (step 1)
 	void horizontalMerges(const int iteration,
 						  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
@@ -140,7 +159,7 @@ protected:
 		}
 	}
 
-	// Perform an iteration of vertical (chain) merges.
+	/// Perform an iteration of vertical (chain) merges (step 2)
 	void verticalMerges(const int iteration,
 						const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
 		// First, we collect all the vertices from which a merge chain can originate upwards

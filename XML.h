@@ -18,6 +18,7 @@ using std::flush;
 using std::string;
 using std::vector;
 
+/// Read an XML file into a tree, using RapidXml
 template <typename TreeType>
 class XmlParser {
 public:
@@ -46,9 +47,13 @@ public:
 	}
 
 private:
+	// recursively parse the XML tree
 	void parseStructure(rapidxml::xml_node<> *node, int id) {
 		rapidxml::xml_node<> *child = node->first_node();
 		int numChildren(0), childId;
+		// Add the children before processing them
+		// Otherwise, the edges would have to be moved all the time
+		// in the tree because of the adjacency array data structure
 		while (child != NULL) {
 			numChildren++;
 			childId = tree.addNode();
@@ -56,9 +61,11 @@ private:
 			labels.set(childId, child->name());
 			child = child->next_sibling();
 		}
+
 		if (numChildren == 0) return;
 		childId -= numChildren - 1;
 		child = node->first_node();
+		// recurse to the children
 		while (child != NULL) {
 			parseStructure(child, childId);
 			childId++;
@@ -71,14 +78,19 @@ private:
 	Labels<string> &labels;
 };
 
+/// XML tree writer (empty template for overloading)
 template <typename TreeType, typename DataType>
 class XmlWriter {};
 
+/// Top tree XML writer
 template <typename DataType>
 class XmlWriter<TopTree<DataType>, DataType> {
 public:
 	XmlWriter(TopTree<DataType> &tree) : tree(tree) {}
 
+	/// Write the top tree to an XML file.
+	/// Nodes without labels will have their merge types used as labels
+	/// \param filename output filename (path must exist)
 	void write(const string &filename) const {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());
@@ -97,22 +109,19 @@ private:
 		if (node.label == NULL) out << node.mergeType; else out << *node.label;
 		out << ">";
 
-		if (node.left < 0 && node.right < 0) {
-			out << "</";
-			if (node.label == NULL) out << node.mergeType; else out << *node.label;
-			out << ">";
-			return;
-		}
-		out << endl;
+		if (node.left >= 0 || node.right >= 0) {
+			out << endl;
 
-		if (node.left >= 0) {
-			writeNode(out, node.left, depth + 1);
-		}
-		if (node.right >= 0) {
-			writeNode(out, node.right, depth + 1);
+			if (node.left >= 0) {
+				writeNode(out, node.left, depth + 1);
+			}
+			if (node.right >= 0) {
+				writeNode(out, node.right, depth + 1);
+			}
+
+			for (int i = 0; i < depth; ++i) out << " ";
 		}
 
-		for (int i = 0; i < depth; ++i) out << " ";
 		out << "</";
 		if (node.label == NULL) out << node.mergeType; else out << *node.label;
 		out << ">";
@@ -121,11 +130,14 @@ private:
 	TopTree<DataType> &tree;
 };
 
+/// OrderedTree XML tree writer
 template <typename NodeType, typename EdgeType, typename DataType>
 class XmlWriter<OrderedTree<NodeType, EdgeType>, DataType> {
 public:
 	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, LabelsT<DataType> &labels) : tree(tree), labels(labels) {}
 
+	/// write the tree to an XML file
+	/// \param filename filename to use. Directory must exist.
 	void write(const string &filename) const {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());

@@ -30,45 +30,77 @@ using std::vector;
 #define FORALL_OUTGOING_EDGES(tree, node, edge)                                                                        \
 	for (auto edge = tree.firstEdge(node); edge <= tree.lastEdge(node); ++edge)
 
+/// Ordered tree data structure
+/**
+ * Holds an ordered tree
+ *
+ * The tree is implemented as an adjacency array
+ * (See section 8.2 of http://people.mpi-inf.mpg.de/~mehlhorn/ftp/Toolbox/GraphRep.pdf)
+ *
+ * You can define your own node and edge types, e.g. add labels
+ * to the nodes or values to the edges if you wish
+ */
 template <typename NodeType, typename EdgeType>
 class OrderedTree {
 public:
+	/// the node type used in this tree
 	typedef NodeType nodeType;
+	/// the type of the edges used in this tree
 	typedef EdgeType edgeType;
 
 	OrderedTree(const int n = 0, const int m = 0) {
 		initialise(n, m);
 	}
 
+	/// pointer to the dummy edge
 	EdgeType *firstEdge() {
 		return edges.data();
 	}
+	/// Pointer to a node's first edge. Does not check whether the node actually has outgoing edges.
+	/// \param u a node ID (index in the node vector)
+	/// \return a pointer to u's first outgoing edge
 	EdgeType *firstEdge(const int u) {
 		return edges.data() + nodes[u].firstEdgeIndex;
 	}
+	/// const pointer to a node's first edge. Does not check whether the node actually has outgoing edges.
+	/// \param u a node ID (index in the node vector)
+	/// \return a const pointer to u's first outgoing edge
 	const EdgeType *firstEdge(const int u) const {
 		return edges.data() + nodes[u].firstEdgeIndex;
 	}
 
+	/// pointer to the last edge
 	EdgeType *lastEdge() {
 		return edges.data() + _numEdges - 1;
 	}
+	/// Pointer to a node's last edge. Does not check wether the node actually has outgoing edges.
+	/// \param u a node ID (index in the node vector)
+	/// \return a pointer to u's last outgoing edge
 	EdgeType *lastEdge(const int u) {
 		return edges.data() + nodes[u].lastEdgeIndex;
 	}
+	/// const ointer to a node's last edge. Does not check wether the node actually has outgoing edges.
+	/// \param u a node ID (index in the node vector)
+	/// \return a const pointer to u's last outgoing edge
 	const EdgeType *lastEdge(const int u) const {
 		return edges.data() + nodes[u].lastEdgeIndex;
 	}
 
-	// Get ID from pointer, woohoo for not doing this in Scala!
+	/// Get node ID from pointer
+	/// \param node a node pointer
+	/// \return the node's ID (index in the node vector)
 	int nodeId(const NodeType *node) {
 		return (node - nodes.data());
 	}
+	/// Get edge ID from pointer
+	/// \param edge an edge pointer
+	/// \return the edge's ID (index in the edge vector)
 	int edgeId(const EdgeType *edge) {
 		return (edge - edges.data());
 	}
 
-	// Add a node and return its id
+	/// Add a node to the tree
+	/// \return the new node's ID
 	int addNode() {
 		if (_firstFreeNode <= (int)nodes.size()) {
 			nodes.resize(_firstFreeNode + 1);
@@ -79,7 +111,9 @@ public:
 		return _firstFreeNode++;
 	}
 
-	// Add `n` nodes and return id of the first one
+	/// Add multiple nodes
+	/// \param n the number of nodes to add
+	/// \return the ID of the first node added
 	int addNodes(const int n) {
 		for (int i = 0; i < n; ++i) {
 			addNode();
@@ -87,13 +121,11 @@ public:
 		return _firstFreeNode - n;
 	}
 
-	void isolateNode(const int u) {
-		for (EdgeType *edge = firstEdge(u); edge <= lastEdge(u); ++edge) {
-			edge->valid = false;
-		}
-		nodes[u].lastEdgeIndex = nodes[u].firstEdgeIndex - 1;
-	}
-
+	/// Add an edge to the tree
+	/// \param from tail (source) node ID
+	/// \param to head (destination) node ID
+	/// \param extraSpace extra space to allocate for more outgoing edges
+	/// of 'from' if more edges need to be allocated
 	EdgeType *addEdge(const int from, const int to, const int extraSpace = 0) {
 		NodeType &node = nodes[from];
 		int newId = node.lastEdgeIndex + 1;
@@ -142,6 +174,10 @@ public:
 		return _prepareEdge(newId, from, to);
 	}
 
+	/// Remove an edge from the tree
+	/// \param from the edge's tail (source) node
+	/// \param edge the edge's ID
+	/// \param compact whether to consolidate 'from's outgoing edges
 	void removeEdge(const int from, const int edge, const bool compact = true) {
 		assert(edges[edge].valid);
 		edges[edge].valid = false;
@@ -170,7 +206,11 @@ public:
 		_numEdges--;
 	}
 
-	// find the first edge from node `from` to node `to` and remove it
+	/// Remove an edge between to nodes from the tree.
+	/// Finds and removes the *first* edge from 'from' to 'to'
+	/// \param from tail (source) node ID
+	/// \param to head (destination) node ID
+	/// \param compact wether to consolidate 'from's outgoing edges after removal
 	void removeEdgeTo(const int from, const int to, const bool compact = true) {
 		NodeType &node = nodes[from];
 		for (int i = node.firstEdgeIndex; i <= node.lastEdgeIndex; ++i) {
@@ -182,8 +222,11 @@ public:
 		}
 	}
 
-	// Merge two descendants of the same node (i.e., siblings)
-	// Will *set* the newNode and mergeType parameters
+	/// Merge two descendants of the same node (i.e., siblings)
+	/// \param leftEdge pointer to the edge leading to the left child
+	/// \param rightEdge pointer to the edge leading to the right edge
+	/// \param newNode will hold the ID of the merged node after this function returns
+	/// \param mergeType will hold the type of the merge that was done after this returns
 	void mergeSiblings(const EdgeType *leftEdge, const EdgeType *rightEdge, int &newNode, MergeType &mergeType) {
 		// retrieve nodes and perform sanity checks
 		assert(leftEdge->valid && rightEdge->valid);
@@ -216,10 +259,11 @@ public:
 		}
 	}
 
-	// Merge two chained edges like this: a -> b -> c will become a -> b
-	// where b and c are the only children of their parents
-	// Any potential children of c will be attached to b
-	// The parameter `middleId` is the ID of node b in this example
+	/// Merge two chained edges like this: a -> b -> c will become a -> b,
+	/// where b and c are the only children of their parents.
+	/// Any potential children of c will be attached to b.
+	/// \param middleId the middle node's ID in this merge (b in the example)
+	/// \param mergeType will be set to the type of the merge performed
 	void mergeChain(const int middleId, MergeType &mergeType) {
 		// Retrieve nodes and perform sanity checks
 		assert(0 <= middleId && middleId < _numNodes);
@@ -248,12 +292,16 @@ public:
 		}
 	}
 
+	/// A one-line summary of the tree
 	string summary() const {
 		stringstream s;
 		s << "Tree with n = " << _numNodes << " m = " << std::setw(NUM_DIGITS(_numNodes)) << _numEdges;
 		return s.str();
 	}
 
+	/// A rather compact representation of the tree as a string.
+	/// Comprises nodes with children or a parent, and valid edges.
+	/// Format: "  ID/(node or edge)"
 	string shortString() const {
 		stringstream os;
 		os << summary() << endl << "Nodes:";
@@ -269,6 +317,7 @@ public:
 		return os.str();
 	}
 
+	/// String representation of the tree, including all nodes and edges
 	string toString() const {
 		stringstream os;
 		os << summary() << endl << "Nodes:";
@@ -294,6 +343,8 @@ public:
 		return os;
 	}
 
+	/// Perform a few consistency checks.
+	/// NOP if NDEBUG is set
 	void checkConsistency() {
 #ifndef NDEBUG
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
@@ -306,6 +357,12 @@ public:
 #endif
 	}
 
+	/// Compress the edge vector, removing gaps
+	/// \param verbose whether to print some debug information
+	/// \param factor how many times the number of its outgoing edges a node's
+	/// edge space shall be allocated. If you set this to 2, for example, space
+	/// for another edge will be reserved for each edge that there is, so that
+	/// inserting an edge does not cause moving or reallocation.
 	void compact(const bool verbose = true, const int factor = 1) {
 		Timer timer;
 		if (_numEdges + 1 == (int)edges.size()) {
@@ -345,8 +402,8 @@ public:
 				 << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
-	// Do an inplace compaction of each node's vertices
-	// Seems rather slow so consider removing this in the future
+	/// Do an inplace compaction of each node's vertices
+	/// Seems rather slow so consider removing this in the future
 	void inplaceCompact(const bool verbose = true) {
 		Timer timer;
 		int count = 0;
@@ -376,12 +433,18 @@ public:
 	}
 
 	// for statistics, mainly
+
+	/// Perform a left fold over each node's children in post-order
+	/// \param callback a callback to be called for each node with the result of the last fold operation
+	/// \param fold the fold function. Parameters: previous value, current value
+	/// \param initial inital value for the first folding
 	template <typename T>
 	const T foldLeftPostOrder(const function<const T(const T)> &callback,
 							  const function<const T(const T, const T)> &fold, const T initial) const {
 		return traverseFoldLeftPostOrder(0, callback, fold, initial);
 	}
 
+	/// This does the work for foldLeftPostOrder() and should not be used directly
 	template <typename T>
 	const T traverseFoldLeftPostOrder(const int nodeId, const function<const T(const T)> &callback,
 									  const function<const T(const T, const T)> &fold, const T initial) const {
@@ -393,12 +456,16 @@ public:
 		return callback(last);
 	}
 
+	/// Calculate the height of the tree (i.e., the maximum depth of a node).
+	/// Uses foldLeftPostOrder() and worth looking at as a simple example of a fold
 	int height() const {
 		return foldLeftPostOrder<int>(
 			[](const int depth) { return depth + 1; },
 			[](const int p1, const int p2) { return std::max(p1, p2); }, 0);
 	}
 
+	/// Calculate the average depth of the nodes in the tree.
+	/// Uses foldLeftPostOrder() and worth looking at as slightly more complex example for a fold
 	double avgDepth() const {
 		typedef pair<int, int> P;
 		P countAndSum = foldLeftPostOrder<P>(
@@ -408,6 +475,9 @@ public:
 	}
 
 protected:
+	/// Initialise the tree
+	/// \param n number of nodes to reserve space for
+	/// \param m number of edges to reserve space for
 	void initialise(const int n, const int m) {
 		nodes.clear();
 		edges.clear();
@@ -425,7 +495,7 @@ protected:
 		_firstFreeEdge = 1;
 	}
 
-	// Helper method for inserting new edges in order to remove repetition
+	/// Helper method for inserting new edges
 	EdgeType *_prepareEdge(const int edgeId, const int from, const int to) {
 		_numEdges++;
 		nodes[to].parent = from;
