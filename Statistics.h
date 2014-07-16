@@ -9,8 +9,8 @@
 #include <vector>
 
 
-/// A statistics writer (thread-safe)
-/// Uses locking for all operations, feel free to do crazy things with threads
+/// A completely thread-safe statistics writer
+// Uses locking for all operations, feel free to do crazy things with threads
 struct StatWriter {
 	void open(const std::string &filename) {
 		mutex.lock();

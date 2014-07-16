@@ -9,9 +9,12 @@
 using std::vector;
 using std::function;
 
+/// A binary DAG that is specialised to be a top tree's minimal DAG
 template <typename DataType>
 class BinaryDag {
 public:
+	/// Create a new binary DAG
+	/// \param n number of node slots to allocate
 	BinaryDag(const int n = 0) : nodes() {
 		nodes.reserve(n);
 		// add a dummy element that is guaranteed to not appear
@@ -19,20 +22,30 @@ public:
 		nodes.emplace_back(-2, -2, (DataType *)NULL, NO_MERGE);
 	}
 
+	/// Add a node
+	/// \param left left child
+	/// \param right right child
+	/// \param label a label pointer
+	/// \param mergeType the original node's merge type (for use with a TopTree)
 	int addNode(int left, int right, const DataType *label, MergeType mergeType) {
 		nodes.emplace_back(left, right, label, mergeType);
 		return (nodes.size() - 1);
 	}
 
+	/// Remove the last node
 	void popNode() {
 		nodes.pop_back();
 	}
 
+	/// Add multiple nodes
+	/// \param n the number of nodes to add
+	/// \return the ID of the first node added
 	int addNodes(const int n) {
 		nodes.resize(nodes.size() + n);
 		return nodes.size() - n;
 	}
 
+	/// Count the number of edges in the DAG
 	int countEdges() const {
 		int count(0);
 		for (const DagNode<DataType> &node : nodes) {
@@ -42,11 +55,14 @@ public:
 		return count;
 	}
 
+	/// Traverse the dag in post-order
+	/// \param callback a callback to be called with the node ID and the results of the calls to its children
 	template <typename T>
 	T inPostOrder(const function<T(const int, const T, const T)> &callback) {
 		return traverseDagPostOrder(nodes.size() - 1, callback);
 	}
 
+	/// Helper for inPostOrder(), you shouldn't need to call this directly
 	template <typename T>
 	T traverseDagPostOrder(const int nodeId, const function<T(const int, const T, const T)> &callback) {
 		assert(nodeId != 0); // 0 is the dummy not and should not be reachable

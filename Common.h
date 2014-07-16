@@ -4,7 +4,7 @@
 #include <random>
 #include <sys/stat.h>
 
-// for std::setw
+// hacky way to calculate the number of digits in a number, for std::setw
 #define NUM_DIGITS(v) ((v >= 1000000000) ? 10 : (v >= 100000000) ? 9 : (v >= 10000000) ? 8 : (v >= 1000000) ? 7 : (v >= 100000) ? 6 : (v >= 10000) ? 5 : (v >= 1000) ? 4 : (v >= 100) ? 3 : (v >= 10) ? 2 : 1)
 
 enum MergeType { NO_MERGE = -1, VERT_WITH_BBN, VERT_NO_BBN, HORZ_LEFT_BBN, HORZ_RIGHT_BBN, HORZ_NO_BBN };
@@ -20,15 +20,17 @@ static void boost_hash_combine(uint &seed, const T &val) {
 	seed ^= hasher(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
 
-// shared random generator
+/// the type of random generator used
 typedef std::mt19937 RandomGeneratorType;
+/// shared random generator
 std::mt19937 &getRandomGenerator() {
 	static std::mt19937 engine{};
 	return engine;
 }
 
-// source: http://stackoverflow.com/a/11366985
-// by StackOverflow user "Mark"
+
+/// Recursively create a path (similar to "mkdir -p")
+/// source: http://stackoverflow.com/a/11366985 by StackOverflow user "Mark"
 bool makePathRecursive(std::string path) {
 	bool success = false;
 	int nRC = mkdir(path.c_str(), 0775);

@@ -10,6 +10,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+/// Generates ordered unlabelled trees uniformly at random
 template <typename RNG>
 class RandomTreeGenerator {
 public:

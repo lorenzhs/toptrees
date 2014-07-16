@@ -4,6 +4,8 @@
 
 // TODO maybe be really hacky and use first bit of headNode as valid flag?
 // -> invalid edges have negative ID
+
+/// Edge type for use with an OrderedTree
 struct TreeEdge {
 	int headNode;
 	bool valid;

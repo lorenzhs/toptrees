@@ -15,6 +15,7 @@ using std::ostream;
 using std::string;
 using std::vector;
 
+/// Cluster type for a top tree, holding a pointer to some data
 template <typename DataType>
 struct Cluster {
 	Cluster() : mergeType(NO_MERGE), left(-1), right(-1), label(NULL)
@@ -35,25 +36,40 @@ struct Cluster {
 	}
 };
 
+/// Top tree data structure
 template <typename DataType>
 struct TopTree {
+	/// Create a top tree with labelled leaves
+	/// \param numLeaves number of leaves in the top tree
+	/// \param labels the labels to assign to the leaves
 	TopTree(const int numLeaves, LabelsT<DataType> &labels) : clusters(numLeaves), numLeaves(numLeaves) {
 		for (int i = 0; i < numLeaves; ++i) {
 			clusters[i].label = &labels[i];
 		}
 	}
 
+	/// Create a top tree with a fixed number of leaves
+	/// \param numLeaves the number of leaves. Not terribly relevant, but other
+	/// parts use this to do stuff [TM]
 	TopTree(const int numLeaves) : clusters(numLeaves), numLeaves(numLeaves) {}
 
+	/// Add a cluster to the top tree
+	/// \param left left child
+	/// \param right right child
+	/// \param mergeType the type of merge that formed this cluster
+	/// \return the new cluster's ID
 	int addCluster(const int left, const int right, const MergeType mergeType) {
 		clusters.push_back(Cluster<DataType>(left, right, mergeType));
 		return clusters.size() - 1;
 	}
 
+	/// Traverse the tree in post order
+	/// \param callback callback to call with the cluster ID as parameter
 	void inPostOrder(const function<void(const int)> &callback) {
 		traverseTreePostOrder(clusters.size() - 1, callback);
 	}
 
+	/// Helper for inPostOrder, you shouldn't need to use this
 	void traverseTreePostOrder(const int clusterId, const function<void(const int)> &callback) {
 		Cluster<DataType> &cluster = clusters[clusterId];
 		if (cluster.left != -1) {
@@ -65,6 +81,7 @@ struct TopTree {
 		callback(clusterId);
 	}
 
+	/// Check equality with another subtree
 	bool isEqual(const TopTree<DataType> &other) const {
 		if (numLeaves != other.numLeaves || clusters.size() != other.clusters.size()) {
 			return false;
@@ -73,6 +90,7 @@ struct TopTree {
 		return nodesEqual(other, clusters.size() - 1, clusters.size() - 1);
 	}
 
+	/// Helper for isEqual, you shouldn't need to use this directly
 	bool nodesEqual(const TopTree<DataType> &other, const int clusterId, const int otherClusterId) const {
 		const Cluster<DataType> &cluster = clusters[clusterId];
 		const Cluster<DataType> &otherCluster = other.clusters[otherClusterId];
@@ -126,6 +144,7 @@ struct TopTree {
 	int numLeaves;
 };
 
+/// Unpack a TopTree into its original OrderedTree
 template <typename TreeType, typename DataType>
 class TopTreeUnpacker {
 public:
@@ -140,9 +159,11 @@ public:
 		int rootClusterId = topTree.clusters.size() - 1;
 
 		Cluster<DataType> &rootCluster = topTree.clusters[rootClusterId];
+		// special treatment for root node of original tree
 		const DataType *label = topTree.clusters[rootCluster.left].label;
 		assert(label != NULL);
 		labels.set(0, *label);
+		// unpack the rest
 		unpackCluster(rootCluster.right, firstId);
 	}
 

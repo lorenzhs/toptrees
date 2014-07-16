@@ -2,18 +2,23 @@
 
 #include <sys/time.h>
 
+/// A reasonably precise timing helper that wraps ugly C interfaces
 class Timer {
 public:
+	/// Create and start a new timer
 	Timer() : start(timestamp()) {}
 
+	/// reset the timer
 	void reset() {
 		start = timestamp();
 	}
 
+	/// milliseconds ellapsed since last reset or instantiation
 	double elapsedMillis() const {
 		return timestamp() - start;
 	}
 
+	/// get the elapsed milliseconds and reset the timer
 	double getAndReset() {
 		double t = elapsedMillis();
 		reset();

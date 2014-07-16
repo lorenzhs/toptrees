@@ -10,8 +10,17 @@ using std::map;
 using std::string;
 using std::vector;
 
+/// Parse command-line arguments
+/**
+ * A simple command-line parser.
+ *
+ * Supports named arguments and switches as well as unnamed data arguments
+ *
+ * Example: ./foo -v -o outfolder in1.xml in2.xml
+ */
 class ArgParser {
 public:
+	/// Parse command-line arguments
 	ArgParser(int argc, char** argv) {
 		for (int i = 1; i < argc; ++i) {
 			string arg(argv[i] + 1);
@@ -28,6 +37,9 @@ public:
 		}
 	}
 
+	/// Get a named argument's value
+	/// \param key the argument name
+	/// \param defaultValue the value to return if the argument wasn't set
 	template <typename T>
 	T get(const string &key, const T defaultValue = T()) {
 		T retval;
@@ -42,14 +54,17 @@ public:
 		return retval;
 	}
 
+	/// check whether an argument was set
 	bool isSet(const string &arg) const {
 		return namedArgs.find(arg) != namedArgs.end();
 	}
 
+	/// the number of unnamed data arguments
 	uint numDataArgs() const {
 		return dataArgs.size();
 	}
 
+	/// get a data argument by its index (among the data arguments)
 	string getDataArg(const int index) const {
 		assert(0 <= index && index < (int)numDataArgs());
 		return dataArgs[index];
