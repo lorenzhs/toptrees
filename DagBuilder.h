@@ -12,6 +12,7 @@ using std::cout;
 using std::endl;
 using std::unordered_map;
 
+/// DagNode equality tester, to enable its use in a map
 template <typename DataType>
 struct SubtreeEquality {
 	bool operator()(const DagNode<DataType> &node, const DagNode<DataType> &other) const {
@@ -25,6 +26,7 @@ struct SubtreeEquality {
 	}
 };
 
+/// DagNode hasher to enable its use in a map
 template <typename DataType>
 struct SubtreeHasher {
 	uint operator()(const DagNode<DataType> &node) const {
@@ -40,17 +42,19 @@ struct SubtreeHasher {
 	}
 };
 
+/// Constructs a top tree's minimal DAG (which is binary)
 template <typename DataType>
 class DagBuilder {
 public:
 	DagBuilder(TopTree<DataType> &t, BinaryDag<DataType> &dag)
-		: topTree(t), dag(dag), nodeMap(), clusterToDag(t.clusters.size(), -1) {
-	}
+		: topTree(t), dag(dag), nodeMap(), clusterToDag(t.clusters.size(), -1) {}
 
 	void createDag() {
 		topTree.inPostOrder([&](const int clusterId) { addClusterToDag(clusterId); });
 	}
 
+private:
+	// add a cluster to the DAG (or just link to it if it's already there)
 	int addClusterToDag(const int clusterId) {
 		Cluster<DataType> &cluster = topTree.clusters[clusterId];
 		assert((cluster.left < 0) == (cluster.right < 0));
@@ -95,11 +99,11 @@ public:
 	vector<int> clusterToDag;
 };
 
+/// Unpack a binary DAG to its original top tree
 template <typename DataType>
 class BinaryDagUnpacker {
 public:
-	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree<DataType> &topTree) : nextLeafId(0), dag(dag), topTree(topTree) {
-	}
+	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree<DataType> &topTree) : nextLeafId(0), dag(dag), topTree(topTree) {}
 
 	void unpack() {
 		assert((int)topTree.clusters.size() == topTree.numLeaves);

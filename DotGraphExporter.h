@@ -5,34 +5,39 @@
 #include <fstream>
 #include <sstream>
 
-using std::endl;
-using std::ofstream;
 using std::string;
-using std::stringstream;
 
+/// Export a tree as a DOT graph
 struct DotGraphExporter {
 	template <typename TreeType>
+	/// write a tree's dot graph to a file
+	/// \param tree the tree to write
+	/// \param filename output filename (path must exist)
 	static void write(const TreeType &tree, const string &filename) {
-		ofstream out(filename);
+		std::ofstream out(filename);
 		assert(out.is_open());
-		out << "digraph myTree {" << endl;
+		out << "digraph myTree {" << std::endl;
 		writeNode(out, tree, 0);
-		out << "}" << endl;
+		out << "}" << std::endl;
 	}
 
 	// UNSAFE
+	/// plot a dotfile to svg using the utterly unsafe system() function
+	/// \param dotfile filename of the dotfile
+	/// \param outfilename filename of the svg file to be generated
 	static void drawSvg(const string &dotfile, const string &outfilename) {
-		stringstream s;
+		std::stringstream s;
 		s << "dot -Tsvg " << dotfile << " -o " << outfilename;
 		system(s.str().c_str());
 	}
 
-private:
+protected:
+	/// iteratively write the tree to an output stream
 	template <typename TreeType>
-	static void writeNode(ofstream &out, const TreeType &tree, const int nodeId) {
+	static void writeNode(std::ostream &out, const TreeType &tree, const int nodeId) {
 		FORALL_OUTGOING_EDGES(tree, nodeId, edge) {
 			if (!edge->valid) continue;
-			out << "\t" << nodeId << " -> " << edge->headNode << ";";
+			out << "\t" << nodeId << " -> " << edge->headNode << ";" << std::endl;
 			writeNode(out, tree, edge->headNode);
 		}
 	}
