@@ -31,7 +31,7 @@ using std::endl;
 
 void usage(char* name) {
 	cout << "Usage: " << name << " <options>" << endl
-		 << "  -m <int>  tree size (nodes) (default: 1000)" << endl
+		 << "  -m <int>  tree size (edges) (default: 1000)" << endl
 		 << "  -n <int>  number of trees to test (default: 100)" << endl
 		 << "  -l <int>  number of different labels to assign to the nodes (default: 2)" << endl
 		 << "  -s <int>  seed (default: 12345678)" << endl
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	const int size = argParser.get<int>("m", 1000);
+	const int size = argParser.get<int>("m", 1000) + 1;
 	const int numIterations = argParser.get<int>("n", 100);
 	const uint numLabels = argParser.get<uint>("l", 2);
 	const uint seed = argParser.get<uint>("s", 12345678);
