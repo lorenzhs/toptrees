@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <random>
+#include <sys/stat.h>
 
 // for std::setw
 #define NUM_DIGITS(v) ((v >= 1000000000) ? 10 : (v >= 100000000) ? 9 : (v >= 10000000) ? 8 : (v >= 1000000) ? 7 : (v >= 100000) ? 6 : (v >= 10000) ? 5 : (v >= 1000) ? 4 : (v >= 100) ? 3 : (v >= 10) ? 2 : 1)
@@ -24,4 +25,33 @@ typedef std::mt19937 RandomGeneratorType;
 std::mt19937 &getRandomGenerator() {
 	static std::mt19937 engine{};
 	return engine;
+}
+
+// source: http://stackoverflow.com/a/11366985
+// by StackOverflow user "Mark"
+bool makePathRecursive(std::string path) {
+	bool success = false;
+	int nRC = mkdir(path.c_str(), 0775);
+	if (nRC == -1) {
+		switch (errno) {
+		case ENOENT:
+			// parent didn't exist, try to create it
+			if (makePathRecursive(path.substr(0, path.find_last_of('/'))))
+				// Now, try to create again.
+				success = 0 == mkdir(path.c_str(), 0775);
+			else
+				success = false;
+			break;
+		case EEXIST:
+			// Done!
+			success = true;
+			break;
+		default:
+			success = false;
+			break;
+		}
+	} else {
+		success = true;
+	}
+	return success;
 }

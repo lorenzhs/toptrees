@@ -25,6 +25,7 @@
 #include "ProgressBar.h"
 
 #include "ArgParser.h"
+#include "XML.h"
 
 using std::cout;
 using std::endl;
@@ -36,6 +37,7 @@ void usage(char* name) {
 		 << "  -l <int>  number of different labels to assign to the nodes (default: 2)" << endl
 		 << "  -s <int>  seed (default: 12345678)" << endl
 		 << "  -o <file> set output file for edge compression ratios (empty for no output)" << endl
+		 << "  -w <path> set output folder for generated trees as XML files (default: don't write)" << endl
 		 << "  -t <int>  number of threads to use (default: #cores)" << endl
 		 << "  -v        verbose" << endl
 		 << "  -vv       extra verbose" << endl;
@@ -43,7 +45,7 @@ void usage(char* name) {
 
 std::mutex debugMutex;
 
-void runIteration(const int iteration, RandomGeneratorType &generator, const int seed, const int size, const int numLabels, const bool verbose, const bool extraVerbose, Statistics &statistics, ProgressBar &bar) {
+void runIteration(const int iteration, RandomGeneratorType &generator, const uint seed, const int size, const int numLabels, const bool verbose, const bool extraVerbose, Statistics &statistics, ProgressBar &bar, const string &treePath) {
 	// Seed RNG
 	generator.seed(seed);
 	if (verbose) cout << endl << "Round " << iteration << ", seed is " <<seed << endl;
@@ -62,6 +64,12 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const int
 	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 	debugInfo.height = tree.height();
 	debugInfo.avgDepth = tree.avgDepth();
+
+	if (treePath != "") {
+		XmlWriter<OrderedTree<TreeNode, TreeEdge>, int> writer(tree, labels);
+		writer.write(treePath + "/" + std::to_string(iteration) + "_" + std::to_string(seed) + ".xml");
+	}
+
 	timer.reset();
 
 	TopTree<int> topTree(tree._numNodes, labels);
@@ -115,6 +123,11 @@ int main(int argc, char **argv) {
 	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
 	const bool extraVerbose = argParser.isSet("vv");
 	const string filename = argParser.get<string>("o", "ratios.dat");
+	const string treePath = argParser.get<string>("w", "");
+
+	if (treePath != "") {
+		makePathRecursive(treePath);
+	}
 
 	int numWorkers(std::thread::hardware_concurrency());
 	numWorkers = argParser.get<int>("t", numWorkers);
@@ -140,7 +153,7 @@ int main(int argc, char **argv) {
 	auto worker = [&](int start, int end) {
 		RandomGeneratorType engine{};
 		for (int i = start; i < end; ++i) {
-			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, statistics, bar);
+			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, statistics, bar, treePath);
 		}
 	};
 
