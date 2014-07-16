@@ -16,7 +16,7 @@ struct TreeNode {
 		return lastEdgeIndex - firstEdgeIndex + 1;
 	}
 
-	int isLeaf() const {
+	bool isLeaf() const {
 		return lastEdgeIndex < firstEdgeIndex;
 	}
 
