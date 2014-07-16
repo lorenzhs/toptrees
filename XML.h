@@ -124,7 +124,7 @@ private:
 template <typename NodeType, typename EdgeType, typename DataType>
 class XmlWriter<OrderedTree<NodeType, EdgeType>, DataType> {
 public:
-	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, Labels<DataType> &labels) : tree(tree), labels(labels) {}
+	XmlWriter(OrderedTree<NodeType, EdgeType> &tree, LabelsT<DataType> &labels) : tree(tree), labels(labels) {}
 
 	void write(const string &filename) const {
 		std::ofstream out(filename.c_str());
@@ -155,5 +155,5 @@ private:
 	}
 
 	OrderedTree<NodeType, EdgeType> &tree;
-	Labels<DataType> &labels;
+	LabelsT<DataType> &labels;
 };
