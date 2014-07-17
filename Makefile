@@ -6,7 +6,7 @@ FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
-EXECS=test testTT random randomEval
+EXECS=test testTT random randomEval randomVerify
 #EXECS
 
 all: $(EXECS)
@@ -48,6 +48,15 @@ randomEvalDebug:
 
 randomEvalNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
+
+randomVerify:
+	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
+
+randomVerifyDebug:
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
+
+randomVerifyNoDebug:
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
 
 #RULES
 

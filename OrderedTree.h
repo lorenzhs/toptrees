@@ -11,6 +11,7 @@
 
 #include "Common.h"
 #include "Timer.h"
+#include "Labels.h"
 
 using std::cout;
 using std::endl;
@@ -51,6 +52,14 @@ public:
 	OrderedTree(const int n = 0, const int m = 0) {
 		initialise(n, m);
 	}
+
+	OrderedTree(const OrderedTree<NodeType, EdgeType> &other) :
+		nodes(other.nodes),
+		edges(other.edges),
+		_firstFreeNode(other._firstFreeNode),
+		_firstFreeEdge(other._firstFreeEdge),
+		_numNodes(other._numNodes),
+		_numEdges(other._numEdges) {}
 
 	/// pointer to the dummy edge
 	EdgeType *firstEdge() {
@@ -290,6 +299,46 @@ public:
 
 			mergeType = VERT_WITH_BBN;
 		}
+	}
+
+	/// Check whether this tree is equal to another tree.
+	/// \param other the other tree
+	/// \param labels the labels for this tree. Label type is kept very general deliberately
+	/// \param otherLabels the other tree's labels
+	/// \param verbose whether to print an error traceback if the trees are not equal
+	template <typename LabelType>
+	bool isEqual(const OrderedTree<NodeType, EdgeType> &other, LabelType &labels, LabelType &otherLabels, const bool verbose = false) const {
+		if (_numNodes != other._numNodes || _numEdges != other._numEdges) {
+			return false;
+		}
+		return nodesEqual(other, labels, otherLabels, 0, 0, verbose);
+	}
+
+	/// Recursive node comparison helper function used by isEqual(). You should not need to use this directly.
+	template <typename LabelType>
+	bool nodesEqual(const OrderedTree<NodeType, EdgeType> &other, LabelType &labels, LabelType &otherLabels, const int nodeId, const int otherNodeId, const bool verbose = false) const {
+		const NodeType &node(nodes[nodeId]), &otherNode(other.nodes[otherNodeId]);
+		if (node.numEdges() != otherNode.numEdges()) {
+			if (verbose) cout << "Edge count mismatch at nodes " << nodeId << " and " << otherNodeId << " : " << node.numEdges() << " vs " << otherNode.numEdges() << endl;
+			return false;
+		}
+		if (labels[nodeId] != otherLabels[otherNodeId]) {
+			if (verbose) cout << "Label mismatch at nodes " << nodeId << " and " << otherNodeId << " : '" << labels[nodeId] << "' vs '" << otherLabels[otherNodeId] << "'" << endl;
+			return false;
+		}
+
+		for (int i = 0; i < node.numEdges(); ++i) {
+			const int headId(edges[node.firstEdgeIndex + i].headNode);
+			const int otherHeadId(other.edges[otherNode.firstEdgeIndex + i].headNode);
+			assert(nodes[headId].parent == nodeId);
+			assert(other.nodes[otherHeadId].parent == otherNodeId);
+			if (!nodesEqual(other, labels, otherLabels, headId, otherHeadId)) {
+				if (verbose) cout << "Children no " << i+1 << " of " << node.numEdges() <<" (" << headId << " and " << otherHeadId << ", labels " << labels[headId] << " and " << otherLabels[otherHeadId] << "), parent " << nodeId << " / " << otherNodeId << " did not match, children: " << nodes[headId] << " and " << other.nodes[otherHeadId] << endl;
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/// A one-line summary of the tree
