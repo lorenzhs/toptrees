@@ -59,7 +59,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	// Generate random tree
 	rand.generateTree(tree, size);
-	RandomLabels<RandomGeneratorType> labels(size, numLabels, generator);
+	RandomLabels<RandomGeneratorType> labels(size + 1, numLabels, generator);
 
 	debugInfo.generationDuration = timer.elapsedMillis();
 	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;

@@ -85,6 +85,7 @@ struct RandomLabels : LabelsT<int> {
 	}
 
 	const int &operator[](uint index) const {
+		assert(index < labels.size());
 		return labels[index];
 	}
 
