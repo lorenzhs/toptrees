@@ -48,13 +48,13 @@ public:
 
 	/// Generate an unlabelled ordered tree uniformly at random
 	/// \param tree a bool-vector for the output tree
-	/// \param numNodes the number of nodes that the tree shall have
+	/// \param numEdges the number of edges that the tree shall have
 	/// \param verbose whether to print the bitstring to stdout
 	template <typename TreeType>
-	void generateTree(TreeType &tree, const int numNodes, const bool verbose = false) {
+	void generateTree(TreeType &tree, const int numEdges, const bool verbose = false) {
 		vector<bool> bitstring;
-		// numNodes - 1 because the root is not included
-		randomBalancedParenthesisBitstring(bitstring, numNodes - 1);
+		// numEdges, because the root is not included in the bitstring
+		randomBalancedParenthesisBitstring(bitstring, numEdges);
 
 		if (verbose) {
 			cout << "Bitstring: (";

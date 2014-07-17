@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	const int size = argParser.get<int>("m", 1000) + 1;
+	const int size = argParser.get<int>("m", 1000);
 	const int numIterations = argParser.get<int>("n", 100);
 	const uint numLabels = argParser.get<uint>("l", 2);
 	const uint seed = argParser.get<uint>("s", 12345678);
