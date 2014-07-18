@@ -179,16 +179,16 @@ protected:
 				assert(tree.nodes[edge->headNode].parent == nodeId);
 			}
 #endif
-			EdgeType *leftEdge, *rightEdge, *baseEdge(tree.firstEdge(nodeId));
-			int left, right, newNode, edgeNum, numEdges(node.numEdges());
+			EdgeType *baseEdge(tree.firstEdge(nodeId));
+			int newNode, lastEdgeNum(node.numEdges() - 2);
 			MergeType mergeType;
 			// iterate over pairs of children by index
-			for (edgeNum = 0; edgeNum < (numEdges - 1); ++edgeNum) {
-				leftEdge = baseEdge + edgeNum;
-				rightEdge = leftEdge + 1;
+			for (int edgeNum = 0; edgeNum < lastEdgeNum; ++edgeNum) {
+				EdgeType *leftEdge(baseEdge + edgeNum);
+				EdgeType *rightEdge(leftEdge + 1);
 				assert(leftEdge->valid && rightEdge->valid);
-				left = leftEdge->headNode;
-				right = rightEdge->headNode;
+				const int left = leftEdge->headNode;
+				const int right = rightEdge->headNode;
 				// We can only merge if at least one of the two is a leaf
 				if (tree.nodes[left].isLeaf() || tree.nodes[right].isLeaf()) {
 					tree.nodes[left].lastMergedIn = iteration;
