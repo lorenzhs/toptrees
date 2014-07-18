@@ -72,7 +72,11 @@ protected:
 			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
 			int oldNumEdges = tree._numEdges;
+#ifdef SWEEP
+			horizontalMergesAllPairs(iteration, mergeCallback);
+#else
 			horizontalMerges(iteration, mergeCallback);
+#endif
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
 
 			// We need to compact here because the horizontal merges don't but
@@ -154,6 +158,44 @@ protected:
 					tree.nodes[childMinusOne].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
 					mergeCallback(childMinusOne, left, newNode, mergeType);
+				}
+			}
+		}
+	}
+
+	/// Do one iteration of horizontal merges (step 1)
+	/// Modified to look at (1,2), (2,3), (3,4) etc instead of (1,2), (3,4), etc
+	void horizontalMergesAllPairs(const int iteration,
+								  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
+		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
+			const NodeType &node = tree.nodes[nodeId];
+			// merging children only make sense for nodes with ≥ 2 children
+			if (node.numEdges() < 2) {
+				continue;
+			}
+#ifndef NDEBUG
+			// verify that these edges indeed do belong to whoever claims to be their parent
+			for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
+				assert(tree.nodes[edge->headNode].parent == nodeId);
+			}
+#endif
+			EdgeType *leftEdge, *rightEdge, *baseEdge(tree.firstEdge(nodeId));
+			int left, right, newNode, edgeNum, numEdges(node.numEdges());
+			MergeType mergeType;
+			// iterate over pairs of children by index
+			for (edgeNum = 0; edgeNum < (numEdges - 1); ++edgeNum) {
+				leftEdge = baseEdge + edgeNum;
+				rightEdge = leftEdge + 1;
+				assert(leftEdge->valid && rightEdge->valid);
+				left = leftEdge->headNode;
+				right = rightEdge->headNode;
+				// We can only merge if at least one of the two is a leaf
+				if (tree.nodes[left].isLeaf() || tree.nodes[right].isLeaf()) {
+					tree.nodes[left].lastMergedIn = iteration;
+					tree.nodes[right].lastMergedIn = iteration;
+					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
+					mergeCallback(left, right, newNode, mergeType);
+					++edgeNum;
 				}
 			}
 		}
