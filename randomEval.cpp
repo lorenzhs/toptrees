@@ -67,8 +67,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	debugInfo.avgDepth = tree.avgDepth();
 
 	if (treePath != "") {
-		XmlWriter<OrderedTree<TreeNode, TreeEdge>, int> writer(tree, labels);
-		writer.write(treePath + "/" + std::to_string(iteration) + "_" + std::to_string(seed) + ".xml");
+		const string filename(treePath + "/" + std::to_string(iteration) + "_" + std::to_string(seed) + ".xml");
+		XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(tree, labels, filename);
 	}
 
 	timer.reset();

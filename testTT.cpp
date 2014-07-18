@@ -26,13 +26,11 @@ int main(int argc, char **argv) {
 	string outputfolder = argc > 2 ? string(argv[2]) : "/tmp";
 
 	// Read input file
-	XmlParser<OrderedTree<TreeNode, TreeEdge>> xml(filename, t, labels);
-	xml.parse();
+	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
 
 	// Dump input file for comparison of output
 	Timer timer;
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>, string> origWriter(t, labels);
-	origWriter.write(outputfolder + "/orig.xml");
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(t, labels, outputfolder + "/orig.xml");
 
 	cout << "Wrote orginial trimmed XML file in " << timer.getAndReset() << "ms: " << t.summary() << endl;
 
@@ -71,8 +69,7 @@ int main(int argc, char **argv) {
 	unpacker.unpack();
 	cout << "Unpacked recovered top tree in " << timer.getAndReset() << "ms: " << recoveredTree.summary() << endl;
 
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>, string> unpackedWriter(recoveredTree, newLabels);
-	unpackedWriter.write(outputfolder + "/unpacked.xml");
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(recoveredTree, newLabels, outputfolder + "/unpacked.xml");
 	cout << "Wrote recovered tree in " << timer.getAndReset() << "ms" << endl;
 
 	return 0;

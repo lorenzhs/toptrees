@@ -24,8 +24,7 @@ int main(int argc, char **argv) {
 
 	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
 
-	XmlParser<OrderedTree<TreeNode, TreeEdge>> xml(filename, t, labels);
-	xml.parse();
+	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
 
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 

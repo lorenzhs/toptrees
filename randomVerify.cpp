@@ -61,8 +61,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
 
 	if (treePath != "") {
-		XmlWriter<OrderedTree<TreeNode, TreeEdge>, int> origWriter(tree, labels);
-		origWriter.write(treePath + "/" + std::to_string(iteration) + "_orig.xml");
+		const string filename(treePath + "/" + std::to_string(iteration) + "_orig.xml");
+		XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(tree, labels, filename);
 		if (verbose) cout << "Wrote orginial trimmed XML file in " << timer.getAndReset() << "ms: " << tree.summary() << endl;
 	}
 
@@ -95,8 +95,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	}
 
 	if (treePath != "") {
-		XmlWriter<OrderedTree<TreeNode, TreeEdge>, int> unpackedWriter(unpackedTree, newLabels);
-		unpackedWriter.write(treePath + "/" + std::to_string(iteration) + "_unpacked.xml");
+		const string filename(treePath + "/" + std::to_string(iteration) + "_unpacked.xml");
+		XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(unpackedTree, newLabels, filename);
 		if (verbose) cout << "Wrote recovered tree in " << timer.getAndReset() << "ms" << endl;
 	}
 
