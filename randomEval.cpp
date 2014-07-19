@@ -63,15 +63,16 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	debugInfo.generationDuration = timer.elapsedMillis();
 	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
+	else timer.getAndReset();
 	debugInfo.height = tree.height();
 	debugInfo.avgDepth = tree.avgDepth();
+	debugInfo.statDuration = timer.getAndReset();
 
 	if (treePath != "") {
 		const string filename(treePath + "/" + std::to_string(iteration) + "_" + std::to_string(seed) + ".xml");
 		XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(tree, labels, filename);
+		debugInfo.ioDuration = timer.getAndReset();
 	}
-
-	timer.reset();
 
 	TopTree<int> topTree(tree._numNodes, labels);
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
@@ -86,6 +87,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 		cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "
 			 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
 			 << " non-leaves)" << endl;
+	else timer.getAndReset();
 
 	BinaryDag<int> dag;
 	DagBuilder<int> builder(topTree, dag);
@@ -97,7 +99,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	debugInfo.dagDuration = timer.elapsedMillis();
 	if (verbose)
 		cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-			 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took in "
+			 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took "
 			 << timer.elapsedMillis() << "ms" << endl;
 
 	debugInfo.numDagEdges = edges;
