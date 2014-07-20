@@ -102,7 +102,7 @@ struct TopTree {
 	int height() const {
 		return foldPostOrder<int>([](const int leftHeight, const int rightHeight) {
 			return std::max(leftHeight, rightHeight) + 1;
-		}, 0);
+		}, -1);
 	}
 
 	/// Check equality with another subtree
