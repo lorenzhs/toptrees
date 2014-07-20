@@ -180,7 +180,7 @@ protected:
 			}
 #endif
 			EdgeType *baseEdge(tree.firstEdge(nodeId));
-			int newNode, lastEdgeNum(node.numEdges() - 2);
+			int newNode, lastEdgeNum(node.numEdges() - 1);
 			MergeType mergeType;
 			// iterate over pairs of children by index
 			for (int edgeNum = 0; edgeNum < lastEdgeNum; ++edgeNum) {
