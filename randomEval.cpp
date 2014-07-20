@@ -62,8 +62,9 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	RandomLabels<RandomGeneratorType> labels(size + 1, numLabels, generator);
 
 	debugInfo.generationDuration = timer.elapsedMillis();
-	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.getAndReset() << "ms" << endl;
-	else timer.getAndReset();
+	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.elapsedMillis() << "ms" << endl;
+	timer.reset();
+
 	debugInfo.height = tree.height();
 	debugInfo.avgDepth = tree.avgDepth();
 	debugInfo.statDuration = timer.getAndReset();
@@ -84,10 +85,10 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	debugInfo.mergeDuration = timer.elapsedMillis();
 	if (verbose)
-		cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has "
+		cout << "Top tree construction took " << timer.elapsedMillis() << "ms; Top tree has "
 			 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
 			 << " non-leaves)" << endl;
-	else timer.getAndReset();
+	timer.reset();
 
 	debugInfo.topTreeHeight = topTree.height();
 	debugInfo.statDuration += timer.getAndReset();
