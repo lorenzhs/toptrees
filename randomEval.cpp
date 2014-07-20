@@ -89,6 +89,9 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 			 << " non-leaves)" << endl;
 	else timer.getAndReset();
 
+	debugInfo.topTreeHeight = topTree.height();
+	debugInfo.statDuration += timer.getAndReset();
+
 	BinaryDag<int> dag;
 	DagBuilder<int> builder(topTree, dag);
 	builder.createDag();

@@ -81,6 +81,30 @@ struct TopTree {
 		callback(clusterId);
 	}
 
+	template <typename T>
+	T foldPostOrder(const function<T (const T, const T)> &callback, const T initial) const {
+		return traverseFoldPostOrder(clusters.size() - 1, callback, initial);
+	}
+
+	template <typename T>
+	T traverseFoldPostOrder(const int clusterId, const function<T (const T, const T)> &callback, const T initial) const {
+		const Cluster<DataType> &cluster = clusters[clusterId];
+		T left(initial), right(initial);
+		if (cluster.left != -1) {
+			left = traverseFoldPostOrder(cluster.left, callback, initial);
+		}
+		if (cluster.right != -1) {
+			right = traverseFoldPostOrder(cluster.right, callback, initial);
+		}
+		return callback(left, right);
+	}
+
+	int height() const {
+		return foldPostOrder<int>([](const int leftHeight, const int rightHeight) {
+			return std::max(leftHeight, rightHeight) + 1;
+		}, 0);
+	}
+
 	/// Check equality with another subtree
 	bool isEqual(const TopTree<DataType> &other) const {
 		if (numLeaves != other.numLeaves || clusters.size() != other.clusters.size()) {

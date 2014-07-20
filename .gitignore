@@ -8,6 +8,7 @@ Doxyfile
 
 *.dat
 *.svg
+log_*
 
 test
 test-*
