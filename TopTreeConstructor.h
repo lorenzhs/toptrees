@@ -132,6 +132,8 @@ protected:
 				right = rightEdge->headNode;
 				// We can only merge if at least one of the two is a leaf
 				if (tree.nodes[left].isLeaf() || tree.nodes[right].isLeaf()) {
+					assert(tree.nodes[left].lastMergedIn < iteration);
+					assert(tree.nodes[right].lastMergedIn < iteration);
 					tree.nodes[left].lastMergedIn = iteration;
 					tree.nodes[right].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
@@ -154,6 +156,8 @@ protected:
 				const int childMinusTwo = (leftEdge - 2)->headNode;
 				if (!tree.nodes[childMinusOne].isLeaf() && !tree.nodes[childMinusTwo].isLeaf()) {
 					// Everything is go for a merge in the "odd case"
+					assert(tree.nodes[left].lastMergedIn < iteration);
+					assert(tree.nodes[childMinusOne].lastMergedIn < iteration);
 					tree.nodes[left].lastMergedIn = iteration;
 					tree.nodes[childMinusOne].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
@@ -191,6 +195,8 @@ protected:
 				const int right = rightEdge->headNode;
 				// We can only merge if at least one of the two is a leaf
 				if (tree.nodes[left].isLeaf() || tree.nodes[right].isLeaf()) {
+					assert(tree.nodes[left].lastMergedIn < iteration);
+					assert(tree.nodes[right].lastMergedIn < iteration);
 					tree.nodes[left].lastMergedIn = iteration;
 					tree.nodes[right].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
@@ -233,6 +239,8 @@ protected:
 				}
 
 				if (parent.lastMergedIn < iteration) {
+					assert(node.lastMergedIn < iteration);
+					assert(parent.lastMergedIn < iteration);
 					node.lastMergedIn = iteration;
 					parent.lastMergedIn = iteration;
 
@@ -251,7 +259,8 @@ protected:
 			}
 
 			if (nodeId >= 0 && parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() &&
-				tree.nodes[parentId].lastMergedIn < iteration && tree.nodes[parentId].parent >= 0) {
+				tree.nodes[nodeId].lastMergedIn < iteration && tree.nodes[parentId].lastMergedIn < iteration &&
+				tree.nodes[parentId].parent >= 0) {
 				// We hit the "odd case"
 				assert(!tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild());
 				tree.nodes[nodeId].lastMergedIn = iteration;
