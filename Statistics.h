@@ -64,7 +64,7 @@ struct DebugInfo {
 	/// the sum of the edge ratios
 	double edgeRatios;
 	/// the number of edge ratios summed up in ::edgeRatios
-	int numEdgeRatios;
+	int iterations;
 	/// number of edges in the minimal DAG
 	int numDagEdges;
 	/// number of nodes in the minimal DAG
@@ -84,7 +84,7 @@ struct DebugInfo {
 		  minEdgeRatio(9.99),
 		  maxEdgeRatio(0.0),
 		  edgeRatios(0.0),
-		  numEdgeRatios(0),
+		  iterations(0),
 		  numDagEdges(0),
 		  numDagNodes(0),
 		  height(0),
@@ -97,7 +97,7 @@ struct DebugInfo {
 
 	/// add a ratio of edges before and after an iteration
 	void addEdgeRatio(double ratio) {
-		++numEdgeRatios;
+		++iterations;
 		edgeRatios += ratio;
 		if (ratio < minEdgeRatio) {
 			minEdgeRatio = ratio;
@@ -110,7 +110,7 @@ struct DebugInfo {
 
 	/// the average ratio of edges compressed in all iterations
 	double avgEdgeRatio() const {
-		return edgeRatios / numEdgeRatios;
+		return edgeRatios / iterations;
 	}
 
 	/// add another DebugInfo object to this
@@ -122,7 +122,7 @@ struct DebugInfo {
 		ioDuration += other.ioDuration;
 		statDuration += other.statDuration;
 		edgeRatios += other.edgeRatios;
-		numEdgeRatios += other.numEdgeRatios;
+		iterations += other.iterations;
 		numDagEdges += other.numDagEdges;
 		numDagNodes += other.numDagNodes;
 		height += other.height;
@@ -138,6 +138,7 @@ struct DebugInfo {
 		ioDuration = std::min(ioDuration, other.ioDuration);
 		statDuration = std::min(statDuration, other.statDuration);
 		minEdgeRatio = std::min(minEdgeRatio, other.minEdgeRatio);
+		iterations = std::min(iterations, other.iterations);
 		numDagEdges = std::min(numDagEdges, other.numDagEdges);
 		numDagNodes = std::min(numDagNodes, other.numDagNodes);
 		height = std::min(height, other.height);
@@ -153,6 +154,7 @@ struct DebugInfo {
 		ioDuration = std::max(ioDuration, other.ioDuration);
 		statDuration = std::max(statDuration, other.statDuration);
 		minEdgeRatio = std::max(maxEdgeRatio, other.maxEdgeRatio);
+		iterations = std::max(iterations, other.iterations);
 		numDagEdges = std::max(numDagEdges, other.numDagEdges);
 		numDagNodes = std::max(numDagNodes, other.numDagNodes);
 		height = std::max(height, other.height);
@@ -185,6 +187,7 @@ struct DebugInfo {
 		   << minEdgeRatio << "\t"
 		   << maxEdgeRatio << "\t"
 		   << avgEdgeRatio() << "\t"
+		   << iterations << "\t"
 		   << numDagEdges << "\t"
 		   << numDagNodes << "\t"
 		   << height << "\t"
@@ -204,6 +207,7 @@ struct DebugInfo {
 		   << "minEdgeRatio" << "\t"
 		   << "maxEdgeRatio" << "\t"
 		   << "avgEdgeRatio" << "\t"
+		   << "iterations" << "\t"
 		   << "numDagEdges" << "\t"
 		   << "numDagNodes" << "\t"
 		   << "height" << "\t"
@@ -270,6 +274,7 @@ struct Statistics {
 		os << std::setprecision(6)
 		   << "Edge comp. ratio: " << avg.avgEdgeRatio() << " (avg), " << min.minEdgeRatio << " (min), " << max.maxEdgeRatio << " (max)" << std::endl
 		   << std::setprecision(2)
+		   << "Top Tree Iterations: " << avg.iterations * 1.0 / numDebugInfos << " (avg), " << min.iterations << " (min), " << max.iterations << " (max)" << std::endl
 		   << "DAG Edges: " << avg.numDagEdges << " (avg), " << min.numDagEdges << " (min), " << max.numDagEdges << " (max)" << std::endl
 		   << "DAG Nodes: " << avg.numDagNodes << " (avg), " << min.numDagNodes << " (min), " << max.numDagNodes << " (max)" << std::endl
 		   << "Tree height:    " << avg.height << " (avg), " << min.height << " (min), " << max.height << " (max)" << std::endl
