@@ -67,7 +67,7 @@ struct XmlParser {
 		labels.set(rootId, root->name());
 		parseStructure(root, rootId);
 
-		if (verbose) cout << timer.elapsedMillis() << "ms." << endl;
+		if (verbose) cout << timer.get() << "ms." << endl;
 	}
 };
 

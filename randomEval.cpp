@@ -61,8 +61,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	rand.generateTree(tree, size);
 	RandomLabels<RandomGeneratorType> labels(size + 1, numLabels, generator);
 
-	debugInfo.generationDuration = timer.elapsedMillis();
-	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.elapsedMillis() << "ms" << endl;
+	debugInfo.generationDuration = timer.get();
+	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.get() << "ms" << endl;
 	timer.reset();
 
 	debugInfo.height = tree.height();
@@ -83,9 +83,9 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 		cout << "minRatio = " << debugInfo.minEdgeRatio << " for seed " << seed << endl;
 	}
 
-	debugInfo.mergeDuration = timer.elapsedMillis();
+	debugInfo.mergeDuration = timer.get();
 	if (verbose)
-		cout << "Top tree construction took " << timer.elapsedMillis() << "ms; Top tree has "
+		cout << "Top tree construction took " << timer.get() << "ms; Top tree has "
 			 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
 			 << " non-leaves)" << endl;
 	timer.reset();
@@ -100,11 +100,11 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	const int edges = dag.countEdges();
 	const double percentage = (edges * 100.0) / topTree.numLeaves;
 	const double ratio = ((int)(1000 / percentage)) / 10.0;
-	debugInfo.dagDuration = timer.elapsedMillis();
+	debugInfo.dagDuration = timer.get();
 	if (verbose)
 		cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
 			 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took "
-			 << timer.elapsedMillis() << "ms" << endl;
+			 << timer.get() << "ms" << endl;
 
 	debugInfo.numDagEdges = edges;
 	debugInfo.numDagNodes = dag.nodes.size() - 1;
@@ -140,7 +140,6 @@ int main(int argc, char **argv) {
 	int numWorkers(std::thread::hardware_concurrency());
 	numWorkers = argParser.get<int>("t", numWorkers);
 
-	Timer timer;
 	Statistics statistics(ratioFilename, debugFilename);
 	ProgressBar bar(numIterations, std::cerr);
 

@@ -447,7 +447,7 @@ public:
 		edges.swap(newEdges);
 
 		if (verbose)
-			cout << timer.elapsedMillis() << "ms, " << edges.size() << " / " << newEdges.size() << " edges left ("
+			cout << timer.get() << "ms, " << edges.size() << " / " << newEdges.size() << " edges left ("
 				 << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
@@ -478,7 +478,7 @@ public:
 		}
 		if (verbose)
 			cout << "Inplace compaction moved " << count << " edges (" << (count * 100.0 / _numEdges) << "%) in "
-				 << timer.elapsedMillis() << "ms" << endl;
+				 << timer.get() << "ms" << endl;
 	}
 
 	// for statistics, mainly

@@ -57,15 +57,15 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	rand.generateTree(tree, size);
 	RandomLabels<RandomGeneratorType> labels(size+1, numLabels, generator);
 
-	debugInfo.generationDuration = timer.elapsedMillis();
-	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.elapsedMillis() << "ms" << endl;
+	debugInfo.generationDuration = timer.get();
+	if (verbose) cout << "Generated " << tree.summary() << " in " << timer.get() << "ms" << endl;
 	timer.reset();
 
 	if (treePath != "") {
 		const string filename(treePath + "/" + std::to_string(iteration) + "_orig.xml");
 		XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(tree, labels, filename);
-		debugInfo.ioDuration = timer.elapsedMillis();
-		if (verbose) cout << "Wrote orginial trimmed XML file in " << timer.elapsedMillis() << "ms: " << tree.summary() << endl;
+		debugInfo.ioDuration = timer.get();
+		if (verbose) cout << "Wrote orginial trimmed XML file in " << timer.get() << "ms: " << tree.summary() << endl;
 		timer.reset();
 	}
 
@@ -79,9 +79,9 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
 	topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
 
-	debugInfo.mergeDuration = timer.elapsedMillis();
+	debugInfo.mergeDuration = timer.get();
 	if (verbose)
-		cout << "Top tree construction took " << timer.elapsedMillis() << "ms; Top tree has "
+		cout << "Top tree construction took " << timer.get() << "ms; Top tree has "
 			 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
 			 << " non-leaves)" << endl;
 	timer.reset();
@@ -91,24 +91,24 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	Labels<int> newLabels(size + 1);
 	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>, int> treeUnpacker(topTree, unpackedTree, newLabels);
 	treeUnpacker.unpack();
-	debugInfo.unpackDuration = timer.elapsedMillis();
-	if (verbose) cout << "Unpacked top tree in " << timer.elapsedMillis() << "ms" << flush;
+	debugInfo.unpackDuration = timer.get();
+	if (verbose) cout << "Unpacked top tree in " << timer.get() << "ms" << flush;
 	timer.reset();
 
 	// Verify that the unpacked tree is identical to the original tree
 	if (!unpackedTree.isEqual<LabelsT<int>>(treeCopy, newLabels, labels)) {
 		std::cerr << "Top Tree unpacking produced incorrect result for seed " << seed << endl;
 	}
-	debugInfo.statDuration += timer.elapsedMillis();
-	if (verbose) cout << "; checked in " << timer.elapsedMillis() << "ms" << endl;
+	debugInfo.statDuration += timer.get();
+	if (verbose) cout << "; checked in " << timer.get() << "ms" << endl;
 	timer.reset();
 
 
 	if (treePath != "") {
 		const string filename(treePath + "/" + std::to_string(iteration) + "_unpacked.xml");
 		XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(unpackedTree, newLabels, filename);
-		debugInfo.ioDuration += timer.elapsedMillis();
-		if (verbose) cout << "Wrote recovered tree in " << timer.elapsedMillis() << "ms" << endl;
+		debugInfo.ioDuration += timer.get();
+		if (verbose) cout << "Wrote recovered tree in " << timer.get() << "ms" << endl;
 	}
 
 	debugMutex.lock();
