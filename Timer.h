@@ -58,6 +58,6 @@ private:
 };
 
 /// A timer that is accurate to microseconds, formatted as milliseconds
-typedef TimerT<std::chrono::microseconds, 1000> Timer;
+typedef TimerT<std::chrono::microseconds, 1000, double> Timer;
 /// A timer that measures milliseconds
 typedef TimerT<std::chrono::milliseconds, 1> MilliTimer;
