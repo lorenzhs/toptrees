@@ -81,11 +81,15 @@ struct TopTree {
 		callback(clusterId);
 	}
 
+	/// Traverse the top tree in post order, applying a callback to the callback results of its children
+	/// \param callback function to be called on its results of the left and right child
+	/// \param initial value to use as "callback result" for leaves
 	template <typename T>
 	T foldPostOrder(const function<T (const T, const T)> &callback, const T initial) const {
 		return traverseFoldPostOrder(clusters.size() - 1, callback, initial);
 	}
 
+	/// Helper function for foldPostOrder(). You should not need to use this directly.
 	template <typename T>
 	T traverseFoldPostOrder(const int clusterId, const function<T (const T, const T)> &callback, const T initial) const {
 		const Cluster<DataType> &cluster = clusters[clusterId];
@@ -99,6 +103,7 @@ struct TopTree {
 		return callback(left, right);
 	}
 
+	/// Get the height of the top tree
 	int height() const {
 		return foldPostOrder<int>([](const int leftHeight, const int rightHeight) {
 			return std::max(leftHeight, rightHeight) + 1;
