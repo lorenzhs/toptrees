@@ -14,7 +14,13 @@ public:
 	/// \param out the output stream to draw the progress bar on
 	/// \param barwidth the width of the bar in characters
 	ProgressBar(const long long max, std::ostream &out = std::cout, int barwidth = 70)
-	    : max(max), pos(0), lastprogress(-1), out(out), barwidth(barwidth) {}
+		: max(max),
+		  pos(0),
+		  lastprogress(-1),
+		  out(out),
+		  barwidth(barwidth),
+		  doDraw((out.rdbuf() == std::cout.rdbuf() || out.rdbuf() == std::cerr.rdbuf())) {
+	}
 
 	/// increase progress by 1 step (not percent!)
 	void step() {
@@ -48,6 +54,7 @@ protected:
 	// http://stackoverflow.com/a/14539953
 	/// Draw the progress bar to the output stream
 	void draw() {
+		if (!doDraw) return;
 		int progress = (int)((pos * 100) / max);
 		if (progress == lastprogress) return;
 
@@ -73,4 +80,5 @@ private:
 	int lastprogress;
 	std::ostream &out;
 	const int barwidth;
+	const bool doDraw;
 };
