@@ -64,15 +64,15 @@ struct DebugInfo {
 	/// the sum of the edge ratios
 	double edgeRatios;
 	/// the number of iterations, which is equal to the number of edge ratios summed up in ::edgeRatios
-	int_fast64_t iterations;
+	uint_fast64_t iterations;
 	/// number of edges in the minimal DAG
-	int_fast64_t numDagEdges;
+	uint_fast64_t numDagEdges;
 	/// number of nodes in the minimal DAG
-	int_fast64_t numDagNodes;
+	uint_fast64_t numDagNodes;
 	/// height of the top tree
-	int_fast64_t topTreeHeight;
+	uint_fast64_t topTreeHeight;
 	/// height of the tree
-	int_fast64_t height;
+	uint_fast64_t height;
 	/// average depth of the tree's nodes
 	double avgDepth;
 
@@ -291,5 +291,5 @@ struct Statistics {
 
 	DebugInfo min, max, avg;
 	std::ofstream out;
-	int numDebugInfos;
+	uint numDebugInfos;
 };
