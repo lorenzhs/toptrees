@@ -6,22 +6,27 @@
 from pylab import *
 from math import log
 
+sigma = 2  # alphabet size
+
 def plotstats(inputfile):
 	with open(inputfile, 'r') as infile:
 		lines = infile.readlines()
 	orig, comp = zip(*map(lambda x: map(int, x.split()), lines))
 
 	cr = [orig/comp for (orig, comp) in zip(orig, comp)]
-	y = [log(ratio) / log(log(n)) for (ratio, n) in zip(cr, orig)]
+	y = [ratio / log(n, sigma) for (ratio, n) in zip(cr, orig)]
 
 	fig, ax = subplots()
-	plot(orig, cr, 'o')
+	plot(orig, y, 'o')
+	ax.set_xscale('log', basex = 2.0)
+	ax.set_xlabel('tree size (n)')
+	ax.set_ylabel('compression ratio / log_4σ(n)')
 	show()
 
 
 if __name__ == '__main__':
 	import sys
 	if len(sys.argv) < 2:
-		print('Usage: {1} inputfile'.format(sys.argv[0]))
+		print('Usage: {0} inputfile'.format(sys.argv[0]))
 		sys.exit(1)
 	plotstats(sys.argv[1])
