@@ -4,7 +4,6 @@
 # for f in res_*; do echo -n "$f\t" | sed 's,.*res_,,'; cat $f | grep "Edges" | cut -d ' ' -f 3; done > eval
 
 from pylab import *
-import matplotlib.pyplot as plt
 from math import log
 
 def plotstats(inputfile):
