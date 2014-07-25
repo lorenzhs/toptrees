@@ -53,7 +53,19 @@ int main(int argc, char **argv) {
 	cout << "DAG: " << entropy.getDagEntropy().summary();
 	cout << "Labels: " << entropy.getLabelEntropy().summary();
 	cout << "MergeT: " << entropy.getMergeEntropy().summary();
-	cout << "Entropy calcuation took " << timer.getAndReset() << "ms" << endl;
+	double dagEntropyTime = timer.getAndReset();
 
+	StringLabelEntropy labelEntropy(labels);
+	labelEntropy.calculate();
+	cout << "Label strings: " << labelEntropy.getEntropy().summary();
+
+	double labelEntropyTime = timer.getAndReset();
+	cout << "Entropy calcuation took " << dagEntropyTime << " + " << labelEntropyTime << " = " << dagEntropyTime + labelEntropyTime << "ms; " << endl;
+
+	int bits = entropy.getDagEntropy().huffBitsNeeded() +
+		entropy.getLabelEntropy().huffBitsNeeded() +
+		entropy.getMergeEntropy().huffBitsNeeded() +
+		labelEntropy.getEntropy().huffBitsNeeded();
+	cout << "Output needs " << bits << " bits (" << (bits+7)/8 << " bytes)" << endl;
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include "BinaryDag.h"
+#include "Labels.h"
 
 /// Calculate entropy of a sequence of symbols
 template <typename T, typename CounterType = int>
@@ -61,6 +62,24 @@ public:
 		return entropy;
 	}
 
+	/// Bits per symbol if each symbol is coded with an integral number of bits (e.g., Huffman)
+	double getIntEntropy() const {
+		double entropy(0);
+		for (auto it = freq.cbegin(); it != freq.cend(); ++it) {
+			if (it->second == 0) continue;
+			double relativeFrequency(((double)it->second) / numItems);
+			entropy += relativeFrequency * ceil(-1*log2(relativeFrequency));
+		}
+		return entropy;
+	}
+
+	/// Total bits needed for a huffman code
+	int huffBitsNeeded() const {
+		int codedBits = (int)(getIntEntropy() * numItems);
+		int huffTableBits = 2 * (freq.size() - 1);
+		return codedBits + huffTableBits;
+	}
+
 	/// The optimal number of bits to code a symbol
 	/// \param symbol the symbol by const reference
 	double optBitsForSymbol(const T &symbol) const {
@@ -89,9 +108,12 @@ public:
 		return ceil(optBitsForSymbol(symbol));
 	}
 
+	/// A short string summary of the data collected
 	std::string summary() const {
 		std::stringstream s;
-		s << "Entropy of " << freq.size() << " symbols with " << numItems << " occurrences: " << getEntropy() << " bits/symbol needed on average" << std::endl;
+		s << freq.size() << " symbols, " << numItems << " occurrences: "
+		  << getEntropy()  << " / " << getIntEntropy() << " b/symbol on avg; "
+		  << " Huff table: " << 2 * (freq.size() - 1) << "b, data " << (int)(getIntEntropy() * numItems) << "b" << std::endl;
 		return s.str();
 	}
 
@@ -151,4 +173,25 @@ private:
 	EntropyCalculator<DataType> labelEntropy;
 	EntropyCalculator<char> mergeEntropy;
 	const BinaryDag<DataType> &dag;
+};
+
+struct StringLabelEntropy {
+	StringLabelEntropy(const Labels<std::string> &labels) : labels(labels), entropy() {}
+
+	void calculate() {
+		for (const std::string* label : labels.valueIndex) {
+			if (label != NULL) {
+				entropy.addSequence(label->cbegin(), label->cend());
+			}
+			entropy.addItem(0);
+		}
+	}
+
+	EntropyCalculator<std::string::value_type> &getEntropy() {
+		return entropy;
+	}
+
+private:
+	const Labels<std::string> &labels;
+	EntropyCalculator<std::string::value_type> entropy;
 };
