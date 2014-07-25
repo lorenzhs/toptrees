@@ -108,12 +108,17 @@ private:
 	std::unordered_map<T, CounterType> freq;
 };
 
+/// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
 	DagEntropy(const BinaryDag<DataType> &dag) : dagEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
 
+	/// Do the entropy calculations on the DAG's nodes
 	void calculate(const DataType &defaultValue = DataType()) {
+		// nodeId starts at 1 because 0 is a dummy node, we don't need to code it
 		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
+			// DAG node is coded as the IDs of its children, its own ID
+			// is implicit from the position in the output it appears in
 			const DagNode<DataType> &node(dag.nodes[nodeId]);
 			dagEntropy.addItem(node.left);
 			dagEntropy.addItem(node.right);
@@ -125,14 +130,17 @@ struct DagEntropy {
 		}
 	}
 
+	/// Get DAG structure entropy object
 	EntropyCalculator<int> &getDagEntropy() {
 		return dagEntropy;
 	}
 
+	/// Get DAG node label entropy object
 	EntropyCalculator<DataType> &getLabelEntropy() {
 		return labelEntropy;
 	}
 
+	/// Get merge type entropy object
 	EntropyCalculator<char> &getMergeEntropy() {
 		return mergeEntropy;
 	}
