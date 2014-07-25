@@ -65,7 +65,8 @@ int main(int argc, char **argv) {
 	int bits = entropy.getDagEntropy().huffBitsNeeded() +
 		entropy.getLabelEntropy().huffBitsNeeded() +
 		entropy.getMergeEntropy().huffBitsNeeded() +
-		labelEntropy.getEntropy().huffBitsNeeded();
+		labelEntropy.getEntropy().huffBitsNeeded() +
+		7*32;  // lengths of each segment (table, data), except for the last, as 32-bit int
 	cout << "Output needs " << bits << " bits (" << (bits+7)/8 << " bytes)" << endl;
 	return 0;
 }
