@@ -115,9 +115,9 @@ struct DagEntropy {
 	void calculate(const DataType &defaultValue = DataType()) {
 		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
 			const DagNode<DataType> &node(dag.nodes[nodeId]);
-			if (node.left == -1) dagEntropy.addItem(-1);
-			if (node.right == -1) dagEntropy.addItem(-1);
-			dagEntropy.addItem(nodeId);
+			dagEntropy.addItem(node.left);
+			dagEntropy.addItem(node.right);
+
 			mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
 
 			const DataType *label(dag.nodes[nodeId].label);
