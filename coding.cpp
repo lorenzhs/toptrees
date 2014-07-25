@@ -50,7 +50,9 @@ int main(int argc, char **argv) {
 
 	DagEntropy<string> entropy(dag);
 	entropy.calculate();
-	cout << entropy.getEntropy().summary();
+	cout << "DAG: " << entropy.getDagEntropy().summary();
+	cout << "Labels: " << entropy.getLabelEntropy().summary();
+	cout << "MergeT: " << entropy.getMergeEntropy().summary();
 	cout << "Entropy calcuation took " << timer.getAndReset() << "ms" << endl;
 
 	return 0;

@@ -110,23 +110,42 @@ private:
 
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag) : entropy(), dag(dag) {}
+	DagEntropy(const BinaryDag<DataType> &dag) : dagEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
 
-	double calculate() {
-		dag.template inPostOrder<int>([&] (int nodeId, int left, int right) {
-			if (left == -1) entropy.addItem(-1);
-			if (right == -1) entropy.addItem(-1);
-			entropy.addItem(nodeId);
-			return 0;
-		});
-		return entropy.getEntropy();
+	void calculate(const DataType defaultValue = DataType()) {
+		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
+			const DagNode<DataType> &node(dag.nodes[nodeId]);
+			if (node.left == -1) dagEntropy.addItem(-1);
+			if (node.right == -1) dagEntropy.addItem(-1);
+			dagEntropy.addItem(nodeId);
+			mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
+
+			const DataType *label(dag.nodes[nodeId].label);
+			if (label == NULL) {
+				labelEntropy.addItem(defaultValue);
+			} else {
+				assert(*label != defaultValue);
+				labelEntropy.addItem(*label);
+			}
+		}
 	}
 
-	EntropyCalculator<int> &getEntropy() {
-		return entropy;
+	EntropyCalculator<int> &getDagEntropy() {
+		return dagEntropy;
 	}
+
+	EntropyCalculator<DataType> &getLabelEntropy() {
+		return labelEntropy;
+	}
+
+	EntropyCalculator<char> &getMergeEntropy() {
+		return mergeEntropy;
+	}
+
 
 private:
-	EntropyCalculator<int> entropy;
+	EntropyCalculator<int> dagEntropy;
+	EntropyCalculator<DataType> labelEntropy;
+	EntropyCalculator<char> mergeEntropy;
 	const BinaryDag<DataType> &dag;
 };
