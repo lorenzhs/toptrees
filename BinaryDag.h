@@ -58,15 +58,15 @@ public:
 	/// Traverse the dag in post-order
 	/// \param callback a callback to be called with the node ID and the results of the calls to its children
 	template <typename T>
-	T inPostOrder(const function<T(const int, const T, const T)> &callback) {
+	T inPostOrder(const function<T(const int, const T, const T)> &callback) const {
 		return traverseDagPostOrder(nodes.size() - 1, callback);
 	}
 
 	/// Helper for inPostOrder(), you shouldn't need to call this directly
 	template <typename T>
-	T traverseDagPostOrder(const int nodeId, const function<T(const int, const T, const T)> &callback) {
+	T traverseDagPostOrder(const int nodeId, const function<T(const int, const T, const T)> &callback) const {
 		assert(nodeId != 0); // 0 is the dummy not and should not be reachable
-		DagNode<DataType> &node = nodes[nodeId];
+		const DagNode<DataType> &node = nodes[nodeId];
 		T left(-1), right(-1);
 		if (node.left >= 0) {
 			left = traverseDagPostOrder(node.left, callback);
