@@ -121,12 +121,7 @@ struct DagEntropy {
 			mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
 
 			const DataType *label(dag.nodes[nodeId].label);
-			if (label == NULL) {
-				labelEntropy.addItem(defaultValue);
-			} else {
-				assert(*label != defaultValue);
-				labelEntropy.addItem(*label);
-			}
+			labelEntropy.addItem(label == NULL ? defaultValue : *label);
 		}
 	}
 
