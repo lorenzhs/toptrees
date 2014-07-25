@@ -112,7 +112,7 @@ template <typename DataType>
 struct DagEntropy {
 	DagEntropy(const BinaryDag<DataType> &dag) : dagEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
 
-	void calculate(const DataType defaultValue = DataType()) {
+	void calculate(const DataType &defaultValue = DataType()) {
 		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
 			const DagNode<DataType> &node(dag.nodes[nodeId]);
 			if (node.left == -1) dagEntropy.addItem(-1);
