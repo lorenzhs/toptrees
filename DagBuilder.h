@@ -75,10 +75,10 @@ private:
 		DagNode<DataType> &node = dag.nodes[id];
 		assert(node.left == left && node.right == right && node.label == cluster.label &&
 			   node.mergeType == cluster.mergeType);
-		int nodeId = nodeMap[node];
+		int &nodeId = nodeMap[node];  // note the reference which allows avoiding re-hashing for insertion
 		if (nodeId == 0) {
 			// node is not yet in the hashmap (element 0 is the dummy)
-			nodeMap[node] = id;
+			nodeId = id;
 			clusterToDag[clusterId] = id;
 			// Increase the childrens' in-degree
 			if (left >= 0) dag.nodes[left].inDegree++;
