@@ -14,7 +14,7 @@ def plotstats(inputfile):
 	orig, comp = zip(*map(lambda x: map(int, x.split()), lines))
 
 	cr = [orig/comp for (orig, comp) in zip(orig, comp)]
-	y = [ratio / log(n, sigma) for (ratio, n) in zip(cr, orig)]
+	y = [ratio / log(n, 4*sigma) for (ratio, n) in zip(cr, orig)]
 
 	fig, ax = subplots()
 	plot(orig, y, 'o')
