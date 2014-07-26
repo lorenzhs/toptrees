@@ -7,7 +7,7 @@ FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
-EXECS=test testTT random randomEval randomVerify coding
+EXECS=test testTT randomTree randomEval randomVerify coding
 #EXECS
 
 all: $(EXECS)
@@ -37,14 +37,14 @@ testTTDebug:
 testTTNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
-random:
-	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp
+randomTree:
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) randomTree.cpp
 
-randomDebug:
-	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp
+randomTreeDebug:
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) randomTree.cpp
 
-randomNoDebug:
-	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) random.cpp
+randomTreeNoDebug:
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) randomTree.cpp
 
 randomEval:
 	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp

@@ -24,8 +24,8 @@ testTT-*
 *.log
 r
 r-*
-random
-random-*
+randomTree
+randomTree-*
 randomEval
 randomEval-*
 randomVerify
