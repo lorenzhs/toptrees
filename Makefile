@@ -38,13 +38,13 @@ testTTNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
 randomTree:
-	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) randomTree.cpp
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
 
 randomTreeDebug:
-	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) randomTree.cpp
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
 
 randomTreeNoDebug:
-	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o random$(EXTRA) randomTree.cpp
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
 
 randomEval:
 	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
