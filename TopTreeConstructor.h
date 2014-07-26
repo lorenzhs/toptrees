@@ -109,9 +109,9 @@ protected:
 	void horizontalMerges(const int iteration,
 						  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
-			const NodeType &node = tree.nodes[nodeId];
 			// merging children only make sense for nodes with ≥ 2 children
-			if (node.numEdges() < 2) {
+			const int numEdges(tree.nodes[nodeId].numEdges());
+			if (numEdges < 2) {
 				continue;
 			}
 #ifndef NDEBUG
@@ -121,7 +121,7 @@ protected:
 			}
 #endif
 			EdgeType *leftEdge, *rightEdge, *baseEdge(tree.firstEdge(nodeId));
-			int left, right, newNode, edgeNum, numEdges(node.numEdges());
+			int left, right, newNode, edgeNum;
 			MergeType mergeType;
 			// iterate over pairs of children by index
 			for (edgeNum = 0; edgeNum < (numEdges - 1); edgeNum += 2) {
@@ -148,8 +148,7 @@ protected:
 				// merged in this iteration so far (because neither is a leaf)
 				leftEdge = tree.lastEdge(nodeId);
 				left = leftEdge->headNode;
-				const NodeType &child = tree.nodes[left];
-				if (!child.isLeaf() || node.numEdges() <= 2 || !(leftEdge - 1)->valid || !(leftEdge - 2)->valid) {
+				if (!tree.nodes[left].isLeaf() || tree.nodes[nodeId].numEdges() <= 2 || !(leftEdge - 1)->valid || !(leftEdge - 2)->valid) {
 					continue;
 				}
 				const int childMinusOne = (leftEdge - 1)->headNode;
