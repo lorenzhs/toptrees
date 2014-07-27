@@ -426,10 +426,9 @@ public:
 				 << "MB); " << flush;
 		newEdges.reserve(numEdgesReserved);
 		newEdges.push_back(edges[0]); // dummy edge
-		uint oldSize;
+		int oldSize(1);
 		// Copy each node's valid edges to the new array
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
-			oldSize = newEdges.size();
 			// While a bit counterintuitive at first, this check speeds things up because now
 			// we don't need to fetch two edges just to determine if we need to copy anything
 			if (nodes[nodeId].hasChildren()) {
@@ -440,7 +439,8 @@ public:
 				}
 			}
 			nodes[nodeId].firstEdgeIndex = oldSize;
-			nodes[nodeId].lastEdgeIndex = newEdges.size() - 1;
+			oldSize = (int)newEdges.size();
+			nodes[nodeId].lastEdgeIndex = oldSize - 1;
 			if (nodes[nodeId].hasChildren()) newEdges.resize(newEdges.size() + nodes[nodeId].numEdges() * (factor - 1));
 		}
 		_firstFreeEdge = newEdges.size();
