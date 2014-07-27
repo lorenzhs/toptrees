@@ -50,8 +50,7 @@ int main(int argc, char **argv) {
 
 	timer.reset();
 	topTreeConstructor.construct();
-	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
-		 << " clusters (" << topTree.clusters.size() - tree._numNodes << " non-leaves)" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
 
 	BinaryDag<int> dag;
 	DagBuilder<int> builder(topTree, dag);

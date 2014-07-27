@@ -34,8 +34,7 @@ int main(int argc, char **argv) {
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 	Timer timer;
 	topTreeConstructor.construct();
-	cout << "Top tree construction took " << timer.getAndReset() << "ms; Top tree has " << topTree.clusters.size()
-		 << " clusters (" << topTree.clusters.size() - t._numNodes << " non-leaves)" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
 
 	BinaryDag<string> dag;
 	DagBuilder<string> builder(topTree, dag);

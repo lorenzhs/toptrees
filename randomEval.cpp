@@ -85,9 +85,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	debugInfo.mergeDuration = timer.get();
 	if (verbose)
-		cout << "Top tree construction took " << timer.get() << "ms; Top tree has "
-			 << topTree.clusters.size() << " clusters (" << topTree.clusters.size() - tree._numNodes
-			 << " non-leaves)" << endl;
+		cout << "Top tree construction took " << timer.get() << "ms" << endl;
 	timer.reset();
 
 	debugInfo.topTreeHeight = topTree.height();
