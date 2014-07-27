@@ -25,7 +25,7 @@ testNoDebug:
 
 testPGO:
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
-	./test-p ext/dblp.xml
+	./test-p$(EXTRA) ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o test-p$(EXTRA) test.cpp
 
 testTT:
@@ -57,7 +57,7 @@ randomEvalNoDebug:
 
 randomEvalPGO:
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomEval-p$(EXTRA) randomEval.cpp
-	./randomEval-p -n 100 -m 100000
+	./randomEval-p$(EXTRA) -n 100 -m 100000
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomEval-p$(EXTRA) randomEval.cpp
 
 randomVerify:
@@ -71,7 +71,7 @@ randomVerifyNoDebug:
 
 randomVerifyPGO:
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomVerify-p$(EXTRA) randomVerify.cpp
-	./randomVerify-p -n 100 -m 100000
+	./randomVerify-p$(EXTRA) -n 100 -m 100000
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomVerify-p$(EXTRA) randomVerify.cpp
 
 coding:
@@ -85,7 +85,7 @@ codingNoDebug:
 
 codingPGO:
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
-	./coding-p ext/dblp.xml
+	./coding-p$(EXTRA) ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
 
 #RULES
