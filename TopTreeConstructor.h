@@ -77,6 +77,7 @@ protected:
 #else
 			horizontalMerges(iteration, mergeCallback);
 #endif
+			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
 
 			// We need to compact here because the horizontal merges don't but
@@ -87,6 +88,7 @@ protected:
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
 			verticalMerges(iteration, mergeCallback);
+			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
 			double ratio = (oldNumEdges * 1.0) / tree._numEdges;

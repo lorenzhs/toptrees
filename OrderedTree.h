@@ -183,6 +183,13 @@ public:
 		return _prepareEdge(newId, from, to);
 	}
 
+	void killNodes() {
+		int nodeId(_numNodes - 1);
+		while (nodes[nodeId].parent < 0 && --nodeId > 0);
+		_numNodes = nodeId + 1;
+		_firstFreeNode = _numNodes;
+	}
+
 	/// Remove an edge from the tree
 	/// \param from the edge's tail (source) node
 	/// \param edge the edge's ID
