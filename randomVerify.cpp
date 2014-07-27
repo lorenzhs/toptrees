@@ -76,8 +76,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	// Construct top tree
 	TopTree<int> topTree(tree._numNodes, labels);
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
-	topTreeConstructor.construct(&debugInfo, verbose, extraVerbose);
+	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
+	topTreeConstructor.construct(&debugInfo);
 
 	debugInfo.mergeDuration = timer.get();
 	if (verbose)

@@ -35,24 +35,27 @@ class TopTreeConstructor {
 public:
 	/// Instantiate a top tree constructor
 	/// \param tree the tree which shall be transformed. WILL BE MODIFIED
-	TopTreeConstructor(TreeType &tree, TopTree<DataType> &topTree) : tree(tree), topTree(topTree) {}
+	/// \param topTree the output top tree
+	/// \param verbose whether to print detailed information about the iterations
+	/// \param extraVerbose whether to print the tree in each iteration
+	TopTreeConstructor(TreeType &tree, TopTree<DataType> &topTree, const bool verbose = true, const bool extraVerbose = false)
+		: tree(tree), topTree(topTree), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes) {}
 
 	/// Perform the top tree construction procedure
 	/// \param debugInfo pointer to a DebugInfo object, should you wish logging of debug information
-	/// \param verbose whether to print detailed information about the iterations
-	/// \param extraVerbose whether to print the tree in each iteration
-	void construct(DebugInfo *debugInfo = NULL, const bool verbose = true, const bool extraVerbose = false) {
-		vector<int> nodeIds(tree._numNodes);
+	void construct(DebugInfo *debugInfo = NULL) {
 		for (int i = 0; i < tree._numNodes; ++i) {
 			nodeIds[i] = i;
 		}
 
-		doMerges([&](const int u, const int v, const int n,
-					 const MergeType type) { nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type); },
-				 debugInfo, verbose, extraVerbose);
+		doMerges(debugInfo);
 	}
 
 protected:
+	void mergeCallback(const int u, const int v, const int n, const MergeType type) {
+		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
+	}
+
 	/// do iterated merges to construct a top tree
 	/// \param mergeCallback the callback that will be called for every pair of merged nodes (clusters).
 	/// Its arguments are the ids of the two merged nodes and the new id
@@ -60,8 +63,7 @@ protected:
 	/// \param debugInfo the DebugInfo object or NULL
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
-	void doMerges(const function<void(const int, const int, const int, const MergeType)> &mergeCallback,
-				  DebugInfo *debugInfo, const bool verbose, const bool extraVerbose) {
+	void doMerges(DebugInfo *debugInfo) {
 		int iteration = 0;
 		Timer timer;
 		const std::streamsize precision = cout.precision();
@@ -73,9 +75,9 @@ protected:
 
 			int oldNumEdges = tree._numEdges;
 #ifdef SWEEP
-			horizontalMergesAllPairs(iteration, mergeCallback);
+			horizontalMergesAllPairs(iteration);
 #else
-			horizontalMerges(iteration, mergeCallback);
+			horizontalMerges(iteration);
 #endif
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
@@ -87,7 +89,7 @@ protected:
 			tree.compact(false);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
-			verticalMerges(iteration, mergeCallback);
+			verticalMerges(iteration);
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
@@ -108,8 +110,7 @@ protected:
 	}
 
 	/// Do one iteration of horizontal merges (step 1)
-	void horizontalMerges(const int iteration,
-						  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
+	void horizontalMerges(const int iteration) {
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
 			// merging children only make sense for nodes with ≥ 2 children
 			const int numEdges(tree.nodes[nodeId].numEdges());
@@ -170,8 +171,7 @@ protected:
 
 	/// Do one iteration of horizontal merges (step 1)
 	/// Modified to look at (1,2), (2,3), (3,4) etc instead of (1,2), (3,4), etc
-	void horizontalMergesAllPairs(const int iteration,
-								  const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
+	void horizontalMergesAllPairs(const int iteration) {
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
 			const NodeType &node = tree.nodes[nodeId];
 			// merging children only make sense for nodes with ≥ 2 children
@@ -209,8 +209,7 @@ protected:
 	}
 
 	/// Perform an iteration of vertical (chain) merges (step 2)
-	void verticalMerges(const int iteration,
-						const function<void(const int, const int, const int, const MergeType)> &mergeCallback) {
+	void verticalMerges(const int iteration) {
 		// First, we collect all the vertices from which a merge chain can originate upwards
 		// This is needed to prevent repeated merges of the same chain in one iteration
 		// I guess we could do this with the .lastMergedIn attribute as well? XXX TODO
@@ -275,4 +274,6 @@ protected:
 
 	TreeType &tree;
 	TopTree<DataType> &topTree;
+	const bool verbose, extraVerbose;
+	vector<int> nodeIds;
 };
