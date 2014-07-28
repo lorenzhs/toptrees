@@ -187,6 +187,12 @@ struct StringLabelEntropy {
 		}
 	}
 
+	/// Additional amount of information that needs to be stored, in bits
+	/// (e.g. for mapping code points to symbols)
+	int getExtraSize() {
+		return entropy.numSymbols() * sizeof(std::string::value_type) * 8;
+	}
+
 	EntropyCalculator<std::string::value_type> &getEntropy() {
 		return entropy;
 	}
