@@ -523,7 +523,7 @@ public:
 	/// Calculate the average depth of the nodes in the tree.
 	/// Uses foldLeftPostOrder() and worth looking at as slightly more complex example for a fold
 	double avgDepth() const {
-		typedef pair<int_fast64_t, int_fast64_t> P;
+		typedef pair<uint_fast32_t, uint_fast64_t> P;
 		P countAndSum = foldLeftPostOrder<P>(
 			[](const P countAndSum) { return P(countAndSum.first + 1, countAndSum.second + countAndSum.first); },
 			[](const P p1, const P p2) { return P(p1.first + p2.first, p1.second + p2.second); }, P(1, 1));
