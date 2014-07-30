@@ -81,7 +81,7 @@ protected:
 		if (*begin == false) {
 			return ++begin;
 		}
-		while (begin < end) {
+		while (begin != end) {
 			if (*begin == true) {
 				int nodeId = tree.addNode();
 				tree.addEdge(parentId, nodeId);
@@ -137,7 +137,7 @@ protected:
 			return false;
 		}
 		int count(0);
-		for (auto it = begin; it < end; ++it) {
+		for (auto it = begin; it != end; ++it) {
 			count += *it;
 		}
 		return (count * 2) == (end - begin);
@@ -147,7 +147,7 @@ protected:
 	template <typename T>
 	static bool isWellFormed(typename T::const_iterator begin, typename T::const_iterator end) {
 		int balance(0);
-		for (typename T::const_iterator it = begin; it < end; ++it) {
+		for (typename T::const_iterator it = begin; it != end; ++it) {
 			balance += *it ? 1 : -1;
 			if (balance < 0) return false;
 		}
@@ -160,7 +160,7 @@ protected:
 	static typename T::const_iterator reducibleIndex(typename T::const_iterator begin, typename T::const_iterator end) {
 		assert(isBalanced(begin, end));
 		int delta(0);
-		for (typename T::const_iterator it = begin; it < end; ++it) {
+		for (typename T::const_iterator it = begin; it != end; ++it) {
 			delta += *it ? 1 : -1;
 			if (delta == 0) {
 				return it + 1;
