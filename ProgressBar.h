@@ -13,7 +13,7 @@ public:
 	/// \param max the value that constitutes 100%
 	/// \param out the output stream to draw the progress bar on
 	/// \param barwidth the width of the bar in characters
-	ProgressBar(const long long max, std::ostream &out = std::cout, int barwidth = 70)
+	ProgressBar(const unsigned long long max, std::ostream &out = std::cout, int barwidth = 70)
 		: max(max),
 		  pos(0),
 		  lastprogress(-1),
@@ -75,8 +75,8 @@ protected:
 	}
 
 private:
-	long long max;
-	long long pos;
+	unsigned long long max;
+	unsigned long long pos;
 	int lastprogress;
 	std::ostream &out;
 	const int barwidth;

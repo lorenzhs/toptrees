@@ -139,7 +139,7 @@ public:
 		NodeType &node = nodes[from];
 		int newId = node.lastEdgeIndex + 1;
 		// Check for space to the right
-		if ((unsigned int)newId < edges.size() && !edges[newId].valid) {
+		if (newId < (int)edges.size() && !edges[newId].valid) {
 			node.lastEdgeIndex++;
 			if (newId == _firstFreeEdge) {
 				_firstFreeEdge++;
