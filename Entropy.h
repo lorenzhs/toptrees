@@ -136,7 +136,7 @@ struct DagEntropy {
 	DagEntropy(const BinaryDag<DataType> &dag) : dagEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
 
 	/// Do the entropy calculations on the DAG's nodes
-	void calculate(const DataType &defaultValue = DataType()) {
+	void calculate() {
 		// nodeId starts at 1 because 0 is a dummy node, we don't need to code it
 		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
 			// DAG node is coded as the IDs of its children, its own ID
@@ -148,7 +148,14 @@ struct DagEntropy {
 			mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
 
 			const DataType *label(dag.nodes[nodeId].label);
-			labelEntropy.addItem(label == NULL ? defaultValue : *label);
+			if (node.left >= 0 || node.right >= 0) {
+				assert(node.left >= 0 && node.right >= 0);
+				assert(label == NULL);
+			} else {
+				assert(node.left < 0 && node.right < 0);
+				assert(label != NULL);
+				labelEntropy.addItem(*label);
+			}
 		}
 	}
 
