@@ -49,7 +49,8 @@ int main(int argc, char **argv) {
 
 	DagEntropy<string> entropy(dag);
 	entropy.calculate();
-	cout << "DAG: " << entropy.getDagEntropy().summary();
+	cout << "DAG Structure: " << entropy.getDagStructureEntropy().summary();
+	cout << "DAG Pointers: " << entropy.getDagPointerEntropy().summary();
 	cout << "Labels: " << entropy.getLabelEntropy().summary();
 	cout << "MergeT: " << entropy.getMergeEntropy().summary();
 	double dagEntropyTime = timer.getAndReset();
@@ -61,7 +62,10 @@ int main(int argc, char **argv) {
 	double labelEntropyTime = timer.getAndReset();
 	cout << "Entropy calcuation took " << dagEntropyTime << " + " << labelEntropyTime << " = " << dagEntropyTime + labelEntropyTime << "ms; " << endl;
 
-	int bits = entropy.getDagEntropy().huffBitsNeeded() +
+	long long bits_per_nodeId = NUM_DIGITS(dag.nodes.size());
+	long long bits = entropy.getDagStructureEntropy().huffBitsNeeded() +
+		entropy.getDagPointerEntropy().huffBitsNeeded() +
+		entropy.getDagPointerEntropy().numSymbols() * bits_per_nodeId +
 		entropy.getLabelEntropy().huffBitsNeeded() +
 		entropy.getMergeEntropy().huffBitsNeeded() +
 		labelEntropy.getEntropy().huffBitsNeeded() +

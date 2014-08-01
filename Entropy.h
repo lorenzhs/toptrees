@@ -130,20 +130,41 @@ private:
 	std::unordered_map<T, CounterType> freq;
 };
 
+enum NodeEncoding { LEAF = 0, IMPLICIT_SIBLING = 1, POINTER_SIBLING = 2 };
+
 /// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag) : dagEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
+	DagEntropy(const BinaryDag<DataType> &dag) : dagStructureEntropy(), dagPointerEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
 
 	/// Do the entropy calculations on the DAG's nodes
 	void calculate() {
+		vector<bool> alreadyVisited(dag.nodes.size(), false);
+
+		const auto processNode([&](const int nodeId) {
+			if (nodeId < 0) return;
+			assert((dag.nodes[nodeId].left < 0) == (dag.nodes[nodeId].right < 0));
+			if (dag.nodes[nodeId].left < 0) {
+				dagStructureEntropy.addItem(LEAF);
+			} else {
+				if (alreadyVisited[nodeId]) {
+					dagStructureEntropy.addItem(POINTER_SIBLING);
+					dagPointerEntropy.addItem(nodeId);
+				} else {
+					dagStructureEntropy.addItem(IMPLICIT_SIBLING);
+					alreadyVisited[nodeId] = true;
+				}
+			}
+		});
+
 		// nodeId starts at 1 because 0 is a dummy node, we don't need to code it
 		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
 			// DAG node is coded as the IDs of its children, its own ID
 			// is implicit from the position in the output it appears in
+
 			const DagNode<DataType> &node(dag.nodes[nodeId]);
-			dagEntropy.addItem(node.left);
-			dagEntropy.addItem(node.right);
+			processNode(node.left);
+			processNode(node.right);
 
 			if (node.left >= 0 || node.right >= 0) {
 				assert(node.left >= 0 && node.right >= 0);
@@ -160,8 +181,13 @@ struct DagEntropy {
 	}
 
 	/// Get DAG structure entropy object
-	EntropyCalculator<int> &getDagEntropy() {
-		return dagEntropy;
+	EntropyCalculator<int> &getDagStructureEntropy() {
+		return dagStructureEntropy;
+	}
+
+	/// Get DAG pointer entropy object
+	EntropyCalculator<int> &getDagPointerEntropy() {
+		return dagPointerEntropy;
 	}
 
 	/// Get DAG node label entropy object
@@ -176,7 +202,8 @@ struct DagEntropy {
 
 
 private:
-	EntropyCalculator<int> dagEntropy;
+	EntropyCalculator<int> dagStructureEntropy;
+	EntropyCalculator<int> dagPointerEntropy;
 	EntropyCalculator<DataType> labelEntropy;
 	EntropyCalculator<char> mergeEntropy;
 	const BinaryDag<DataType> &dag;
