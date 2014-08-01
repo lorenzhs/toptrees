@@ -145,16 +145,16 @@ struct DagEntropy {
 			dagEntropy.addItem(node.left);
 			dagEntropy.addItem(node.right);
 
-			mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
-
-			const DataType *label(dag.nodes[nodeId].label);
 			if (node.left >= 0 || node.right >= 0) {
 				assert(node.left >= 0 && node.right >= 0);
-				assert(label == NULL);
+				assert(node.label == NULL);
+				assert(node.mergeType != NO_MERGE);
+				mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
 			} else {
 				assert(node.left < 0 && node.right < 0);
-				assert(label != NULL);
-				labelEntropy.addItem(*label);
+				assert(node.label != NULL);
+				assert(node.mergeType == NO_MERGE);
+				labelEntropy.addItem(*node.label);
 			}
 		}
 	}
