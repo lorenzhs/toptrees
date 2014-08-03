@@ -8,6 +8,8 @@
 #include "BinaryDag.h"
 #include "Labels.h"
 
+#include "Huffman.h"
+
 /// Calculate entropy of a sequence of symbols
 template <typename T, typename CounterType = int>
 class EntropyCalculator {
@@ -62,24 +64,6 @@ public:
 		return entropy;
 	}
 
-	/// Bits per symbol if each symbol is coded with an integral number of bits (e.g., Huffman)
-	double getIntEntropy() const {
-		double entropy(0);
-		for (auto it = freq.cbegin(); it != freq.cend(); ++it) {
-			if (it->second == 0) continue;
-			double relativeFrequency(((double)it->second) / numItems);
-			entropy += relativeFrequency * ceil(-1*log2(relativeFrequency));
-		}
-		return entropy;
-	}
-
-	/// Total bits needed for a huffman code
-	int huffBitsNeeded() const {
-		int codedBits = (int)(getIntEntropy() * numItems);
-		int huffTableBits = 2 * (freq.size() - 1);
-		return codedBits + huffTableBits;
-	}
-
 	/// The optimal number of bits to code a symbol
 	/// \param symbol the symbol by const reference
 	double optBitsForSymbol(const T &symbol) const {
@@ -96,31 +80,18 @@ public:
 		return -1*log2(((double)occurrences) / numItems);
 	}
 
-	/// The rounded-up number of bits to code a symbol, e.g. in a Huffman code
-	/// \param symbol the symbol by const reference
-	double bitsForSymbol(const T &symbol) const {
-		return ceil(optBitsForSymbol(symbol));
-	}
-
-	/// The rounded-up number of bits to code a symbol, e.g. in a Huffman code
-	/// \param symbol the symbol by rvalue reference
-	double bitsForSymbol(T &&symbol) const {
-		return ceil(optBitsForSymbol(symbol));
-	}
-
 	/// A short string summary of the data collected
 	std::string summary() const {
 		std::stringstream s;
 		s << freq.size() << " symbols, " << numItems << " occurrences: "
-		  << getEntropy()  << " / " << getIntEntropy() << " b/symbol on avg; "
-		  << " Huff table: " << 2 * (freq.size() - 1) << "b, data " << (int)(getIntEntropy() * numItems) << "b" << std::endl;
+		  << getEntropy()  << " b/symbol on avg; need at least" << (int)ceil(getEntropy() * numItems) << " bits" << std::endl;
 		return s.str();
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const EntropyCalculator &entropy) {
 		os << entropy.summary();
 		for (auto it = entropy.freq.cbegin(); it != entropy.freq.cend(); ++it) {
-			os << it->first << ": " << entropy.optBitsForSymbol(it->first) << " bits, " << it->second << " occurrences" << std::endl;
+			os << (int)it->first << ": " << entropy.optBitsForSymbol(it->first) << " bits, " << it->second << " occurrences" << std::endl;
 		}
 		return os;
 	}
@@ -135,7 +106,7 @@ enum NodeEncoding { LEAF = 0, IMPLICIT_SIBLING = 1, POINTER_SIBLING = 2 };
 /// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag) : dagStructureEntropy(), dagPointerEntropy(), labelEntropy(), mergeEntropy(), dag(dag) {}
+	DagEntropy(const BinaryDag<DataType> &dag) : dagStructureEntropy(), dagPointerEntropy(), mergeEntropy(), dag(dag) {}
 
 	/// Do the entropy calculations on the DAG's nodes
 	void calculate() {
@@ -168,44 +139,22 @@ struct DagEntropy {
 
 			if (node.left >= 0 || node.right >= 0) {
 				assert(node.left >= 0 && node.right >= 0);
-				assert(node.label == NULL);
 				assert(node.mergeType != NO_MERGE);
 				mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
 			} else {
 				assert(node.left < 0 && node.right < 0);
-				assert(node.label != NULL);
 				assert(node.mergeType == NO_MERGE);
-				labelEntropy.addItem(*node.label);
 			}
 		}
+
+		dagStructureEntropy.construct();
+		dagPointerEntropy.construct();
+		mergeEntropy.construct();
 	}
 
-	/// Get DAG structure entropy object
-	EntropyCalculator<int> &getDagStructureEntropy() {
-		return dagStructureEntropy;
-	}
-
-	/// Get DAG pointer entropy object
-	EntropyCalculator<int> &getDagPointerEntropy() {
-		return dagPointerEntropy;
-	}
-
-	/// Get DAG node label entropy object
-	EntropyCalculator<DataType> &getLabelEntropy() {
-		return labelEntropy;
-	}
-
-	/// Get merge type entropy object
-	EntropyCalculator<char> &getMergeEntropy() {
-		return mergeEntropy;
-	}
-
-
-private:
-	EntropyCalculator<int> dagStructureEntropy;
-	EntropyCalculator<int> dagPointerEntropy;
-	EntropyCalculator<DataType> labelEntropy;
-	EntropyCalculator<char> mergeEntropy;
+	HuffmanBuilder<char> dagStructureEntropy;
+	HuffmanBuilder<int> dagPointerEntropy;
+	HuffmanBuilder<char> mergeEntropy;
 	const BinaryDag<DataType> &dag;
 };
 
@@ -215,23 +164,19 @@ struct StringLabelEntropy {
 	void calculate() {
 		for (const std::string* label : labels.valueIndex) {
 			if (label != NULL) {
-				entropy.addSequence(label->cbegin(), label->cend());
+				entropy.addItems(label->cbegin(), label->cend());
 			}
 			entropy.addItem(0);
 		}
+		entropy.construct();
 	}
 
 	/// Additional amount of information that needs to be stored, in bits
 	/// (e.g. for mapping code points to symbols)
 	int getExtraSize() {
-		return entropy.numSymbols() * sizeof(std::string::value_type) * 8;
+		return entropy.getNumSymbols() * sizeof(std::string::value_type) * 8;
 	}
 
-	EntropyCalculator<std::string::value_type> &getEntropy() {
-		return entropy;
-	}
-
-private:
 	const Labels<std::string> &labels;
-	EntropyCalculator<std::string::value_type> entropy;
+	HuffmanBuilder<std::string::value_type> entropy;
 };
