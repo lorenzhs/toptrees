@@ -159,24 +159,24 @@ struct DagEntropy {
 };
 
 struct StringLabelEntropy {
-	StringLabelEntropy(const Labels<std::string> &labels) : labels(labels), entropy() {}
+	StringLabelEntropy(const Labels<std::string> &labels) : labels(labels), huffman() {}
 
 	void calculate() {
 		for (const std::string* label : labels.valueIndex) {
 			if (label != NULL) {
-				entropy.addItems(label->cbegin(), label->cend());
+				huffman.addItems(label->cbegin(), label->cend());
 			}
-			entropy.addItem(0);
+			huffman.addItem(0);
 		}
-		entropy.construct();
+		huffman.construct();
 	}
 
 	/// Additional amount of information that needs to be stored, in bits
 	/// (e.g. for mapping code points to symbols)
-	int getExtraSize() {
-		return entropy.getNumSymbols() * sizeof(std::string::value_type) * 8;
+	int getExtraSize() const {
+		return huffman.getNumSymbols() * sizeof(std::string::value_type) * 8;
 	}
 
 	const Labels<std::string> &labels;
-	HuffmanBuilder<std::string::value_type> entropy;
+	HuffmanBuilder<std::string::value_type> huffman;
 };

@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 
 	StringLabelEntropy labelEntropy(labels);
 	labelEntropy.calculate();
-	cout << "Label strings: " << labelEntropy.entropy << " + " << labelEntropy.getExtraSize() << " bits for symbols" << endl;
+	cout << "Label strings: " << labelEntropy.huffman << " + " << labelEntropy.getExtraSize() << " bits for symbols" << endl;
 
 	double labelEntropyTime = timer.getAndReset();
 	cout << "Entropy calcuation took " << dagEntropyTime << " + " << labelEntropyTime << " = " << dagEntropyTime + labelEntropyTime << "ms; " << endl;
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 	long long bits = entropy.dagStructureEntropy.getBitsNeeded() +
 		entropy.dagPointerEntropy.getBitsNeeded() +	entropy.dagPointerEntropy.getNumSymbols() * bits_per_nodeId +
 		entropy.mergeEntropy.getBitsNeeded() + entropy.mergeEntropy.getBitsForTableLabels() +
-		labelEntropy.entropy.getBitsNeeded() + labelEntropy.getExtraSize() +
+		labelEntropy.huffman.getBitsNeeded() + labelEntropy.getExtraSize() +
 		7*32;  // lengths of each segment (table, data), except for the last, as 32-bit int
 	cout << "Output needs " << bits << " bits (" << (bits+7)/8 << " bytes)" << endl;
 	return 0;

@@ -14,22 +14,19 @@
 // (as of 03 August 2014)
 // This implementation extends and improves upon it.
 
-class HuffNode {
-public:
+struct HuffNode {
 	const int frequency;
 	virtual ~HuffNode() {}
 protected:
 	HuffNode(const int frequency) : frequency(frequency) {}
 };
 
-class HuffLeaf : public HuffNode {
-public:
+struct HuffLeaf : public HuffNode {
 	const int symbolId;
 	HuffLeaf(const int symbolId, const int frequency) : HuffNode(frequency), symbolId(symbolId) {}
 };
 
-class HuffInnerNode : public HuffNode {
-public:
+struct HuffInnerNode : public HuffNode {
 	const int leftId, rightId;
 	HuffInnerNode(const int leftId, const int rightId, const int combinedFrequency) :
 		HuffNode(combinedFrequency),
