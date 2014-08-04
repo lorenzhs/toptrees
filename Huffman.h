@@ -92,7 +92,7 @@ public:
 
 	/// Get the length of a symbol's code. Need to have called construct() before.
 	int getCodeLength(const SymbolType &symbol) const {
-		assert(symbols[symbol] < codes.size())
+		assert(symbols[symbol] < codes.size());
 		return codes[symbols[symbol]].size();
 	}
 
