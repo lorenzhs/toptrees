@@ -106,17 +106,19 @@ enum NodeEncoding { LEAF = 0, IMPLICIT_SIBLING = 1, POINTER_SIBLING = 2 };
 /// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag) : dagStructureEntropy(), dagPointerEntropy(), mergeEntropy(), dag(dag) {}
+	DagEntropy(const BinaryDag<DataType> &dag) : dagStructureEntropy(), dagPointerEntropy(), mergeEntropy(), labelEntropy(), dag(dag) {}
 
 	/// Do the entropy calculations on the DAG's nodes
 	void calculate() {
 		vector<bool> alreadyVisited(dag.nodes.size(), false);
 
 		const auto processNode([&](const int nodeId) {
-			if (nodeId < 0) return;
+			assert(nodeId >= 0);
 			assert((dag.nodes[nodeId].left < 0) == (dag.nodes[nodeId].right < 0));
 			if (dag.nodes[nodeId].left < 0) {
 				dagStructureEntropy.addItem(LEAF);
+				assert(dag.nodes[nodeId].label != NULL);
+				labelEntropy.addItem(*dag.nodes[nodeId].label);
 			} else {
 				if (alreadyVisited[nodeId]) {
 					dagStructureEntropy.addItem(POINTER_SIBLING);
@@ -134,15 +136,18 @@ struct DagEntropy {
 			// is implicit from the position in the output it appears in
 
 			const DagNode<DataType> &node(dag.nodes[nodeId]);
-			processNode(node.left);
-			processNode(node.right);
 
 			if (node.left >= 0 || node.right >= 0) {
 				assert(node.left >= 0 && node.right >= 0);
+				assert(node.label == NULL);
 				assert(node.mergeType != NO_MERGE);
 				mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
+				processNode(node.left);
+				processNode(node.right);
 			} else {
+				// leaves are not coded here, they were coded before in processNode
 				assert(node.left < 0 && node.right < 0);
+				assert(node.label != NULL);
 				assert(node.mergeType == NO_MERGE);
 			}
 		}
@@ -150,11 +155,13 @@ struct DagEntropy {
 		dagStructureEntropy.construct();
 		dagPointerEntropy.construct();
 		mergeEntropy.construct();
+		labelEntropy.construct();
 	}
 
 	HuffmanBuilder<char> dagStructureEntropy;
 	HuffmanBuilder<int> dagPointerEntropy;
 	HuffmanBuilder<char> mergeEntropy;
+	HuffmanBuilder<DataType> labelEntropy;
 	const BinaryDag<DataType> &dag;
 };
 
