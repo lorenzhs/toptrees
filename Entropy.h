@@ -112,10 +112,12 @@ struct DagEntropy {
 	void calculate() {
 		vector<bool> alreadyVisited(dag.nodes.size(), false);
 
+		// Add structure and label information for a **child** of the current node
 		const auto processNode([&](const int nodeId) {
 			assert(nodeId >= 0);
 			assert((dag.nodes[nodeId].left < 0) == (dag.nodes[nodeId].right < 0));
 			if (dag.nodes[nodeId].left < 0) {
+				// Never code leafs as pointers, a pointer needs more space than a label index
 				dagStructureEntropy.addItem(LEAF);
 				assert(dag.nodes[nodeId].label != NULL);
 				labelEntropy.addItem(*dag.nodes[nodeId].label);
