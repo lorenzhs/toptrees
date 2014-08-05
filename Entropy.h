@@ -101,12 +101,48 @@ private:
 	std::unordered_map<T, CounterType> freq;
 };
 
+
+template <typename DataType>
+struct LabelDataEntropy;
+
+template <>
+struct LabelDataEntropy<std::string> {
+	LabelDataEntropy(const Labels<std::string> &labels) : labels(labels), huffman() {}
+
+	void construct() {
+		for (const std::string* label : labels.valueIndex) {
+			if (label != NULL) {
+				huffman.addItems(label->cbegin(), label->cend());
+			}
+			huffman.addItem(0);
+		}
+		huffman.construct();
+	}
+
+	/// Additional amount of information that needs to be stored, in bits
+	/// (e.g. for mapping code points to symbols)
+	int getExtraSize() const {
+		return huffman.getNumSymbols() * sizeof(std::string::value_type) * 8;
+	}
+
+	const Labels<std::string> &labels;
+	HuffmanBuilder<std::string::value_type> huffman;
+};
+
+
 enum NodeEncoding { LEAF = 0, IMPLICIT_SIBLING = 1, POINTER_SIBLING = 2 };
 
 /// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag) : dagStructureEntropy(), dagPointerEntropy(), mergeEntropy(), labelEntropy(), dag(dag) {}
+	DagEntropy(const BinaryDag<DataType> &dag, const Labels<DataType> &labels) :
+		dagStructureEntropy(),
+		dagPointerEntropy(),
+		mergeEntropy(),
+		labelEntropy(),
+		labelDataEntropy(labels),
+		dag(dag)
+	{}
 
 	/// Do the entropy calculations on the DAG's nodes
 	void calculate() {
@@ -158,34 +194,32 @@ struct DagEntropy {
 		dagPointerEntropy.construct();
 		mergeEntropy.construct();
 		labelEntropy.construct();
+		labelDataEntropy.construct();
+	}
+
+	long long getTotalSize() {
+		// Code dag pointers as fixed-length ints
+		// Size can be deduced from decoded dag structure data
+		long long bits_per_pointer = NUM_DIGITS(dag.nodes.size());
+		long long bits =
+			// node IDs are implicit
+			dagStructureEntropy.getBitsNeeded() +
+			// pointers are not implicit, need to store them
+			dagPointerEntropy.getBitsNeeded() +	dagPointerEntropy.getNumSymbols() * bits_per_pointer +
+			// merge type needs a mapping as well (it's tiny anyway)
+			mergeEntropy.getBitsNeeded() + mergeEntropy.getBitsForTableLabels() +
+			// labels can be reordered as we want to, so no need for a table here
+			labelEntropy.getBitsNeeded() +
+			// label strings do need a kind of a table
+			labelDataEntropy.huffman.getBitsNeeded() + labelDataEntropy.getExtraSize() +
+			7*sizeof(int)*8;  // lengths of each segment (table, data), except for the last, as ints
+		return bits;
 	}
 
 	HuffmanBuilder<char> dagStructureEntropy;
 	HuffmanBuilder<int> dagPointerEntropy;
 	HuffmanBuilder<char> mergeEntropy;
 	HuffmanBuilder<DataType> labelEntropy;
+	LabelDataEntropy<DataType> labelDataEntropy;
 	const BinaryDag<DataType> &dag;
-};
-
-struct StringLabelEntropy {
-	StringLabelEntropy(const Labels<std::string> &labels) : labels(labels), huffman() {}
-
-	void calculate() {
-		for (const std::string* label : labels.valueIndex) {
-			if (label != NULL) {
-				huffman.addItems(label->cbegin(), label->cend());
-			}
-			huffman.addItem(0);
-		}
-		huffman.construct();
-	}
-
-	/// Additional amount of information that needs to be stored, in bits
-	/// (e.g. for mapping code points to symbols)
-	int getExtraSize() const {
-		return huffman.getNumSymbols() * sizeof(std::string::value_type) * 8;
-	}
-
-	const Labels<std::string> &labels;
-	HuffmanBuilder<std::string::value_type> huffman;
 };

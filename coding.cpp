@@ -47,28 +47,15 @@ int main(int argc, char **argv) {
 		 << "% of original tree, " << ratio << ":1)" << endl
 		 << "Top dag construction took in " << timer.getAndReset() << "ms" << endl;
 
-	DagEntropy<string> entropy(dag);
+	DagEntropy<string> entropy(dag, labels);
 	entropy.calculate();
 	cout << "DAG Structure: " << entropy.dagStructureEntropy << endl;
 	cout << "DAG Pointers:  " << entropy.dagPointerEntropy << endl;
 	cout << "Merge Types:   " << entropy.mergeEntropy << endl;
 	cout << "Label ptrs:    " << entropy.labelEntropy << endl;
-	double dagEntropyTime = timer.getAndReset();
-
-	StringLabelEntropy labelEntropy(labels);
-	labelEntropy.calculate();
-	cout << "Label strings: " << labelEntropy.huffman << " + " << labelEntropy.getExtraSize() << " bits for symbols" << endl;
-
-	double labelEntropyTime = timer.getAndReset();
-	cout << "Entropy calcuation took " << dagEntropyTime << " + " << labelEntropyTime << " = " << dagEntropyTime + labelEntropyTime << "ms; " << endl;
-
-	long long bits_per_nodeId = NUM_DIGITS(dag.nodes.size());
-	long long bits = entropy.dagStructureEntropy.getBitsNeeded() +
-		entropy.dagPointerEntropy.getBitsNeeded() +	entropy.dagPointerEntropy.getNumSymbols() * bits_per_nodeId +
-		entropy.mergeEntropy.getBitsNeeded() + entropy.mergeEntropy.getBitsForTableLabels() +
-		entropy.labelEntropy.getBitsNeeded() +
-		labelEntropy.huffman.getBitsNeeded() + labelEntropy.getExtraSize() +
-		7*32;  // lengths of each segment (table, data), except for the last, as 32-bit int
-	cout << "Output needs " << bits << " bits (" << (bits+7)/8 << " bytes)" << endl;
+	cout << "Label strings: " << entropy.labelDataEntropy.huffman << " + " << entropy.labelDataEntropy.getExtraSize() << " bits for symbols" << endl;
+	cout << "Huffman calcuation took " << timer.getAndReset() << "ms; " << endl;
+	long long bits = entropy.getTotalSize();
+	cout << "Output file needs " << bits << " bits (" << (bits+7)/8 << " bytes)" << endl;
 	return 0;
 }
