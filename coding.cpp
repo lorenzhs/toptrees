@@ -49,9 +49,9 @@ int main(int argc, char **argv) {
 
 	DagEntropy<string> entropy(dag, labels);
 	entropy.calculate();
-	cout << "DAG Structure: " << entropy.dagStructureEntropy << endl;
+	cout << "DAG Structure: " << entropy.dagStructureEntropy.huffman << endl;
 	cout << "DAG Pointers:  " << entropy.dagPointerEntropy << endl;
-	cout << "Merge Types:   " << entropy.mergeEntropy << endl;
+	cout << "Merge Types:   " << entropy.mergeEntropy.huffman << endl;
 	cout << "Label strings: " << entropy.labelDataEntropy.huffman << " + " << entropy.labelDataEntropy.getExtraSize() << " bits for symbols" << endl;
 	cout << "Huffman calcuation took " << timer.getAndReset() << "ms; " << endl;
 	long long bits = entropy.getTotalSize();

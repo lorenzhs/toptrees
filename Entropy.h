@@ -200,9 +200,9 @@ struct DagEntropy {
 			alreadyVisited[node.right] = true;
 		}
 
-		dagStructureEntropy.construct();
+		dagStructureEntropy.huffman.construct();
 		dagPointerEntropy.construct();
-		mergeEntropy.construct();
+		mergeEntropy.huffman.construct();
 		labelDataEntropy.construct();
 	}
 
@@ -212,11 +212,11 @@ struct DagEntropy {
 		long long bits_per_pointer = NUM_DIGITS(dag.nodes.size());
 		long long bits =
 			// node IDs are implicit
-			dagStructureEntropy.getBitsNeeded() +
+			dagStructureEntropy.huffman.getBitsNeeded() +
 			// pointers are not implicit, need to store them
 			dagPointerEntropy.getBitsNeeded() +	dagPointerEntropy.getNumSymbols() * bits_per_pointer +
 			// merge type needs a mapping as well (it's tiny anyway)
-			mergeEntropy.getBitsNeeded() + mergeEntropy.getBitsForTableLabels() +
+			mergeEntropy.huffman.getBitsNeeded() + mergeEntropy.huffman.getBitsForTableLabels() +
 			// label strings do need a kind of a table
 			labelDataEntropy.huffman.getBitsNeeded() + labelDataEntropy.getExtraSize() +
 			// lengths of each data segment, except for the last, as ints
@@ -226,9 +226,9 @@ struct DagEntropy {
 		return bits;
 	}
 
-	HuffmanBuilder<char> dagStructureEntropy;
+	HuffmanBlocker<bool, uint8_t, 1, 8> dagStructureEntropy;
 	HuffmanBuilder<int> dagPointerEntropy;
-	HuffmanBuilder<char> mergeEntropy;
+	HuffmanBlocker<char, uint16_t, 4, 16> mergeEntropy;
 	LabelDataEntropy<DataType> labelDataEntropy;
 	const BinaryDag<DataType> &dag;
 };

@@ -179,3 +179,44 @@ protected:
 	std::vector<HuffCode> codes;
 	std::vector<HuffNode*> nodes;
 };
+
+/// construct a blocked huffman coding
+/// the size of the output type must be a multiple of the input type's!
+template <typename InputType, typename OutputType, int inputSize = sizeof(InputType)*8, int outputSize = sizeof(OutputType)*8>
+struct HuffmanBlocker {
+	HuffmanBlocker() : blockingFactor(outputSize / inputSize), tempStore(), huffman() {
+		assert(outputSize % inputSize == 0);
+		tempStore.reserve(blockingFactor);
+	}
+
+	/// add an occurence to the frequency statistics
+	void addItem(const InputType &symbol) {
+		const bool verbose = false;
+
+		tempStore.push_back(symbol);
+		if (tempStore.size() == blockingFactor) {
+			// move into huffman
+			OutputType result{};
+			if (verbose) cout << "Combining: ";
+			for (uint i = 0; i < blockingFactor; ++i) {
+				result |= (tempStore[i] << (i * inputSize));
+				if (verbose) cout << (uint) tempStore[i] << " ";
+			}
+			if (verbose) cout << " => " << (uint)result << endl;
+			huffman.addItem(result);
+			tempStore.clear();
+		}
+	}
+
+	/// add a sequence of occurences to the frequency statistics
+	template <class InputIterator>
+	void addItems(InputIterator begin, InputIterator end) {
+		for (auto it = begin; it != end; ++it) {
+			addItem(*it);
+		}
+	}
+
+	const uint blockingFactor;
+	std::vector<InputType> tempStore;
+	HuffmanBuilder<OutputType> huffman;
+};
