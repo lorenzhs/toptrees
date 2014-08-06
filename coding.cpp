@@ -52,7 +52,6 @@ int main(int argc, char **argv) {
 	cout << "DAG Structure: " << entropy.dagStructureEntropy << endl;
 	cout << "DAG Pointers:  " << entropy.dagPointerEntropy << endl;
 	cout << "Merge Types:   " << entropy.mergeEntropy << endl;
-	cout << "Label ptrs:    " << entropy.labelEntropy << endl;
 	cout << "Label strings: " << entropy.labelDataEntropy.huffman << " + " << entropy.labelDataEntropy.getExtraSize() << " bits for symbols" << endl;
 	cout << "Huffman calcuation took " << timer.getAndReset() << "ms; " << endl;
 	long long bits = entropy.getTotalSize();

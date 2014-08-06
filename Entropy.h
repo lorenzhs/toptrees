@@ -130,7 +130,7 @@ struct LabelDataEntropy<std::string> {
 };
 
 
-enum NodeEncoding { LEAF = 0, IMPLICIT_SIBLING = 1, POINTER_SIBLING = 2 };
+enum NodeEncoding { IMPLICIT, MISSING };
 
 /// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
@@ -139,7 +139,6 @@ struct DagEntropy {
 		dagStructureEntropy(),
 		dagPointerEntropy(),
 		mergeEntropy(),
-		labelEntropy(),
 		labelDataEntropy(labels),
 		dag(dag)
 	{}
@@ -148,23 +147,18 @@ struct DagEntropy {
 	void calculate() {
 		vector<bool> alreadyVisited(dag.nodes.size(), false);
 
-		// Add structure and label information for a **child** of the current node
-		const auto processNode([&](const int nodeId) {
-			assert(nodeId >= 0);
+		const auto isLeafOrPointer([&](const int nodeId) {
 			assert((dag.nodes[nodeId].left < 0) == (dag.nodes[nodeId].right < 0));
-			if (dag.nodes[nodeId].left < 0) {
-				// Never code leafs as pointers, a pointer needs more space than a label index
-				dagStructureEntropy.addItem(LEAF);
-				assert(dag.nodes[nodeId].label != NULL);
-				labelEntropy.addItem(*dag.nodes[nodeId].label);
+			return (alreadyVisited[nodeId] || dag.nodes[nodeId].left < 0);
+		});
+
+		// Add structure and label information for a **child** of the current node
+		const auto codeStructure([&](const int nodeId) {
+			assert(nodeId >= 0);
+			if (isLeafOrPointer(nodeId)) {
+				dagStructureEntropy.addItem(MISSING);
 			} else {
-				if (alreadyVisited[nodeId]) {
-					dagStructureEntropy.addItem(POINTER_SIBLING);
-					dagPointerEntropy.addItem(nodeId);
-				} else {
-					dagStructureEntropy.addItem(IMPLICIT_SIBLING);
-					alreadyVisited[nodeId] = true;
-				}
+				dagStructureEntropy.addItem(IMPLICIT);
 			}
 		});
 
@@ -175,25 +169,40 @@ struct DagEntropy {
 
 			const DagNode<DataType> &node(dag.nodes[nodeId]);
 
-			if (node.left >= 0 || node.right >= 0) {
-				assert(node.left >= 0 && node.right >= 0);
-				assert(node.label == NULL);
-				assert(node.mergeType != NO_MERGE);
-				mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
-				processNode(node.left);
-				processNode(node.right);
-			} else {
-				// leaves are not coded here, they were coded before in processNode
-				assert(node.left < 0 && node.right < 0);
+			assert((node.left < 0) == (node.right < 0));
+			if (node.left < 0) {
+				// leaves are not coded here, they were coded before
 				assert(node.label != NULL);
 				assert(node.mergeType == NO_MERGE);
+				continue;
 			}
+
+			assert(node.label == NULL);
+			assert(node.mergeType != NO_MERGE);
+
+			// We need to code the merge type regardless of the nature of the children
+			mergeEntropy.addItem((char)dag.nodes[nodeId].mergeType);
+
+			// if both children are leaves / pointers, they don't need to be coded in the structure
+			if (!isLeafOrPointer(node.left) || !isLeafOrPointer(node.right)) {
+				codeStructure(node.left);
+				codeStructure(node.right);
+			}
+
+			if (isLeafOrPointer(node.left)) {
+				dagPointerEntropy.addItem(node.left);
+			}
+			if (isLeafOrPointer(node.right)) {
+				dagPointerEntropy.addItem(node.right);
+			}
+
+			alreadyVisited[node.left] = true;
+			alreadyVisited[node.right] = true;
 		}
 
 		dagStructureEntropy.construct();
 		dagPointerEntropy.construct();
 		mergeEntropy.construct();
-		labelEntropy.construct();
 		labelDataEntropy.construct();
 	}
 
@@ -208,18 +217,18 @@ struct DagEntropy {
 			dagPointerEntropy.getBitsNeeded() +	dagPointerEntropy.getNumSymbols() * bits_per_pointer +
 			// merge type needs a mapping as well (it's tiny anyway)
 			mergeEntropy.getBitsNeeded() + mergeEntropy.getBitsForTableLabels() +
-			// labels can be reordered as we want to, so no need for a table here
-			labelEntropy.getBitsNeeded() +
 			// label strings do need a kind of a table
 			labelDataEntropy.huffman.getBitsNeeded() + labelDataEntropy.getExtraSize() +
-			7*sizeof(int)*8;  // lengths of each segment (table, data), except for the last, as ints
+			// lengths of each data segment, except for the last, as ints
+			// we don't need to code the length of the pointer table (we can infer that from the decoded dag structure),
+			// nor for the merge entropy (we know that it's NUM_DIGITS(5)*5 = 15 bit)
+			4*sizeof(int)*8;
 		return bits;
 	}
 
 	HuffmanBuilder<char> dagStructureEntropy;
 	HuffmanBuilder<int> dagPointerEntropy;
 	HuffmanBuilder<char> mergeEntropy;
-	HuffmanBuilder<DataType> labelEntropy;
 	LabelDataEntropy<DataType> labelDataEntropy;
 	const BinaryDag<DataType> &dag;
 };
