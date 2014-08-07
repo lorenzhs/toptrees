@@ -17,8 +17,9 @@ struct TreeNode {
 	int lastEdgeIndex;
 	int parent;
 	int lastMergedIn;
+	uint hash;
 
-	TreeNode() : firstEdgeIndex(-1), lastEdgeIndex(-1), parent(-1), lastMergedIn(-1) {}
+	TreeNode() : firstEdgeIndex(-1), lastEdgeIndex(-1), parent(-1), lastMergedIn(-1), hash(0) {}
 
 	/// Get the number of outgoing edges (both valid and invalid)
 	int numEdges() const {
