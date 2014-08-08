@@ -137,7 +137,6 @@ protected:
 					// We're only interested in merging if one is a leaf
 					continue;
 				}
-				//cout << "Hashing edges " << *edge << " and " << *(edge+1) << ", leaving node " << nodeId << " " << tree.nodes[nodeId] << "; hash is " << getRePairHash(edge) << endl;
 				Pair pair(nodeId, tree.edgeId(edge));
 				hashMap.add(getRePairHash(edge), pair);
 				++numPairs;
@@ -154,8 +153,6 @@ protected:
 		RePair::HashMap<Pair> hashMap(records);
 		RePair::PriorityQueue<Pair> queue;
 		prepareRePair(hashMap, queue);
-		//cout << hashMap;
-		//cout << queue;
 
 		while (!queue.empty()) {
 			RePair::Record<Pair> *record = queue.popMostFrequentRecord();
