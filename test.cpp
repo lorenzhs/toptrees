@@ -1,16 +1,22 @@
 #include <iostream>
 #include <vector>
 
+// Data structures
 #include "Edges.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
 
+// Algorithms
 #include "TopTree.h"
 #include "TopTreeConstructor.h"
-#include "XML.h"
-#include "Timer.h"
-
+#include "RePairCombiner.h"
 #include "DagBuilder.h"
+
+// Utils
+#include "ArgParser.h"
+#include "Timer.h"
+#include "XML.h"
+
 
 using std::cout;
 using std::endl;
@@ -20,9 +26,11 @@ using std::vector;
 int main(int argc, char **argv) {
 	OrderedTree<TreeNode, TreeEdge> t;
 //*
-	Labels<string> labels;
+	ArgParser argParser(argc, argv);
+	const bool useRePair = argParser.isSet("r");
+	const string filename = argParser.numDataArgs() > 0 ? argParser.getDataArg(0) : "data/1998statistics.xml";
 
-	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
+	Labels<string> labels;
 
 	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
 
@@ -30,9 +38,14 @@ int main(int argc, char **argv) {
 
 	TopTree<string> topTree(t._numNodes, labels);
 
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 	Timer timer;
-	topTreeConstructor.construct();
+	if (useRePair) {
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree, labels);
+		topTreeConstructor.construct();
+	} else {
+		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
+		topTreeConstructor.construct();
+	}
 	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
 
 	BinaryDag<string> dag;
