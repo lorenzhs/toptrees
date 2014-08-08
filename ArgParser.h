@@ -23,8 +23,8 @@ public:
 	/// Parse command-line arguments
 	ArgParser(int argc, char** argv) {
 		for (int i = 1; i < argc; ++i) {
-			string arg(argv[i] + 1);
 			if (argv[i][0] == '-') {
+				string arg(argv[i] + 1);
 				if ((i + 1) < argc && argv[i + 1][0] != '-') {
 					string val(argv[++i]);
 					namedArgs[arg] = val;
@@ -32,7 +32,7 @@ public:
 					namedArgs[arg] = "";
 				}
 			} else {
-				dataArgs.push_back(arg);
+				dataArgs.push_back(argv[i]);
 			}
 		}
 	}
