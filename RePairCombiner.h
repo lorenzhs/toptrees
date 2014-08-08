@@ -12,6 +12,7 @@
 #include "Statistics.h"
 
 #include "RePair.h"
+#include "RePairTreeHasher.h"
 
 using std::cout;
 using std::endl;
@@ -45,8 +46,8 @@ public:
 	/// \param topTree the output top tree
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
-	RePairCombiner(TreeType &tree, TopTree<DataType> &topTree, const bool verbose = true, const bool extraVerbose = false)
-		: tree(tree), topTree(topTree), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes) {}
+	RePairCombiner(TreeType &tree, TopTree<DataType> &topTree, const LabelsT<DataType> &labels, const bool verbose = true, const bool extraVerbose = false)
+		: tree(tree), topTree(topTree), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes), hasher(tree, labels) {}
 
 	/// Perform the top tree construction procedure
 	/// \param debugInfo pointer to a DebugInfo object, should you wish logging of debug information
@@ -60,8 +61,8 @@ public:
 
 protected:
 	void mergeCallback(const int u, const int v, const int n, const MergeType type) {
-		//cout << "Merging nodes " << u << " and " << v << " into " << n << " type " << type << endl;
 		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
+		hasher.hashNode(n);
 	}
 
 
@@ -73,6 +74,8 @@ protected:
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
 	void doMerges(DebugInfo *debugInfo) {
+		hasher.hash();
+
 		int iteration = 0;
 		Timer timer;
 
@@ -84,7 +87,9 @@ protected:
 			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
 			int oldNumEdges = tree._numEdges;
+			// First, do RePair merges, then whatever else is possible
 			horizontalMergesRePair(iteration);
+			normalHorizontalMerges(iteration);
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
 
@@ -195,8 +200,9 @@ protected:
 				mergeCallback(tree.edges[leftEdge].headNode, tree.edges[rightEdge].headNode, newNode, mergeType);
 			}
 		}
+	}
 
-
+	void normalHorizontalMerges(const int iteration) {
 		// Do the rest of the horizontal merges
 		for (int nodeId = tree._numNodes - 1; nodeId >= 0; --nodeId) {
 			const int numEdges(tree.nodes[nodeId].numEdges());
@@ -308,4 +314,5 @@ protected:
 	TopTree<DataType> &topTree;
 	const bool verbose, extraVerbose;
 	vector<int> nodeIds;
+	NodeHasher<TreeType, DataType> hasher;
 };

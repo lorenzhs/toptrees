@@ -30,12 +30,9 @@ int main(int argc, char **argv) {
 
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
-	NodeHasher<OrderedTree<TreeNode, TreeEdge>, string> hasher(t, labels);
-	hasher.hash();
-
 	TopTree<string> topTree(t._numNodes, labels);
 
-	RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
+	RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree, labels);
 	Timer timer;
 	topTreeConstructor.construct();
 	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
