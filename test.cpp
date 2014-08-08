@@ -5,9 +5,9 @@
 #include "Edges.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
+#include "TopTree.h"
 
 // Algorithms
-#include "TopTree.h"
 #include "TopTreeConstructor.h"
 #include "RePairCombiner.h"
 #include "DagBuilder.h"
@@ -28,7 +28,13 @@ int main(int argc, char **argv) {
 //*
 	ArgParser argParser(argc, argv);
 	const bool useRePair = argParser.isSet("r");
-	const string filename = argParser.numDataArgs() > 0 ? argParser.getDataArg(0) : "data/1998statistics.xml";
+	string filename = "data/1998statistics.xml";
+	if (argParser.numDataArgs() > 0) {
+		filename = argParser.getDataArg(0);
+	} else if (useRePair) {
+		// if used as "./test -r foo.xml", it will match the foo.xml to the "-r" which is unfortunate
+		filename = argParser.get("r", filename);
+	}
 
 	Labels<string> labels;
 

@@ -5,26 +5,26 @@
 #include <mutex>
 
 #include "Common.h"
-#include "RandomTree.h"
 
-#include "OrderedTree.h"
-#include "Nodes.h"
+// Data Structures
+#include "BinaryDag.h"
 #include "Edges.h"
+#include "Labels.h"
+#include "Nodes.h"
+#include "OrderedTree.h"
+#include "TopTree.h"
 
-#include "Timer.h"
-
+// Algorithms
+#include "RandomTree.h"
+#include "DagBuilder.h"
+#include "RePairCombiner.h"
 #include "TopTreeConstructor.h"
 
-#include "TopTree.h"
-#include "Labels.h"
-
-#include "BinaryDag.h"
-#include "DagBuilder.h"
-
-#include "Statistics.h"
-#include "ProgressBar.h"
-
+// Utils
 #include "ArgParser.h"
+#include "ProgressBar.h"
+#include "Statistics.h"
+#include "Timer.h"
 #include "XML.h"
 
 using std::cout;
@@ -46,7 +46,9 @@ void usage(char* name) {
 
 std::mutex debugMutex;
 
-void runIteration(const int iteration, RandomGeneratorType &generator, const uint seed, const int size, const int numLabels, const bool verbose, const bool extraVerbose, Statistics &statistics, ProgressBar &bar, const string &treePath) {
+void runIteration(const int iteration, RandomGeneratorType &generator, const uint seed, const int size,
+		const int numLabels, const bool useRePair, const bool verbose, const bool extraVerbose,
+		Statistics &statistics, ProgressBar &bar, const string &treePath) {
 	// Seed RNG
 	generator.seed(seed);
 	if (verbose) cout << endl << "Round " << iteration << ", seed is " <<seed << endl;
@@ -76,8 +78,13 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	}
 
 	TopTree<int> topTree(tree._numNodes, labels);
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-	topTreeConstructor.construct(&debugInfo);
+	if (useRePair) {
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, labels, verbose, extraVerbose);
+		topTreeConstructor.construct(&debugInfo);
+	} else {
+		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
+		topTreeConstructor.construct(&debugInfo);
+	}
 
 	if (debugInfo.minEdgeRatio < 1.2) {
 		cout << "minRatio = " << debugInfo.minEdgeRatio << " for seed " << seed << endl;
@@ -125,6 +132,7 @@ int main(int argc, char **argv) {
 	const int numIterations = argParser.get<int>("n", 100);
 	const uint numLabels = argParser.get<uint>("l", 2);
 	const uint seed = argParser.get<uint>("s", 12345678);
+	const bool useRePair = argParser.isSet("r");
 	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
 	const bool extraVerbose = argParser.isSet("vv");
 	const string ratioFilename = argParser.get<string>("r", "");
@@ -158,7 +166,7 @@ int main(int argc, char **argv) {
 	auto worker = [&](int start, int end) {
 		RandomGeneratorType engine{};
 		for (int i = start; i < end; ++i) {
-			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, statistics, bar, treePath);
+			runIteration(i, engine, seeds[i], size, numLabels, useRePair, verbose, extraVerbose, statistics, bar, treePath);
 		}
 	};
 
