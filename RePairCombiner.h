@@ -224,12 +224,13 @@ protected:
 			for (int edgeNum = 0; edgeNum < lastEdgeNum; ++edgeNum) {
 				EdgeType *leftEdge(baseEdge + edgeNum);
 				if (!leftEdge->valid) {
-					++edgeNum;
+					assert(tree.nodes[leftEdge->headNode].lastMergedIn == iteration);
 					continue;
 				}
 				EdgeType *rightEdge(leftEdge + 1);
 				if (!rightEdge->valid) {
-					edgeNum += 2;
+					assert(tree.nodes[rightEdge->headNode].lastMergedIn == iteration);
+					++edgeNum;
 					continue;
 				}
 				const int left = leftEdge->headNode;
