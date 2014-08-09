@@ -33,7 +33,8 @@ int main(int argc, char **argv) {
 		filename = argParser.getDataArg(0);
 	} else if (useRePair) {
 		// if used as "./test -r foo.xml", it will match the foo.xml to the "-r" which is unfortunate
-		filename = argParser.get("r", filename);
+		string arg = argParser.get<string>("r", "");
+		filename = (arg == "") ? filename : arg;
 	}
 
 	Labels<string> labels;
