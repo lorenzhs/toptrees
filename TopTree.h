@@ -9,8 +9,6 @@
 using std::function;
 using std::cout;
 using std::endl;
-using std::ostream;
-using std::vector;
 
 /// Cluster type for a top tree, holding a pointer to some data
 template <typename DataType>
@@ -23,7 +21,7 @@ struct Cluster {
 	int left, right /*, rLeft, lRight, rRight, height, size, distTBleft, distTBright*/;
 	const DataType *label;
 
-	friend ostream &operator<<(ostream &os, const Cluster &cluster) {
+	friend std::ostream &operator<<(std::ostream &os, const Cluster &cluster) {
 		os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; ";
 		if (cluster.label == NULL)
 			os << "NULL";
@@ -174,7 +172,7 @@ struct TopTree {
 		return true;
 	}
 
-	friend ostream &operator<<(ostream &os, const TopTree<DataType> &toptree) {
+	friend std::ostream &operator<<(std::ostream &os, const TopTree<DataType> &toptree) {
 		os << "Top tree with " << toptree.clusters.size() << " clusters. Non-leaves:" << endl;
 		uint count = 0;
 		for (const Cluster<DataType> &cluster : toptree.clusters) {
@@ -186,6 +184,6 @@ struct TopTree {
 		return os;
 	}
 
-	vector<Cluster<DataType>> clusters;
+	std::vector<Cluster<DataType>> clusters;
 	int numLeaves;
 };

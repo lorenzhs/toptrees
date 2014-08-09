@@ -1,16 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <functional>
 #include <unordered_map>
 
 #include "Common.h"
 #include "BinaryDag.h"
 #include "TopTree.h"
-
-using std::cout;
-using std::endl;
-using std::unordered_map;
 
 /// DagNode equality tester, to enable its use in a map
 template <typename DataType>
@@ -97,7 +91,7 @@ private:
 
 	TopTree<DataType> &topTree;
 	BinaryDag<DataType> &dag;
-	unordered_map<DagNode<DataType>, int, SubtreeHasher<DataType>, SubtreeEquality<DataType>> nodeMap;
+	std::unordered_map<DagNode<DataType>, int, SubtreeHasher<DataType>, SubtreeEquality<DataType>> nodeMap;
 	vector<int> clusterToDag;
 };
 

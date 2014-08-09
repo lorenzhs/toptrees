@@ -3,10 +3,8 @@
 #include <cassert>
 #include <iostream>
 #include <iomanip>
-#include <functional>
 #include <vector>
 
-#include "Common.h"
 #include "Timer.h"
 #include "TopTree.h"
 #include "Statistics.h"
@@ -14,7 +12,6 @@
 using std::cout;
 using std::endl;
 using std::flush;
-using std::function;
 using std::vector;
 
 /// Transform a tree into its top tree

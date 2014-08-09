@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Labels.h"
-#include "Nodes.h"
 
 template <typename TreeType, typename DataType>
 struct NodeHasher {

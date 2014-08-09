@@ -1,8 +1,6 @@
 #pragma once
 
-#include <algorithm>
 #include <cassert>
-#include <list>
 #include <ostream>
 #include <set>
 #include <unordered_map>

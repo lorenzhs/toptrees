@@ -1,22 +1,21 @@
 #include <iostream>
-#include <string>
 
-#include "RandomTree.h"
-
-#include "OrderedTree.h"
-#include "Nodes.h"
+// Data Structures
+#include "BinaryDag.h"
 #include "Edges.h"
-
-#include "Timer.h"
-
-#include "DotGraphExporter.h"
-
-#include "TopTree.h"
 #include "Labels.h"
+#include "Nodes.h"
+#include "OrderedTree.h"
+#include "TopTree.h"
+
+// Algorithms
+#include "DagBuilder.h"
+#include "DotGraphExporter.h"
+#include "RandomTree.h"
 #include "TopTreeConstructor.h"
 
-#include "BinaryDag.h"
-#include "DagBuilder.h"
+// Utils
+#include "Timer.h"
 
 using std::cout;
 using std::endl;

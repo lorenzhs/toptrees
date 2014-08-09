@@ -1,13 +1,9 @@
 #pragma once
 
-#include <algorithm>
-#include <cassert>
 #include <iomanip>
 #include <mutex>
-#include <ostream>
 #include <fstream>
 #include <vector>
-
 
 /// A completely thread-safe statistics writer
 // Uses locking for all operations, feel free to do crazy things with threads

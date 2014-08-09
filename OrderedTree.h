@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <cassert>
 #include <functional>
 #include <iostream>
@@ -11,17 +10,11 @@
 
 #include "Common.h"
 #include "Timer.h"
-#include "Labels.h"
 
 using std::cout;
 using std::endl;
 using std::function;
-using std::flush;
-using std::ostream;
-using std::pair;
 using std::string;
-using std::stringstream;
-using std::vector;
 
 // #define awfulness
 #define FORALL_NODES(tree, node) for (int node = 0; node < tree._numNodes; ++node)
@@ -354,7 +347,7 @@ public:
 
 	/// A one-line summary of the tree
 	string summary() const {
-		stringstream s;
+		std::stringstream s;
 		s << "Tree with n = " << _numNodes << " m = " << std::setw(NUM_DIGITS(_numNodes)) << _numEdges;
 		return s.str();
 	}
@@ -363,7 +356,7 @@ public:
 	/// Comprises nodes with children or a parent, and valid edges.
 	/// Format: "  ID/(node or edge)"
 	string shortString() const {
-		stringstream os;
+		std::stringstream os;
 		os << summary() << endl << "Nodes:";
 		for (uint i = 0; i < nodes.size(); ++i) {
 			if (nodes[i].hasChildren() || nodes[i].parent != -1)
@@ -379,7 +372,7 @@ public:
 
 	/// String representation of the tree, including all nodes and edges
 	string toString() const {
-		stringstream os;
+		std::stringstream os;
 		os << summary() << endl << "Nodes:";
 		for (uint i = 0; i < nodes.size(); ++i) {
 			os << " " << nodes[i];
@@ -429,12 +422,12 @@ public:
 			if (verbose) cout << "GC: nothing to do" << endl;
 			return;
 		}
-		vector<EdgeType> newEdges;
+		std::vector<EdgeType> newEdges;
 		// Guess the amount of space needed for extra empty edges
 		const int numEdgesReserved(_numEdges * factor + 1);
 		if (verbose)
 			cout << "GC: allocating " << numEdgesReserved << " edges (" << numEdgesReserved * sizeof(EdgeType) / 1e6
-				 << "MB); " << flush;
+				 << "MB); " << std::flush;
 		newEdges.reserve(numEdgesReserved);
 		newEdges.push_back(edges[0]); // dummy edge
 		int oldSize(1);
@@ -527,7 +520,7 @@ public:
 	/// Calculate the average depth of the nodes in the tree.
 	/// Uses foldLeftPostOrder() and worth looking at as slightly more complex example for a fold
 	double avgDepth() const {
-		typedef pair<uint_fast32_t, uint_fast64_t> P;
+		typedef std::pair<uint_fast32_t, uint_fast64_t> P;
 		P countAndSum = foldLeftPostOrder<P>(
 			[](const P countAndSum) { return P(countAndSum.first + 1, countAndSum.second + countAndSum.first + 1); },
 			[](const P p1, const P p2) { return P(p1.first + p2.first, p1.second + p2.second); }, P(1, 0));
@@ -568,8 +561,8 @@ protected:
 	// ...said everyone in history who then promptly proceeded
 	// to shoot themselves in the food catastrophically
 public:
-	vector<NodeType> nodes;
-	vector<EdgeType> edges;
+	std::vector<NodeType> nodes;
+	std::vector<EdgeType> edges;
 	int _firstFreeNode;
 	int _firstFreeEdge;
 	int _numNodes;

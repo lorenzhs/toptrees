@@ -1,7 +1,8 @@
 #include <iostream>
-#include <vector>
+#include <string>
 
 // Data Structures
+#include "BinaryDag.h"
 #include "Edges.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
@@ -22,7 +23,6 @@
 using std::cout;
 using std::endl;
 using std::string;
-using std::vector;
 
 int main(int argc, char **argv) {
 	ArgParser argParser(argc, argv);
