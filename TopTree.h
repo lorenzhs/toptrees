@@ -110,6 +110,18 @@ struct TopTree {
 		}, -1);
 	}
 
+	double avgDepth() const {
+		typedef std::pair<uint_fast32_t, uint_fast64_t> P;
+		P countAndSum = foldPostOrder<P>([](const P left, const P right) {
+			// there are numNodes(left) + numNodes(right) + 1 (=this) nodes in this subtree
+			const auto count = left.first + right.first + 1;
+			// each of their depths increases by 1, so add their count to the sum of total depth
+			const auto sum = left.second + right.second + count;
+			return P(count, sum);
+		}, P(1, 0));
+		return (double)countAndSum.second / countAndSum.first;
+	}
+
 	/// Check equality with another subtree
 	bool isEqual(const TopTree<DataType> &other) const {
 		if (numLeaves != other.numLeaves || clusters.size() != other.clusters.size()) {

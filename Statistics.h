@@ -71,6 +71,8 @@ struct DebugInfo {
 	uint_fast64_t numDagNodes;
 	/// height of the top tree
 	uint_fast64_t topTreeHeight;
+	/// average depth of the top tree's nodes
+	double topTreeAvgDepth;
 	/// height of the tree
 	uint_fast64_t height;
 	/// average depth of the tree's nodes
@@ -90,6 +92,7 @@ struct DebugInfo {
 		  numDagEdges(0),
 		  numDagNodes(0),
 		  topTreeHeight(0),
+		  topTreeAvgDepth(0.0),
 		  height(0),
 		  avgDepth(0.0) {}
 
@@ -129,6 +132,7 @@ struct DebugInfo {
 		numDagEdges += other.numDagEdges;
 		numDagNodes += other.numDagNodes;
 		topTreeHeight += other.topTreeHeight;
+		topTreeAvgDepth += other.topTreeAvgDepth;
 		height += other.height;
 		avgDepth += other.avgDepth;
 	}
@@ -146,6 +150,7 @@ struct DebugInfo {
 		numDagEdges = std::min(numDagEdges, other.numDagEdges);
 		numDagNodes = std::min(numDagNodes, other.numDagNodes);
 		topTreeHeight = std::min(topTreeHeight, other.topTreeHeight);
+		topTreeAvgDepth = std::min(topTreeAvgDepth, other.topTreeAvgDepth);
 		height = std::min(height, other.height);
 		avgDepth = std::min(avgDepth, other.avgDepth);
 	}
@@ -163,6 +168,7 @@ struct DebugInfo {
 		numDagEdges = std::max(numDagEdges, other.numDagEdges);
 		numDagNodes = std::max(numDagNodes, other.numDagNodes);
 		topTreeHeight = std::max(topTreeHeight, other.topTreeHeight);
+		topTreeAvgDepth = std::max(topTreeAvgDepth, other.topTreeAvgDepth);
 		height = std::max(height, other.height);
 		avgDepth = std::max(avgDepth, other.avgDepth);
 	}
@@ -177,6 +183,7 @@ struct DebugInfo {
 		statDuration /= factor;
 		numDagEdges /= factor;
 		numDagNodes /= factor;
+		topTreeAvgDepth /= factor;
 		avgDepth /= factor;
 	}
 
@@ -196,6 +203,7 @@ struct DebugInfo {
 		   << numDagEdges << "\t"
 		   << numDagNodes << "\t"
 		   << topTreeHeight << "\t"
+		   << topTreeAvgDepth << "\t"
 		   << height << "\t"
 		   << avgDepth
 		   << std::endl;
@@ -217,6 +225,7 @@ struct DebugInfo {
 		   << "numDagEdges" << "\t"
 		   << "numDagNodes" << "\t"
 		   << "topTreeHeight" << "\t"
+		   << "topTreeAvgDepth" << "\t"
 		   << "height" << "\t"
 		   << "avgDepth" << std::endl;
 	}
@@ -285,6 +294,7 @@ struct Statistics {
 		   << "DAG Edges: " << avg.numDagEdges << " (avg), " << min.numDagEdges << " (min), " << max.numDagEdges << " (max)" << std::endl
 		   << "DAG Nodes: " << avg.numDagNodes << " (avg), " << min.numDagNodes << " (min), " << max.numDagNodes << " (max)" << std::endl
 		   << "Top Tree height: " << avg.topTreeHeight * 1.0 / numDebugInfos << " (avg), " << min.topTreeHeight << " (min), " << max.topTreeHeight << " (max)" << std::endl
+		   << "Top T avg depth: " << avg.topTreeAvgDepth << " (avg), " << min.topTreeAvgDepth << " (min), " << max.topTreeAvgDepth << " (max)" << std::endl
 		   << "Tree height:     " << avg.height * 1.0 / numDebugInfos << " (avg), " << min.height << " (min), " << max.height << " (max)" << std::endl
 		   << "Avg node depth:  " << avg.avgDepth << " (avg), " << min.avgDepth << " (min), " << max.avgDepth << " (max)" << std::endl;
 	}
