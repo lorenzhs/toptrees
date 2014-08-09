@@ -95,6 +95,11 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 		cout << "Top tree construction took " << timer.get() << "ms" << endl;
 	timer.reset();
 
+	debugInfo.topTreeHeight = topTree.height();
+	debugInfo.topTreeAvgDepth = topTree.avgDepth();
+	debugInfo.topTreeMinDepth = topTree.minDepth();
+	debugInfo.statDuration += timer.getAndReset();
+
 	// Unpack top tree
 	OrderedTree<TreeNode, TreeEdge> unpackedTree;
 	Labels<int> newLabels(size + 1);

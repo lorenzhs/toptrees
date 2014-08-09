@@ -97,6 +97,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	debugInfo.topTreeHeight = topTree.height();
 	debugInfo.topTreeAvgDepth = topTree.avgDepth();
+	debugInfo.topTreeMinDepth = topTree.minDepth();
 	debugInfo.statDuration += timer.getAndReset();
 
 	BinaryDag<int> dag;

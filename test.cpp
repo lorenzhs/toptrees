@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 		topTreeConstructor.construct();
 	}
-	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
 
 	BinaryDag<string> dag;
 	DagBuilder<string> builder(topTree, dag);

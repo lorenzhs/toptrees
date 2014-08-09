@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 	// construct top tree
 	topTreeConstructor.construct();
 
-	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
 
 	// Construct top DAG
 	BinaryDag<string> dag;

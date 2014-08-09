@@ -110,6 +110,14 @@ struct TopTree {
 		}, 0);
 	}
 
+	/// Get the depth of the highest leaf
+	int minDepth() const {
+		return foldPostOrder<int>([](const int left, const int right) {
+			return std::min(left, right) + 1;
+		}, 0);
+	}
+
+	/// Get the average depth of all nodes
 	double avgDepth() const {
 		typedef std::pair<uint_fast32_t, uint_fast64_t> P;
 		P countAndSum = foldPostOrder<P>([](const P left, const P right) {
