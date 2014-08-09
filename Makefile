@@ -1,4 +1,4 @@
-CC=clang++
+CC=clang++-3.4
 GCC=g++-4.9
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold
