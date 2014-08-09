@@ -19,6 +19,7 @@
 #include "DagBuilder.h"
 #include "RePairCombiner.h"
 #include "TopTreeConstructor.h"
+#include "TopTreeUnpacker.h"
 
 // Utils
 #include "ArgParser.h"

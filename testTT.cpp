@@ -11,6 +11,7 @@
 
 #include "DagBuilder.h"
 #include "TopTreeConstructor.h"
+#include "TopTreeUnpacker.h"
 
 using std::cout;
 using std::endl;
