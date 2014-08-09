@@ -162,8 +162,9 @@ struct DagEntropy {
 			}
 		});
 
-		// nodeId starts at 1 because 0 is a dummy node, we don't need to code it
-		for (uint nodeId = 1; nodeId < dag.nodes.size(); ++nodeId) {
+		// nodeId starts at 2 because 0 is a dummy node, we don't need to code it,
+		// and 1 is the tree's root, but we know that, so we don't need to code it.
+		for (uint nodeId = 2; nodeId < dag.nodes.size(); ++nodeId) {
 			// DAG node is coded as the IDs of its children, its own ID
 			// is implicit from the position in the output it appears in
 

@@ -50,6 +50,8 @@ public:
 		: topTree(t), dag(dag), nodeMap(), clusterToDag(t.clusters.size(), -1) {}
 
 	void createDag() {
+		// need to add the root separately, it isn't referenced by an edge in the top tree
+		dag.nodes[addClusterToDag(0)].label = topTree.clusters[0].label;
 		topTree.inPostOrder([&](const int clusterId) { addClusterToDag(clusterId); });
 	}
 
@@ -103,7 +105,7 @@ private:
 template <typename DataType>
 class BinaryDagUnpacker {
 public:
-	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree<DataType> &topTree) : nextLeafId(0), dag(dag), topTree(topTree) {}
+	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree<DataType> &topTree) : nextLeafId(1), dag(dag), topTree(topTree) {}
 
 	void unpack() {
 		assert((int)topTree.clusters.size() == topTree.numLeaves);
@@ -111,6 +113,8 @@ public:
 			[&](const int nodeId, const int left, const int right) {
 				return addNodeToTopTree(nodeId, left, right);
 			});
+		// Restore the root label
+		topTree.clusters[0].label = dag.nodes[1].label;
 	}
 
 private:

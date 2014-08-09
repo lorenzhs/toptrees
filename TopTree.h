@@ -107,7 +107,7 @@ struct TopTree {
 	int height() const {
 		return foldPostOrder<int>([](const int leftHeight, const int rightHeight) {
 			return std::max(leftHeight, rightHeight) + 1;
-		}, -1);
+		}, 0);
 	}
 
 	double avgDepth() const {
@@ -197,15 +197,13 @@ public:
 	void unpack() {
 		int firstId = tree.addNodes(topTree.numLeaves);
 		assert(firstId == 0);
-		int rootClusterId = topTree.clusters.size() - 1;
 
-		Cluster<DataType> &rootCluster = topTree.clusters[rootClusterId];
 		// special treatment for root node of original tree
-		const DataType *label = topTree.clusters[rootCluster.left].label;
+		const DataType *label = topTree.clusters[0].label;
 		assert(label != NULL);
 		labels.set(0, *label);
 		// unpack the rest
-		unpackCluster(rootCluster.right, firstId);
+		unpackCluster(topTree.clusters.size() - 1, firstId);
 	}
 
 private:
