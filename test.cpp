@@ -17,6 +17,7 @@
 
 // Utils
 #include "ArgParser.h"
+#include "DotGraphExporter.h"
 #include "Timer.h"
 #include "XML.h"
 
@@ -38,12 +39,17 @@ int main(int argc, char **argv) {
 		string arg = argParser.get<string>("r", "");
 		filename = (arg == "") ? filename : arg;
 	}
+	const bool writeDotFiles = argParser.isSet("w");
 
 	Labels<string> labels;
 
 	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
 
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
+
+	if (writeDotFiles) {
+		OrderedTreeDotGraphExporter<TreeNode, TreeEdge>().write(t, "/tmp/tree.dot");
+	}
 
 	TopTree<string> topTree(t._numNodes, labels);
 
@@ -67,6 +73,12 @@ int main(int argc, char **argv) {
 	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
 		 << "% of original tree, " << ratio << ":1)" << endl
 		 << "Top dag construction took in " << timer.get() << "ms" << endl;
+
+	if (writeDotFiles) {
+		TopTreeDotGraphExporter<string>().write(topTree, "/tmp/toptree.dot", topTree.clusters.size()-1);
+		BinaryDagDotGraphExporter<string>().write(dag, "/tmp/topdag.dot");
+		DotGraphExporter<BinaryDag<string>>::drawSvg("/tmp/topdag.dot", "/tmp/topdag.svg");
+	}
 
 /*/
 
@@ -118,6 +130,13 @@ int main(int argc, char **argv) {
 	Labels<int> newLabels;
 	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>, int> unpacker(topTree, newTree, newLabels);
 	unpacker.unpack();
+
+	OrderedTreeDotGraphExporter<TreeNode, TreeEdge>().write(newTree, "/tmp/tree.dot");
+	TopTreeDotGraphExporter<int>().write(topTree, "/tmp/toptree.dot", topTree.clusters.size()-1);
+	BinaryDagDotGraphExporter<int>().write(dag, "/tmp/topdag.dot");
+	DotGraphExporter<OrderedTree<TreeNode, TreeEdge>>::drawSvg("/tmp/tree.dot", "/tmp/tree.svg");
+	DotGraphExporter<TopTree<int>>::drawSvg("/tmp/toptree.dot", "/tmp/toptree.svg");
+	DotGraphExporter<BinaryDag<int>>::drawSvg("/tmp/topdag.dot", "/tmp/topdag.svg");
 
 	XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(newTree, newLabels, "/tmp/unpacked.xml");
 

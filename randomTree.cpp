@@ -34,12 +34,12 @@ int main(int argc, char **argv) {
 	if (size <= 30) cout << tree << endl;
 
 	if (size <= 10000) {
-		DotGraphExporter::template write<OrderedTree<TreeNode, TreeEdge>>(tree, "/tmp/tree.dot");
+		OrderedTreeDotGraphExporter<TreeNode, TreeEdge>().write(tree, "/tmp/tree.dot");
 		cout << "Wrote DOT file in " << timer.getAndReset() << "ms" << endl;
 	}
 
 	if (size <= 1000) {
-		DotGraphExporter::drawSvg("/tmp/tree.dot", "/tmp/tree.svg");
+		DotGraphExporter<OrderedTree<TreeNode, TreeEdge>>::drawSvg("/tmp/tree.dot", "/tmp/tree.svg");
 		cout << "Graphed DOT file in " << timer.getAndReset() << "ms" << endl;
 	}
 
