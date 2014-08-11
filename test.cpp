@@ -27,7 +27,7 @@ using std::string;
 
 int main(int argc, char **argv) {
 	OrderedTree<TreeNode, TreeEdge> t;
-/*
+//*
 	ArgParser argParser(argc, argv);
 	const bool useRePair = argParser.isSet("r");
 	string filename = "data/1998statistics.xml";
