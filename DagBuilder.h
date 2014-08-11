@@ -83,7 +83,6 @@ private:
 		} else {
 			// node is already in the hashmap, compression is happening!
 			clusterToDag[clusterId] = nodeId;
-			dag.nodes[nodeId].inDegree++;
 			dag.popNode();
 			return nodeId;
 		}
