@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -26,7 +27,7 @@ using std::string;
 
 int main(int argc, char **argv) {
 	OrderedTree<TreeNode, TreeEdge> t;
-//*
+/*
 	ArgParser argParser(argc, argv);
 	const bool useRePair = argParser.isSet("r");
 	string filename = "data/1998statistics.xml";
@@ -69,47 +70,41 @@ int main(int argc, char **argv) {
 
 /*/
 
-	int foo = argc;
-	foo++;
-	char** bar = argv;
-	bar++;
+	(void) argc;
+	(void) argv;
 
-	t.addNodes(12);
-	t.addEdge(0, 1);
-	t.addEdge(1, 2);
-	t.addEdge(1, 3);
-	t.addEdge(2, 4);
-	t.addEdge(2, 5);
-	t.addEdge(2, 6);
-	t.addEdge(5, 7);
-	t.addEdge(3, 8);
-	t.addEdge(3, 9);
-	t.addEdge(3, 10);
-	t.addEdge(9, 11);
+	// vector<int> edges({0,1, 1,2, 1,3, 2,4, 2,5, 2,6, 5,7, 3,8, 3,9, 3,10, 9,11});
+
+	vector<int> edges({0,1, 0,2, 0,3, 1,4, 1,5, 4,9, 4,10, 3,6, 6,7, 7,8});
+	const int numNodes = *std::max_element(edges.begin(), edges.end()) + 1;
+	t.addNodes(numNodes);
+	for (uint i = 0; i < edges.size(); i += 2) {
+		t.addEdge(edges[i], edges[i+1]);
+	}
+
 	cout << t << endl << endl;
 
 	FakeLabels<int> labels(0);
 
 	t.toString();
 
-	const int numNodes(t._numNodes);
-
 	TopTree<int> topTree(numNodes, labels);
 
-	RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(t, topTree, labels, true, true);
+	//RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(t, topTree, labels, true, true);
+	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(t, topTree, true, true);
 	topTreeConstructor.construct(NULL);
 
 	cout << endl << t << endl;
-	//cout << topTree << endl;
+	cout << topTree << endl;
 	BinaryDag<int> dag;
 	DagBuilder<int> builder(topTree, dag);
 	builder.createDag();
-	//cout << dag << endl;
+	cout << dag << endl;
 
-	const int edges = dag.countEdges();
-	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const int numEdges = dag.countEdges();
+	const double percentage = (numEdges * 100.0) / topTree.numLeaves;
 	const double ratio = ((int)(1000 / percentage)) / 10.0;
-	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
+	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << numEdges << " edges (" << percentage
 		 << "% of original tree, " << ratio << ":1)" << endl;
 
 	XmlWriter<TopTree<int>>::write(topTree, "/tmp/toptree.xml");
