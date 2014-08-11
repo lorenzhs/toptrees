@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 	cout << dag << endl;
 
 	const int numEdges = dag.countEdges();
-	const double percentage = (numEdges * 100.0) / topTree.numLeaves;
+	const double percentage = (numEdges * 100.0) / (edges.size()/2);
 	const double ratio = ((int)(1000 / percentage)) / 10.0;
 	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << numEdges << " edges (" << percentage
 		 << "% of original tree, " << ratio << ":1)" << endl;
