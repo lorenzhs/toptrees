@@ -34,7 +34,7 @@ struct DotGraphExporter {
 		system(s.str().c_str());
 	}
 protected:
-	virtual void writeNode(std::ostream&, const TreeType&, const int);
+	virtual void writeNode(std::ostream&, const TreeType&, const int) = 0;
 };
 
 /// Export a tree as a DOT graph
