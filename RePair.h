@@ -111,9 +111,7 @@ struct PriorityQueue {
 	}
 
 	void decrementFrequency(Record<Pair> *record) {
-		if (lastNonEmptyList < 0) {
-			return;
-		}
+		assert(lastNonEmptyList >= 0);
 		const uint bucket(record->frequency - 2);
 		if (bucket < lists.size()) {
 			lists[bucket].erase(record);

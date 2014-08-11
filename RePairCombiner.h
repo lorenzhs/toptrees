@@ -168,14 +168,14 @@ protected:
 
 				// Decrement frequencies of neighbouring pairs
 				if (leftEdge > tree.nodes[pair.parentId].firstEdgeIndex) {
-					if (tree.edges[leftEdge - 1].valid) {
+					if (tree.edges[leftEdge - 1].valid && !queue.empty()) {
 						const uint hash = getRePairHash(&tree.edges[leftEdge - 1]);
 						auto *record = &records[hashMap.recordMap[hash]];
 						queue.decrementFrequency(record);
 					}
 				}
 				if (rightEdge < tree.nodes[pair.parentId].lastEdgeIndex) {
-					if (tree.edges[rightEdge + 1].valid) {
+					if (tree.edges[rightEdge + 1].valid && !queue.empty()) {
 						const uint hash = getRePairHash(&tree.edges[rightEdge]);
 						auto *record = &records[hashMap.recordMap[hash]];
 						queue.decrementFrequency(record);
