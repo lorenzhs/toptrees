@@ -10,6 +10,7 @@
 
 // Algorithms
 #include "TopTreeConstructor.h"
+#include "TopTreeUnpacker.h"
 #include "RePairCombiner.h"
 #include "DagBuilder.h"
 
@@ -91,10 +92,12 @@ int main(int argc, char **argv) {
 
 	t.toString();
 
-	TopTree<int> topTree(t._numNodes, labels);
+	const int numNodes(t._numNodes);
 
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(t, topTree);
-	topTreeConstructor.construct(NULL, true, true);
+	TopTree<int> topTree(numNodes, labels);
+
+	RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(t, topTree, labels, true, true);
+	topTreeConstructor.construct(NULL);
 
 	cout << endl << t << endl;
 	//cout << topTree << endl;
@@ -109,10 +112,9 @@ int main(int argc, char **argv) {
 	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
 		 << "% of original tree, " << ratio << ":1)" << endl;
 
-	XmlWriter<TopTree<int>, int> writer(topTree);
-	writer.write("/tmp/toptree.xml");
+	XmlWriter<TopTree<int>>::write(topTree, "/tmp/toptree.xml");
 
-	TopTree<int> newTopTree(t._numNodes);
+	TopTree<int> newTopTree(numNodes);
 	BinaryDagUnpacker<int> dagUnpacker(dag, newTopTree);
 	dagUnpacker.unpack();
 	//cout << newTopTree << endl;
@@ -122,8 +124,7 @@ int main(int argc, char **argv) {
 	TopTreeUnpacker<OrderedTree<TreeNode, TreeEdge>, int> unpacker(topTree, newTree, newLabels);
 	unpacker.unpack();
 
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>, int> unpackedWriter(newTree, newLabels);
-	unpackedWriter.write("/tmp/unpacked.xml");
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(newTree, newLabels, "/tmp/unpacked.xml");
 
 //*/
 	return 0;
