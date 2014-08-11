@@ -105,8 +105,7 @@ struct PriorityQueue {
 			list.erase(list.begin());
 		}
 
-		while(lists[lastNonEmptyList].empty() && --lastNonEmptyList >= 0);
-		assert(lastNonEmptyList == -1 || !lists[lastNonEmptyList].empty());
+		findNextNonEmptyList();
 
 		return result;
 	}
@@ -137,8 +136,7 @@ struct PriorityQueue {
 			}
 		}
 
-		while(lists[lastNonEmptyList].empty() && --lastNonEmptyList >= 0);
-		assert(lastNonEmptyList < 0 || !lists[lastNonEmptyList].empty());
+		findNextNonEmptyList();
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const PriorityQueue<Pair> &queue) {
@@ -155,6 +153,18 @@ struct PriorityQueue {
 			os << " " << *record;
 		}
 		return os << std::endl;
+	}
+
+private:
+	void findNextNonEmptyList() {
+		if (lastNonEmptyList == (int) lists.size()) {
+			assert(!frequentRecords.empty());
+			return;
+		}
+		while(lastNonEmptyList >= 0 && lists[lastNonEmptyList].empty()) {
+			lastNonEmptyList--;
+		}
+		assert(lastNonEmptyList == -1 || !lists[lastNonEmptyList].empty());
 	}
 
 	int lastNonEmptyList;
