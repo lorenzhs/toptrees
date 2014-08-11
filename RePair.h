@@ -41,6 +41,7 @@ template <typename Pair>
 struct Records {
 	Records() : records(1) {}
 	int add(uint hash) {
+		// add a dummy record for std::unordered_map stuff
 		records.emplace_back(Record<Pair>(hash));
 		return records.size()-1;
 	}

@@ -170,14 +170,14 @@ protected:
 				if (leftEdge > tree.nodes[pair.parentId].firstEdgeIndex) {
 					if (tree.edges[leftEdge - 1].valid) {
 						const uint hash = getRePairHash(&tree.edges[leftEdge - 1]);
-						auto *record = &hashMap.records.records[hashMap.recordMap[hash]];
+						auto *record = &records.records[hashMap.recordMap[hash]];
 						queue.decrementFrequency(record);
 					}
 				}
 				if (rightEdge < tree.nodes[pair.parentId].lastEdgeIndex) {
 					if (tree.edges[rightEdge + 1].valid) {
 						const uint hash = getRePairHash(&tree.edges[rightEdge]);
-						auto *record = &hashMap.records.records[hashMap.recordMap[hash]];
+						auto *record = &records.records[hashMap.recordMap[hash]];
 						queue.decrementFrequency(record);
 					}
 				}
