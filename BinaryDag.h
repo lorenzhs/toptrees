@@ -78,8 +78,8 @@ public:
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const BinaryDag<DataType> &dag) {
-		os << "Binary Dag with " << dag.nodes.size() << " nodes";
-		for (uint i = 0; i < dag.nodes.size(); ++i) {
+		os << "Binary Dag with " << dag.nodes.size() - 1 << " nodes";
+		for (uint i = 1; i < dag.nodes.size(); ++i) {
 			os << "; " << i << "=" << dag.nodes[i];
 		}
 		return os;
