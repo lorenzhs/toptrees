@@ -45,6 +45,15 @@ struct Records {
 		records.emplace_back(Record<Pair>(hash));
 		return records.size()-1;
 	}
+
+	Record<Pair>& operator[](typename std::vector<Record<Pair>>::size_type index) {
+		return records[index];
+	}
+
+	const Pair& operator[](typename std::vector<Record<Pair>>::size_type index) const {
+		return records[index];
+	}
+
 	std::vector<Record<Pair>> records;
 };
 
@@ -163,14 +172,14 @@ struct HashMap {
 			index = records.add(hash);
 		}
 		assert(index != 0);
-		records.records[index].frequency++;
-		records.records[index].occurrences.push_back(pair);
+		records[index].frequency++;
+		records[index].occurrences.push_back(pair);
 	}
 
 	void populatePQ(PriorityQueue<Pair> &queue) {
 		for (auto it = recordMap.begin(); it != recordMap.end(); ++it) {
-			if (it->second != 0 && records.records[it->second].frequency >= 2) {
-				queue.insert(&records.records[it->second]);
+			if (it->second != 0 && records[it->second].frequency >= 2) {
+				queue.insert(&records[it->second]);
 			}
 		}
 	}
@@ -178,7 +187,7 @@ struct HashMap {
 	friend std::ostream &operator<<(std::ostream &os, const HashMap<Pair> &hashMap) {
 		os << "HashMap with " << hashMap.recordMap.size() << " different hashes" << std::endl;
 		for (auto elem : hashMap.recordMap) {
-			os << "Hash " << elem.first << " record " << hashMap.records.records[elem.second] << std::endl;
+			os << "Hash " << elem.first << " record " << hashMap.records[elem.second] << std::endl;
 		}
 		os << "Records:";
 		for (Record<Pair> &record : hashMap.records.records) {
