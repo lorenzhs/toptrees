@@ -224,26 +224,24 @@ protected:
 			// a) node or parent is the root node
 			// b) parent has more than one child
 			// otherwise, merge the chain grandparent -> parent -> node
-			while (parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() && tree.nodes[parentId].parent >= 0 &&
-				   tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild()) {
+
+			while (parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild()) {
 				NodeType &node(tree.nodes[nodeId]), &parent(tree.nodes[parentId]);
 
-				if (node.lastMergedIn == iteration) {
+				if (node.lastMergedIn == iteration || parent.lastMergedIn == iteration) {
 					nodeId = parentId;
 					parentId = parent.parent;
 					continue;
 				}
 
-				if (parent.lastMergedIn < iteration) {
-					assert(node.lastMergedIn < iteration);
-					assert(parent.lastMergedIn < iteration);
-					node.lastMergedIn = iteration;
-					parent.lastMergedIn = iteration;
+				assert(node.lastMergedIn < iteration);
+				assert(parent.lastMergedIn < iteration);
+				node.lastMergedIn = iteration;
+				parent.lastMergedIn = iteration;
 
-					MergeType mergeType;
-					tree.mergeChain(parentId, mergeType);
-					mergeCallback(parentId, nodeId, parentId, mergeType);
-				}
+				MergeType mergeType;
+				tree.mergeChain(parentId, mergeType);
+				mergeCallback(parentId, nodeId, parentId, mergeType);
 
 				// Follow the chain upwards if possible
 				nodeId = parent.parent;
@@ -252,18 +250,6 @@ protected:
 				} else {
 					break; // break while loop
 				}
-			}
-
-			if (nodeId >= 0 && parentId >= 0 && tree.nodes[parentId].hasOnlyOneChild() &&
-				tree.nodes[nodeId].lastMergedIn < iteration && tree.nodes[parentId].lastMergedIn < iteration &&
-				tree.nodes[parentId].parent >= 0) {
-				// We hit the "odd case"
-				assert(!tree.nodes[tree.nodes[parentId].parent].hasOnlyOneChild());
-				tree.nodes[nodeId].lastMergedIn = iteration;
-				tree.nodes[parentId].lastMergedIn = iteration;
-				MergeType mergeType;
-				tree.mergeChain(parentId, mergeType);
-				mergeCallback(parentId, nodeId, parentId, mergeType);
 			}
 		}
 	}
