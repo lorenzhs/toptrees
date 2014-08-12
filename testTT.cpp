@@ -12,7 +12,10 @@
 
 #include "DagBuilder.h"
 #include "TopTreeConstructor.h"
+#include "RePairCombiner.h"
 #include "TopTreeUnpacker.h"
+
+#include "ArgParser.h"
 
 using std::cout;
 using std::endl;
@@ -23,8 +26,10 @@ int main(int argc, char **argv) {
 
 	Labels<string> labels(0);
 
-	string filename = argc > 1 ? string(argv[1]) : "data/1998statistics.xml";
-	string outputfolder = argc > 2 ? string(argv[2]) : "/tmp";
+	ArgParser argParser(argc, argv);
+	const bool useRePair = argParser.isSet("r");
+	string filename = argParser.get<string>("i", "data/1998statistics.xml");
+	string outputfolder = argParser.get<string>("o", "/tmp");
 
 	// Read input file
 	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
@@ -38,11 +43,16 @@ int main(int argc, char **argv) {
 	// Prepare for construction of top tree
 	const int size = t._numNodes;
 	TopTree<string> topTree(size, labels);
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 	timer.reset();
 
 	// construct top tree
-	topTreeConstructor.construct();
+	if (useRePair) {
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree, labels);
+		topTreeConstructor.construct();
+	} else {
+		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
+		topTreeConstructor.construct();
+	}
 
 	cout << "Top tree construction took " << timer.getAndReset() << "ms, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
 
