@@ -13,6 +13,7 @@
 #include "Entropy.h"
 #include "RePairCombiner.h"
 #include "TopTreeConstructor.h"
+#include "TreeSizeEstimation.h"
 
 // Utils
 #include "ArgParser.h"
@@ -44,6 +45,7 @@ int main(int argc, char **argv) {
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
 	TopTree<string> topTree(t._numNodes, labels);
+	const long long treeSize = TreeSizeEstimation<OrderedTree<TreeNode, TreeEdge>>::compute(t, labels);
 
 	Timer timer;
 	if (useRePair) {
@@ -74,6 +76,7 @@ int main(int argc, char **argv) {
 	cout << "Label strings: " << entropy.labelDataEntropy.huffman << " + " << entropy.labelDataEntropy.getExtraSize() << " bits for symbols" << endl;
 	cout << "Huffman calcuation took " << timer.getAndReset() << "ms; " << endl;
 	long long bits = entropy.getTotalSize();
-	cout << "Output file needs " << bits << " bits (" << (bits+7)/8 << " bytes)" << endl;
+	cout << "Output file needs " << bits << " bits (" << (bits+7)/8 << " bytes), vs " << (treeSize+7)/8 << " bytes for orig succ tree, "
+		 << std::fixed << std::setprecision(1) << (double)treeSize/bits << ":1" << endl;
 	return 0;
 }

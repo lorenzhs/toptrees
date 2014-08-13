@@ -127,11 +127,11 @@ struct Labels : LabelsT<Value> {
 		keys[id] = it->second;
 	}
 
-	int size() const {
+	uint size() const {
 		return values.size();
 	}
 
-	int numKeys() const {
+	uint numKeys() const {
 		return keys.size();
 	}
 

@@ -222,7 +222,7 @@ struct DagEntropy {
 			labelDataEntropy.huffman.getBitsNeeded() + labelDataEntropy.getExtraSize() +
 			// lengths of each data segment, except for the last, as ints
 			// we don't need to code the length of the pointer table (we can infer that from the decoded dag structure),
-			// nor for the merge entropy (we know that it's NUM_DIGITS(5)*5 = 15 bit)
+			// nor for the merge entropy (we know that it's log2(5)*5 = 15 bit)
 			4*sizeof(int)*8;
 		return bits;
 	}
