@@ -6,6 +6,16 @@
 // hacky way to calculate the number of digits in a number, for std::setw
 #define NUM_DIGITS(v) ((v >= 1000000000) ? 10 : (v >= 100000000) ? 9 : (v >= 10000000) ? 8 : (v >= 1000000) ? 7 : (v >= 100000) ? 6 : (v >= 10000) ? 5 : (v >= 1000) ? 4 : (v >= 100) ? 3 : (v >= 10) ? 2 : 1)
 
+template <typename T>
+T log2(T val) {
+	T result(0);
+	while (val > 1) {
+		++result;
+		val >>= 1;
+	}
+	return result;
+}
+
 enum MergeType { NO_MERGE = -1, VERT_WITH_BBN, VERT_NO_BBN, HORZ_LEFT_BBN, HORZ_RIGHT_BBN, HORZ_NO_BBN };
 
 

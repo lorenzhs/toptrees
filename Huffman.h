@@ -112,7 +112,7 @@ public:
 	/// Get the number of bits that are required to store the labels to the table entries,
 	/// as fixed-length codes.
 	long long getBitsForTableLabels() const {
-		return static_cast<long long>(getNumSymbols()) * NUM_DIGITS(getNumSymbols());
+		return static_cast<long long>(getNumSymbols()) * log2(getNumSymbols());
 	}
 
 	/// Get a string representation, including the symbols, their codes and absolute as well as

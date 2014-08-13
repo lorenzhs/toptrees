@@ -210,7 +210,7 @@ struct DagEntropy {
 	long long getTotalSize() {
 		// Code dag pointers as fixed-length ints
 		// Size can be deduced from decoded dag structure data
-		long long bits_per_pointer = NUM_DIGITS(dag.nodes.size());
+		long long bits_per_pointer = log2(dag.nodes.size());
 		long long bits =
 			// node IDs are implicit
 			dagStructureEntropy.huffman.getBitsNeeded() +
