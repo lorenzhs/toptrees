@@ -32,14 +32,9 @@ class RePairCombiner {
 	typedef typename TreeType::nodeType NodeType;
 	typedef typename TreeType::edgeType EdgeType;
 
-	struct HorzPair {
-		HorzPair(int parentId, int leftEdgeIndex) : parentId(parentId), leftEdgeIndex(leftEdgeIndex) {}
+	struct Pair {
+		Pair(int parentId, int leftEdgeIndex) : parentId(parentId), leftEdgeIndex(leftEdgeIndex) {}
 		int parentId, leftEdgeIndex;
-	};
-
-	struct VertPair {
-		VertPair(int middleNodeId) : middleNodeId(middleNodeId) {}
-		int middleNodeId;
 	};
 
 public:
@@ -102,8 +97,7 @@ protected:
 			tree.compact(false);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
-			verticalMergesRePair(iteration);
-			normalVerticalMerges(iteration);
+			verticalMerges(iteration);
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
@@ -123,21 +117,13 @@ protected:
 	}
 
 
-	uint getRePairHashHorz(const EdgeType *edge) const {
+	uint getRePairHash(const EdgeType *edge) const {
 		const uint leftHash(tree.nodes[ edge   ->headNode].hash),
 				  rightHash(tree.nodes[(edge+1)->headNode].hash);
 		return RePair::HashCombiner::hash(leftHash, rightHash);
 	}
 
-	uint getRePairHashVert(const int nodeId) const {
-		assert(tree.nodes[nodeId].hasOnlyOneChild());
-		const uint middleHash(tree.nodes[nodeId].hash);
-		const int childId(tree.edges[tree.nodes[nodeId].firstEdgeIndex].headNode);
-		const uint childHash(tree.nodes[childId].hash);
-		return RePair::HashCombiner::hash(middleHash, childHash);
-	}
-
-	void prepareHorzRePair(RePair::HashMap<HorzPair> &hashMap, RePair::PriorityQueue<HorzPair> &queue) {
+	void prepareRePair(RePair::HashMap<Pair> &hashMap, RePair::PriorityQueue<Pair> &queue) {
 		// Populate the HashMap with the pairs
 		uint numPairs(0);
 		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
@@ -147,25 +133,8 @@ protected:
 					// We're only interested in merging if one is a leaf
 					continue;
 				}
-				HorzPair pair(nodeId, tree.edgeId(edge));
-				hashMap.add(getRePairHashHorz(edge), pair);
-				++numPairs;
-			}
-		}
-
-		const int queueSize(sqrt(numPairs));
-		queue.init(queueSize);
-		hashMap.populatePQ(queue);
-	}
-
-	void prepareVertRePair(RePair::HashMap<VertPair> &hashMap, RePair::PriorityQueue<VertPair> &queue, const int iteration) const {
-		uint numPairs(0);
-		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
-			const NodeType &node(tree.nodes[nodeId]);
-			if (node.parent >= 0 && node.hasOnlyOneChild() && node.lastMergedIn < iteration &&
-				tree.nodes[tree.edges[node.firstEdgeIndex].headNode].lastMergedIn < iteration) {
-				VertPair pair(nodeId);
-				hashMap.add(getRePairHashVert(nodeId), pair);
+				Pair pair(nodeId, tree.edgeId(edge));
+				hashMap.add(getRePairHash(edge), pair);
 				++numPairs;
 			}
 		}
@@ -176,15 +145,15 @@ protected:
 	}
 
 	void horizontalMergesRePair(const int iteration) {
-		RePair::Records<HorzPair> records;
-		RePair::HashMap<HorzPair> hashMap(records);
-		RePair::PriorityQueue<HorzPair> queue;
-		prepareHorzRePair(hashMap, queue);
+		RePair::Records<Pair> records;
+		RePair::HashMap<Pair> hashMap(records);
+		RePair::PriorityQueue<Pair> queue;
+		prepareRePair(hashMap, queue);
 
 		while (!queue.empty()) {
-			RePair::Record<HorzPair> *record = queue.popMostFrequentRecord();
+			RePair::Record<Pair> *record = queue.popMostFrequentRecord();
 			//cout << "Processing record " << *record << endl;
-			for (HorzPair pair : record->occurrences) {
+			for (Pair pair : record->occurrences) {
 				//cout << "\tProcessing pair (" << pair.leftEdgeIndex << ", " << pair.parentId << ")" << endl;
 				const int leftEdge = pair.leftEdgeIndex;
 				const int rightEdge = leftEdge + 1;
@@ -197,18 +166,17 @@ protected:
 				}
 
 
-				// TODO does this ruin already merged stuff?????
 				// Decrement frequencies of neighbouring pairs
 				if (leftEdge > tree.nodes[pair.parentId].firstEdgeIndex) {
 					if (tree.edges[leftEdge - 1].valid && !queue.empty()) {
-						const uint hash = getRePairHashHorz(&tree.edges[leftEdge - 1]);
+						const uint hash = getRePairHash(&tree.edges[leftEdge - 1]);
 						auto *record = &records[hashMap.recordMap[hash]];
 						queue.decrementFrequency(record);
 					}
 				}
 				if (rightEdge < tree.nodes[pair.parentId].lastEdgeIndex) {
 					if (tree.edges[rightEdge + 1].valid && !queue.empty()) {
-						const uint hash = getRePairHashHorz(&tree.edges[rightEdge]);
+						const uint hash = getRePairHash(&tree.edges[rightEdge]);
 						auto *record = &records[hashMap.recordMap[hash]];
 						queue.decrementFrequency(record);
 					}
@@ -273,60 +241,7 @@ protected:
 	}
 
 	/// Perform an iteration of vertical (chain) merges (step 2)
-	void verticalMergesRePair(const int iteration) {
-		RePair::Records<VertPair> records;
-		RePair::HashMap<VertPair> hashMap(records);
-		RePair::PriorityQueue<VertPair> queue;
-		prepareVertRePair(hashMap, queue, iteration);
-
-		while (!queue.empty()) {
-			RePair::Record<VertPair> *record = queue.popMostFrequentRecord();
-			for (VertPair pair : record->occurrences) {
-				const int middleNodeId(pair.middleNodeId);
-				NodeType &middleNode = tree.nodes[middleNodeId];
-
-				// Can't merge twice in one iteration
-				if (middleNode.lastMergedIn == iteration) {
-					continue;
-				}
-
-				assert(middleNode.hasOnlyOneChild() && tree.edges[middleNode.firstEdgeIndex].valid);
-				const int childId(tree.edges[middleNode.firstEdgeIndex].headNode);
-				NodeType &child(tree.nodes[childId]);
-
-				if (child.lastMergedIn == iteration) {
-					continue;
-				}
-
-				// Decrement frequencies of neighbouring pairs
-				const int parentId(middleNode.parent);
-				const NodeType &parent = tree.nodes[parentId];
-				if (parent.lastMergedIn < iteration && parent.hasOnlyOneChild() && !queue.empty()) {
-					const uint hash = getRePairHashVert(parentId);
-					auto *record = &records[hashMap.recordMap[hash]];
-					queue.decrementFrequency(record);
-				}
-
-				if (child.hasOnlyOneChild() && !queue.empty()) {
-					const uint hash = getRePairHashVert(childId);
-					auto *record = &records[hashMap.recordMap[hash]];
-					queue.decrementFrequency(record);
-				}
-
-				// Do the merge
-				assert(middleNode.lastMergedIn < iteration);
-				assert(child.lastMergedIn < iteration);
-				middleNode.lastMergedIn = iteration;
-				child.lastMergedIn = iteration;
-
-				MergeType mergeType;
-				tree.mergeChain(middleNodeId, mergeType);
-				mergeCallback(middleNodeId, childId, middleNodeId, mergeType);
-			}
-		}
-	}
-
-	void normalVerticalMerges(const int iteration) {
+	void verticalMerges(const int iteration) {
 		// First, we collect all the vertices from which a merge chain can originate upwards
 		// This is needed to prevent repeated merges of the same chain in one iteration
 		// I guess we could do this with the .lastMergedIn attribute as well? XXX TODO
