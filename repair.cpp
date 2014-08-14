@@ -2,6 +2,7 @@
 #include <string>
 
 // Data Structures
+#include "RePair/RePair.h"
 #include "Edges.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
@@ -35,6 +36,9 @@ int main(int argc, char **argv) {
 	BPString::template fromTree<TreeNode, TreeEdge, string>(tree, labels, bpstring, labelnames);
 
 	cout << "bpstring with " << bpstring.size() << " bits, " << labelnames.size() << " bytes of labels" << endl;
+
+	RePair::RePair<unsigned int, bool> structureRePair(bpstring);
+	structureRePair.compress();
 
 	return 0;
 }

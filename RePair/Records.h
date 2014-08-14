@@ -1,41 +1,60 @@
 #pragma once
 
+#include <cassert>
 #include <limits>
 #include <unordered_map>
 #include <vector>
 
 namespace RePair {
 
+// forward declaration
 template <typename DataType>
-struct Records {
-	Records() : skipSymbol(typename std::numeric_limits<DataType>::max()), text(), prev(), next() {}
+class HashTable;
+
+template <typename DataType>
+class Records {
+public:
+	Records() : symbolCount(0), skipSymbol(std::numeric_limits<DataType>::max()), text(), prev(), next() {}
 
 	template <typename InputType>
-	void init(std::vector<InputType> data) {
+	Records(std::vector<InputType> &data) : symbolCount(0), skipSymbol(std::numeric_limits<DataType>::max()), text(), prev(), next() {
+		init(data);
+	}
+
+	template <typename InputType>
+	void init(std::vector<InputType> &data) {
 		text.push_back(DataType()); // Dummy
 		std::copy(data.begin(), data.end(), std::back_inserter(text));
 
-		std::unordered_map<DataType, int> prevOcc;
-		next.assign(text.size(), 0);
-		prev.assign(text.size(), 0);
+		next.resize(text.size());
+		prev.resize(text.size());
 
-		const int maxIndex = (int)text.size() - 1;
-		for (int i = 1; i < maxIndex; ++i) {
+		next[0] = 0;
+		for (uint i = 1; i < next.size(); ++i) {
+			next[i] = i;
+			++symbolCount;
 			// skipSymbol is reserved and must not occur in input
 			assert(text[i] != skipSymbol);
+		}
 
-			const std::pair<DataType, DataType> pair(text[i], text[i+1]);
-			int &previousIndex = prevOcc[pair];
-			if (previousIndex != 0) {
+		DataType second(text[1]);
+		for (uint i = 1, nextI; i < next.size(); i = nextI) {
+			DataType first(second);
+			nextI = nextIndex(i);
+			second = text[i];
+
+			int hashIndex = findInHash(first, second, prev);
+			int prevIndex = prev[hashIndex];
+			prev[hashIndex] = i;
+			if (prevIndex != 0) {
 				// add into linked list
-				next[i] = next[previousIndex];
-				next[previousIndex] = i;
+				next[i] = next[prevIndex];
+				next[prevIndex] = i;
 			}
-			previousIndex = i;
 		}
 
 		// fill in the prev pointers
-		for (int i = 0; i < next.size(); ++i) {
+		for (int i = 0; i < (int)next.size(); ++i) {
 			prev[next[i]] = i;
 		}
 	}
@@ -54,6 +73,14 @@ struct Records {
 			result = prev[result];
 		}
 		return result;
+	}
+
+	DataType nextSymbol(const int index) const {
+		return text[nextIndex(index)];
+	}
+
+	DataType prevSymbol(const int index) const {
+		return text[prevSymbol(index)];
 	}
 
 	bool occursAt(const int index, const DataType first, const DataType second) const {
@@ -119,8 +146,18 @@ struct Records {
 		prev[nextIndex] = index;
 	}
 
+	int findInHash(const DataType first, const DataType second, std::vector<int> &hash) {
+		int previousValue, hashIndex(HashTable<DataType>::hashPair(first, second));
+		do {
+			hashIndex = (hashIndex + 1) % hash.size();
+			previousValue = hash[hashIndex];
+		} while (previousValue != 0 && !occursAt(previousValue, first, second));
+		return hashIndex;
+	}
+
+	int symbolCount;
 	const DataType skipSymbol;
-	std::vector<std::pair<DataType, DataType>> text;
+	std::vector<DataType> text;
 	// previous occurrence index, or, in the case of gaps, index of previous actual symbol
 	std::vector<int> prev;
 	// index of next occurrence, or, in the case of gaps, index of next actual symbol

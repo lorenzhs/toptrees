@@ -8,7 +8,15 @@
 namespace RePair {
 
 struct PriorityQueue {
-	PriorityQueue(const int size) : maxIndex(-1), entries(size) {}
+	PriorityQueue(const int size = 0) : maxIndex(-1), entries(size) {}
+
+	void init(const int size) {
+		entries.resize(size);
+	}
+
+	void clear() {
+		entries.clear();
+	}
 
 	bool addEntry(PQEntry *entry) {
 		assert(entry != nullptr);

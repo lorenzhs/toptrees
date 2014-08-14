@@ -5,6 +5,7 @@
 namespace RePair {
 
 struct PQEntry {
+	PQEntry() : index(-1), count(FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
 	PQEntry(const int index, const int count) : index(index), count(count | FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
 
 	PQEntry* insertInto(PQEntry *list) {
