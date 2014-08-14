@@ -120,10 +120,10 @@ protected:
 	uint getRePairHash(const EdgeType *edge) const {
 		const uint leftHash(tree.nodes[ edge   ->headNode].hash),
 				  rightHash(tree.nodes[(edge+1)->headNode].hash);
-		return RePair::HashCombiner::hash(leftHash, rightHash);
+		return SimpleRePair::HashCombiner::hash(leftHash, rightHash);
 	}
 
-	void prepareRePair(RePair::HashMap<Pair> &hashMap, RePair::PriorityQueue<Pair> &queue) {
+	void prepareRePair(SimpleRePair::HashMap<Pair> &hashMap, SimpleRePair::PriorityQueue<Pair> &queue) {
 		// Populate the HashMap with the pairs
 		uint numPairs(0);
 		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
@@ -145,13 +145,13 @@ protected:
 	}
 
 	void horizontalMergesRePair(const int iteration) {
-		RePair::Records<Pair> records;
-		RePair::HashMap<Pair> hashMap(records);
-		RePair::PriorityQueue<Pair> queue;
+		SimpleRePair::Records<Pair> records;
+		SimpleRePair::HashMap<Pair> hashMap(records);
+		SimpleRePair::PriorityQueue<Pair> queue;
 		prepareRePair(hashMap, queue);
 
 		while (!queue.empty()) {
-			RePair::Record<Pair> *record = queue.popMostFrequentRecord();
+			SimpleRePair::Record<Pair> *record = queue.popMostFrequentRecord();
 			//cout << "Processing record " << *record << endl;
 			for (Pair pair : record->occurrences) {
 				//cout << "\tProcessing pair (" << pair.leftEdgeIndex << ", " << pair.parentId << ")" << endl;

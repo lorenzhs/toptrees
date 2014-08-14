@@ -9,7 +9,7 @@
 
 #include "Common.h"
 
-namespace RePair {
+namespace SimpleRePair {
 
 struct HashCombiner {
 	uint operator()(const uint leftHash, const uint rightHash) const {
