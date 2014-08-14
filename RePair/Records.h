@@ -23,22 +23,29 @@ public:
 
 	template <typename InputType>
 	void init(std::vector<InputType> &data) {
-		text.push_back(DataType()); // Dummy
-		std::copy(data.begin(), data.end(), std::back_inserter(text));
+		text.reserve(data.size() + 1);
+		text.push_back(DataType()); // Dummy for begin
+
+		for (auto it = data.cbegin(); it != data.cend(); ++it) {
+			text.push_back(static_cast<DataType>(*it));
+		}
+
+		text.push_back(DataType()); // Dummy for end
 
 		next.resize(text.size());
 		prev.resize(text.size());
 
-		next[0] = 0;
-		for (uint i = 1; i < next.size(); ++i) {
+		for (uint i = 0; i < next.size(); ++i) {
 			next[i] = i;
 			++symbolCount;
 			// skipSymbol is reserved and must not occur in input
 			assert(text[i] != skipSymbol);
 		}
+		symbolCount -= 2; // dummy elements
 
 		DataType second(text[1]);
-		for (uint i = 1, nextI; i < next.size(); i = nextI) {
+		const int maxIndex = (int)next.size() - 1;
+		for (int i = 1, nextI; i < maxIndex; i = nextI) {
 			DataType first(second);
 			nextI = nextIndex(i);
 			second = text[i];

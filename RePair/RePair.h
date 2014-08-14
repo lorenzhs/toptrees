@@ -15,6 +15,15 @@ template <typename DataType, typename InputType>
 struct RePair {
 	RePair(std::vector<InputType> &data) : records(data), hashTable(records), queue(), workingEntries(nullptr), dictionary(records) {}
 
+	~RePair() {
+		for (PQEntry *entry : pqentries) {
+			if (entry != nullptr) {
+				delete entry;
+			}
+		}
+		pqentries.clear();
+	}
+
 	void compress() {
 		int maxCount(fillHashTable());
 		int queueSize(std::min(maxCount - 1, (int)sqrt(records.symbolCount)));
@@ -53,9 +62,9 @@ protected:
 				}
 				assert(count > 1);
 				maxCount = std::max(maxCount, count);
-				pqentries.emplace_back(PQEntry(index, count));
 
-				PQEntry *entry(&pqentries.back());
+				PQEntry *entry = new PQEntry(index, count);
+				pqentries.push_back(entry);
 				hashTable.insert(entry);
 				workingEntries = entry->insertBefore(workingEntries);
 			}
@@ -152,8 +161,8 @@ protected:
 
 	void createEntryIfNotExists(const int index) {
 		if (hashTable.find(index) == nullptr) {
-			pqentries.emplace_back(PQEntry(index, 0));
-			PQEntry *entry(&pqentries.back());
+			PQEntry *entry = new PQEntry(index, 0);
+			pqentries.push_back(entry);
 			hashTable.insert(entry);
 			workingEntries = entry->insertBefore(workingEntries);
 		}
@@ -206,7 +215,7 @@ protected:
 	}
 
 protected:
-	std::vector<PQEntry> pqentries;
+	std::vector<PQEntry*> pqentries;
 	Records<DataType> records;
 	HashTable<DataType> hashTable;
 	PriorityQueue queue;

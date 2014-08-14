@@ -12,6 +12,7 @@ struct Dictionary {
 		for (const auto symbol : initialContent.text) {
 			nextIndex = std::max(nextIndex, symbol);
 		}
+		nextIndex++;
 	}
 
 	DataType addPair(DataType first, DataType second) {

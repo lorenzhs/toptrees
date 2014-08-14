@@ -1,12 +1,13 @@
 #pragma once
 
 #include <cassert>
+#include <ostream>
 
 namespace RePair {
 
 struct PQEntry {
-	PQEntry() : index(-1), count(FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
-	PQEntry(const int index, const int count) : index(index), count(count | FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
+	PQEntry() : index(0), count(FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
+	PQEntry(const int index, const int cnt) : index(index), count(cnt | FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
 
 	PQEntry* insertInto(PQEntry *list) {
 		assert(prevEntry == nullptr && nextEntry == nullptr && (list == nullptr || list->prevEntry == nullptr));
@@ -81,11 +82,15 @@ struct PQEntry {
 		count += delta;
 	}
 
+	friend std::ostream &operator<<(std::ostream &os, const PQEntry &entry) {
+		return os << "(c=" << entry.getCount() << " f=" << entry.getFlag() << " i=" << entry.index << " next=" << entry.nextEntry << " prev=" << entry.prevEntry << ")";
+	}
+
 public:
 	int index;
 protected:
 	// flag states whether the entry is in the PQ and stored in MSB of count
-	static const int FLAG_MASK = 0x80000000;
+	static const int FLAG_MASK = 0x40000000;
 	int count;
 	PQEntry *nextEntry, *prevEntry;
 };

@@ -20,7 +20,7 @@ struct PriorityQueue {
 
 	bool addEntry(PQEntry *entry) {
 		assert(entry != nullptr);
-		int index(getIndex(entry));
+		const int index(getIndex(entry));
 
 		if (index >= 0) {
 			maxIndex = std::max(index, maxIndex);
