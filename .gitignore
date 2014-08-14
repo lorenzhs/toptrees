@@ -9,6 +9,7 @@ Doxyfile
 
 *.dat
 *.svg
+*.png
 log_*
 
 test
@@ -34,3 +35,5 @@ coding
 coding-*
 testR
 testR-*
+repair
+repair-*

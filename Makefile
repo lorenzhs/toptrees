@@ -7,7 +7,7 @@ FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
-EXECS=test testTT randomTree randomEval randomVerify coding
+EXECS=test testTT randomTree randomEval randomVerify coding repair
 #EXECS
 
 all: $(EXECS)
@@ -91,6 +91,15 @@ codingPGO:
 	./coding-p$(EXTRA) ext/dblp.xml
 	./coding-p$(EXTRA) -r ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
+
+repair:
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
+
+repairDebug:
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
+
+repairNoDebug:
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
 
 #RULES
 
