@@ -97,6 +97,7 @@ protected:
 				aIndex(nextReplacement),
 				bIndex(records.nextIndex(aIndex)),
 				yIndex(records.nextIndex(bIndex));
+			assert (bIndex < (int)records.text.size() - 1);
 			const DataType x(records.text[xIndex]), y(records.text[yIndex]);
 			nextReplacement = records.nextNonOverlappingOccurrence(aIndex);
 

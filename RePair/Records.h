@@ -24,16 +24,19 @@ public:
 	template <typename InputType>
 	void init(std::vector<InputType> &data) {
 		text.reserve(data.size() + 2);
-		text.push_back(DataType()); // Dummy for begin
+		text.push_back(skipSymbol); // Dummy for begin
 
+		// add the input symbols
 		for (auto it = data.cbegin(); it != data.cend(); ++it) {
 			// skipSymbol is reserved and must not occur in input
 			assert(*it != skipSymbol);
 			text.push_back(static_cast<DataType>(*it));
 		}
 
-		text.push_back(DataType()); // Dummy for end
+		text.push_back(skipSymbol); // Dummy for end
+		assert(text.size() == data.size() + 2);
 
+		// Create next list
 		next.resize(text.size());
 		for (uint i = 0; i < next.size(); ++i) {
 			next[i] = i;
@@ -62,7 +65,8 @@ public:
 		}
 
 		// fill in the prev pointers
-		for (int i = 0; i < (int)next.size(); ++i) {
+		prev[0] = 0;
+		for (int i = 1; i < (int)next.size(); ++i) {
 			if (text[i] == skipSymbol) {
 				prev[i] = i - 1;
 			} else {
@@ -71,20 +75,20 @@ public:
 		}
 	}
 
-	int nextIndex(const int index) const {
-		int result(index + 1);
-		if (text[result] == skipSymbol) {
-			result = next[result];
+	int nextIndex(int index) const {
+		index += 1;
+		if (text[index] == skipSymbol) {
+			index = next[index];
 		}
-		return result;
+		return index;
 	}
 
-	int prevIndex(const int index) const {
-		int result(index - 1);
-		if (text[result] == skipSymbol) {
-			result = prev[result];
+	int prevIndex(int index) const {
+		index -= 1;
+		if (text[index] == skipSymbol) {
+			index = prev[index];
 		}
-		return result;
+		return index;
 	}
 
 	DataType nextSymbol(const int index) const {
@@ -172,7 +176,8 @@ public:
 	void collapse(std::vector<DataType> &out) {
 		const int maxIndex = (int) text.size() - 1;
         for (int source = 1; source < maxIndex; source = nextIndex(source)) {
-        	out.push_back(text[source]);
+        	if (text[source] != skipSymbol)
+        		out.push_back(text[source]);
         }
 	}
 

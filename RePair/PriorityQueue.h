@@ -21,19 +21,20 @@ struct PriorityQueue {
 	bool addEntry(PQEntry *entry) {
 		assert(entry != nullptr);
 		const int index(getIndex(entry));
+		bool addEntry = (index >= 0);
 
-		if (index >= 0) {
+		if (addEntry) {
 			maxIndex = std::max(index, maxIndex);
 			entry->clearFlag();
 			entries[index] = entry->insertInto(entries[index]);
 		}
 
-		return index >= 0;
+		return addEntry;
 	}
 
 	void removeEntry(PQEntry *entry) {
 		assert(entry != nullptr);
-		int index(getIndex(entry));
+		const int index(getIndex(entry));
 		assert(index >= 0);
 
 		entry->setFlag();

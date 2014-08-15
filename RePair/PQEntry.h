@@ -16,7 +16,7 @@ struct PQEntry {
 		while (next != nullptr && getCount() < next->getCount()) {
 			prev = next;
 			next = prev->nextEntry;
-			assert(next->prevEntry == prev);
+			assert(next == nullptr || next->prevEntry == prev);
 		}
 
 		if (next != nullptr) {
@@ -67,7 +67,7 @@ struct PQEntry {
 	}
 
 	bool getFlag() const {
-		return (count & FLAG_MASK);
+		return (count & FLAG_MASK) != 0;
 	}
 
 	void clearFlag() {
