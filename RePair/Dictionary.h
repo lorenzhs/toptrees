@@ -10,8 +10,9 @@ namespace RePair {
 template <typename DataType>
 struct Dictionary {
 	Dictionary(Records<DataType> &initialContent) : nextIndex(0) {
-		for (const auto symbol : initialContent.text) {
-			nextIndex = std::max(nextIndex, symbol);
+		const int maxIndex = (int)initialContent.text.size() - 1;
+		for (int i = 1; i < maxIndex; ++i) {
+			nextIndex = std::max(nextIndex, initialContent.text[i]);
 		}
 		nextIndex++;
 	}

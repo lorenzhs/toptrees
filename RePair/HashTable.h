@@ -10,17 +10,14 @@ namespace RePair {
 template <typename DataType>
 class HashTable {
 public:
-	HashTable(Records<DataType> &records) : freeSlots(records.symbolCount), lastHashIndex(0), table(freeSlots), text(records) {}
+	HashTable(Records<DataType> &records) : freeSlots(records.symbolCount), lastHashIndex(0), table(freeSlots, nullptr), text(records) {}
 
 	PQEntry* find(const int index) {
 		const int first(text.text[index]), second(text.nextSymbol(index));
 
 		PQEntry *entry = table[lastHashIndex];
-
 		if (entry == nullptr || !text.occursAt(entry->index, first, second)) {
-
 			lastHashIndex = hashPair(first, second);
-
 			do {
 				lastHashIndex = (lastHashIndex + 1) % table.size();
 				entry = table[lastHashIndex];
@@ -63,7 +60,7 @@ public:
 	}
 
 	static DataType hashPair(const DataType a, const DataType b) {
-		int res = a * (a + b + 1) + b * (b + 1);
+		DataType res = a * (a + b + 1) + b * (b + 1);
 		return (res < 0) ? -res : res;
 	}
 

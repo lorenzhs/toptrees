@@ -23,32 +23,33 @@ public:
 
 	template <typename InputType>
 	void init(std::vector<InputType> &data) {
-		text.reserve(data.size() + 1);
+		text.reserve(data.size() + 2);
 		text.push_back(DataType()); // Dummy for begin
 
 		for (auto it = data.cbegin(); it != data.cend(); ++it) {
+			// skipSymbol is reserved and must not occur in input
+			assert(*it != skipSymbol);
 			text.push_back(static_cast<DataType>(*it));
 		}
 
 		text.push_back(DataType()); // Dummy for end
 
 		next.resize(text.size());
-		prev.assign(text.size(), 0);
-
 		for (uint i = 0; i < next.size(); ++i) {
 			next[i] = i;
 			++symbolCount;
-			// skipSymbol is reserved and must not occur in input
-			assert(text[i] != skipSymbol);
 		}
 		symbolCount -= 2; // dummy elements
 
+		prev.assign(text.size(), 0);
 		DataType second(text[1]);
-		const int maxIndex = (int)next.size() - 1;
+		const int maxIndex = (int)text.size() - 1;
 		for (int i = 1, nextI; i < maxIndex; i = nextI) {
 			DataType first(second);
 			nextI = nextIndex(i);
 			second = text[i];
+
+			assert(first != skipSymbol && second != skipSymbol);
 
 			int hashIndex = findInHash(first, second, prev);
 			int prevIndex = prev[hashIndex];
@@ -62,7 +63,11 @@ public:
 
 		// fill in the prev pointers
 		for (int i = 0; i < (int)next.size(); ++i) {
-			prev[next[i]] = i;
+			if (text[i] == skipSymbol) {
+				prev[i] = i - 1;
+			} else {
+				prev[next[i]] = i;
+			}
 		}
 	}
 
@@ -91,15 +96,16 @@ public:
 	}
 
 	bool occursAt(const int index, const DataType first, const DataType second) const {
-		return text[index] == first && text[index + 1] == second;
+		return text[index] == first && nextSymbol(index) == second;
 	}
 
-	int nextNonOverlappingOccurrence(const int index) {
-		int result(next[index]);
-		if (result == index + 1) {
-			result = next[result];
+	int nextNonOverlappingOccurrence(int index) {
+		const int nextIdx = nextIndex(index);
+		index = next[index];
+		if (index == nextIdx) {
+			index = next[index];
 		}
-		return result;
+		return index;
 	}
 
 	void replacePair(const int index, const DataType newSymbol) {
@@ -116,6 +122,7 @@ public:
 	}
 
 	int remove(const int index) {
+		assert(0 <= index && index < (int)prev.size());
 		int delta(-1);
 
 		// scan preceding overlapping pairs
