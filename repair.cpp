@@ -24,16 +24,19 @@ void compress(vector<InType> &data, const std::string &description, const bool v
 	Timer timer;
 	cout << "RePair-ing the " << description << ", initialising… " << flush;
 	std::vector<DataType> compressedStructure;
-	RePair::RePair<DataType, InType> structureRePair(data);
+	RePair::RePair<DataType, InType> repair(data);
 	cout << timer.getAndReset() << "ms, compressing… " << flush;
-	structureRePair.compress(compressedStructure);
+	repair.compress(compressedStructure);
+	RePair::Dictionary<DataType> &dictionary = repair.getDictionary();
 	cout << "done (" << timer.getAndReset() << "ms)" << endl;
+
+	cout << "Compressed representation has " << compressedStructure.size() << " symbols, dictionary has " << dictionary.size() << " entries (" << dictionary.numSymbols() << " symbols)" << endl;
 
 	if (verbose) {
 		for (auto elem : compressedStructure) {
 			std::cout << elem << " ";
 		}
-		std::cout << std::endl << structureRePair.getDictionary();
+		std::cout << std::endl << dictionary;
 	}
 
 }

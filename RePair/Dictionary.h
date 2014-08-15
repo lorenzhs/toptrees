@@ -22,6 +22,14 @@ struct Dictionary {
 		return (nextIndex - 1);
 	}
 
+	uint size() {
+		return dict.size();
+	}
+
+	DataType numSymbols() {
+		return nextIndex;
+	}
+
 	friend std::ostream &operator<<(std::ostream &os, const Dictionary &dict) {
 		os << "Dictionary with " << dict.dict.size() << " symbols:" << std::endl;
 		for (auto &pair : dict.dict) {
@@ -30,6 +38,7 @@ struct Dictionary {
 		return os;
 	}
 
+private:
 	DataType nextIndex;
 	std::unordered_map<DataType, std::pair<DataType, DataType>> dict;
 };
