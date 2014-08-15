@@ -17,9 +17,14 @@ public:
 
 		PQEntry *entry = table[lastHashIndex];
 
-		while (entry != nullptr && !text.occursAt(entry->index, first, second)) {
-			lastHashIndex = (lastHashIndex + 1) % table.size();
-			entry = table[lastHashIndex];
+		if (entry == nullptr || !text.occursAt(entry->index, first, second)) {
+
+			lastHashIndex = hashPair(first, second);
+
+			do {
+				lastHashIndex = (lastHashIndex + 1) % table.size();
+				entry = table[lastHashIndex];
+			} while (entry != nullptr && !text.occursAt(entry->index, first, second));
 		}
 
 		return entry;

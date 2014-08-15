@@ -37,8 +37,17 @@ int main(int argc, char **argv) {
 
 	cout << "bpstring with " << bpstring.size() << " bits, " << labelnames.size() << " bytes of labels" << endl;
 
+	std::vector<unsigned int> compressedStructure;
 	RePair::RePair<unsigned int, bool> structureRePair(bpstring);
-	structureRePair.compress();
+	structureRePair.compress(compressedStructure);
+
+	for (auto elem : compressedStructure) {
+		std::cout << elem << " ";
+	}
+	std::cout << std::endl << structureRePair.getDictionary();
+
+	//RePair::RePair<unsigned int, unsigned char> labelRePair(labelnames);
+	//labelRePair.compress();
 
 	return 0;
 }

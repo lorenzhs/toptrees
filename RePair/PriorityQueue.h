@@ -57,6 +57,16 @@ struct PriorityQueue {
 		return maxIndex < 0;
 	}
 
+	friend std::ostream &operator<<(std::ostream &os, const PriorityQueue &pq) {
+		os << "PQ with " << pq.entries.size() << " lists, maxIndex = " << pq.maxIndex << std::endl;
+		for (uint i = 0; i < pq.entries.size(); ++i) {
+			if (pq.entries[i] != NULL) {
+				os << "List " << i << ": " << *pq.entries[i] << std::endl;
+			}
+		}
+		return os;
+	}
+
 private:
 	int getIndex(PQEntry *entry) const {
 		assert(entry != nullptr);

@@ -24,7 +24,7 @@ struct RePair {
 		pqentries.clear();
 	}
 
-	void compress() {
+	void compress(std::vector<DataType> &out) {
 		int maxCount(fillHashTable());
 		int queueSize(std::min(maxCount - 1, (int)sqrt(records.symbolCount)));
 		queue.init(queueSize);
@@ -46,7 +46,11 @@ struct RePair {
 		queue.clear();
 		hashTable.clear();
 
-		// return text.collapse();
+		records.collapse(out);
+	}
+
+	Dictionary<DataType>& getDictionary() {
+		return dictionary;
 	}
 
 protected:
@@ -186,7 +190,7 @@ protected:
 					countDeltaForAy = 0;
 			}
 			if (x != A)
-				addIndex(xIndex, 1);
+				addIndex(xIndex, 1); // add xA
 			addIndex(i, countDeltaForAy);
 		} while (i != nextIndex);
 

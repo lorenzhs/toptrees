@@ -83,7 +83,11 @@ struct PQEntry {
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const PQEntry &entry) {
-		return os << "(c=" << entry.getCount() << " f=" << entry.getFlag() << " i=" << entry.index << " next=" << entry.nextEntry << " prev=" << entry.prevEntry << ")";
+		os << "(c=" << entry.getCount() << " f=" << entry.getFlag() << " i=" << entry.index << " next=" << entry.nextEntry << " prev=" << entry.prevEntry << ")";
+		if (entry.nextEntry != nullptr) {
+			os << *entry.nextEntry;
+		}
+		return os;
 	}
 
 public:

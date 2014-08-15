@@ -33,7 +33,7 @@ public:
 		text.push_back(DataType()); // Dummy for end
 
 		next.resize(text.size());
-		prev.resize(text.size());
+		prev.assign(text.size(), 0);
 
 		for (uint i = 0; i < next.size(); ++i) {
 			next[i] = i;
@@ -160,6 +160,13 @@ public:
 			previousValue = hash[hashIndex];
 		} while (previousValue != 0 && !occursAt(previousValue, first, second));
 		return hashIndex;
+	}
+
+	void collapse(std::vector<DataType> &out) {
+		const int maxIndex = (int) text.size() - 1;
+        for (int source = 1; source < maxIndex; source = nextIndex(source)) {
+        	out.push_back(text[source]);
+        }
 	}
 
 	int symbolCount;
