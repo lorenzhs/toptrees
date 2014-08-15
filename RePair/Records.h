@@ -43,11 +43,11 @@ public:
 
 		prev.assign(text.size(), 0);
 		DataType second(text[1]);
-		const int maxIndex = (int)text.size() - 1;
+		const int maxIndex = (int)text.size() - 2;
 		for (int i = 1, nextI; i < maxIndex; i = nextI) {
 			DataType first(second);
 			nextI = nextIndex(i);
-			second = text[i];
+			second = text[nextI];
 
 			assert(first != skipSymbol && second != skipSymbol);
 
