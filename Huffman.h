@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <iterator>
-#include <ostream>
+#include <iostream>
 #include <queue>
 #include <sstream>
 #include <unordered_map>
@@ -197,12 +197,12 @@ struct HuffmanBlocker {
 		if (tempStore.size() == blockingFactor) {
 			// move into huffman
 			OutputType result{};
-			if (verbose) cout << "Combining: ";
+			if (verbose) std::cout << "Combining: ";
 			for (uint i = 0; i < blockingFactor; ++i) {
 				result |= (tempStore[i] << (i * inputSize));
-				if (verbose) cout << (uint) tempStore[i] << " ";
+				if (verbose) std::cout << (uint) tempStore[i] << " ";
 			}
-			if (verbose) cout << " => " << (uint)result << endl;
+			if (verbose) std::cout << " => " << (uint)result << std::endl;
 			huffman.addItem(result);
 			tempStore.clear();
 		}
