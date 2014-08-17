@@ -32,7 +32,7 @@ struct Coder {
 
 	template <typename InputType>
 	void codeInputMapping(std::unordered_map<InputType, InputType> &mapping) {
-		InputType maxSymbol;
+		InputType maxSymbol(0);
 		for (auto it = mapping.begin(); it != mapping.end(); ++it) {
 			maxSymbol = std::max(maxSymbol, it->second);
 		}
