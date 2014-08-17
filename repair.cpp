@@ -23,7 +23,7 @@ using std::endl;
 using std::string;
 
 template <typename InType, typename DataType>
-void compress(vector<InType> &data, const std::string &description, const bool skipPrepair = false, const bool verbose = false) {
+long long compress(vector<InType> &data, const std::string &description, const bool skipPrepair = false, const bool verbose = false) {
 	Timer timer;
 	cout << "RePair-ing the " << description;
 
@@ -59,6 +59,7 @@ void compress(vector<InType> &data, const std::string &description, const bool s
 	}
 	coder.compute();
 	cout << coder.huff << " + " << coder.huff.getBitsForTableLabels() << " bits = " << (coder.getBitsNeeded() + 7) / 8 << " Bytes" << endl;
+	return coder.getBitsNeeded();
 }
 
 int main(int argc, char **argv) {
@@ -81,7 +82,9 @@ int main(int argc, char **argv) {
 
 	cout << "bpstring with " << bpstring.size() << " bits, " << labelnames.size() << " bytes of labels (transformation took " << timer.getAndReset() << "ms)" << endl;
 
-	compress<bool, int>(bpstring, "tree structure", false, verbose);
-	compress<unsigned char, int>(labelnames, "labels", verbose);
+	long long totalSize(0);
+	totalSize += compress<bool, int>(bpstring, "tree structure", false, verbose);
+	totalSize += compress<unsigned char, int>(labelnames, "labels", verbose);
+	cout << "Output file needs " << totalSize << " bits (" << (totalSize + 7)/8 << " Bytes)" << endl;
 	return 0;
 }
