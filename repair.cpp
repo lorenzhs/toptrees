@@ -27,9 +27,10 @@ void compress(vector<InType> &data, const std::string &description, const bool s
 	Timer timer;
 	cout << "RePair-ing the " << description;
 
+
+	std::unordered_map<InType, InType> inputTransformations;
 	if (!skipPrepair) {
 		cout << ", preparing… " << flush;
-		std::unordered_map<InType, InType> inputTransformations;
 		RePair::Prepair<InType>::prepare(data, inputTransformations);
 		cout << timer.getAndReset() << "ms";
 	}
@@ -53,6 +54,9 @@ void compress(vector<InType> &data, const std::string &description, const bool s
 	}
 
 	RePair::Coder<DataType> coder(output, dictionary);
+	if (!skipPrepair) {
+		coder.codeInputMapping(inputTransformations);
+	}
 	coder.compute();
 	cout << coder.huff << " + " << coder.huff.getBitsForTableLabels() << " bits = " << (coder.getBitsNeeded() + 7) / 8 << " Bytes" << endl;
 }

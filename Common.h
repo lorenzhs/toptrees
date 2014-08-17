@@ -10,7 +10,7 @@ template <typename T>
 T log2(T val) {
 	T result(0);
 	while (val > 1) {
-		++result;
+		result += 1;
 		val >>= 1;
 	}
 	return result;
