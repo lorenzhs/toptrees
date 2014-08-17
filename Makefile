@@ -101,6 +101,11 @@ repairDebug:
 repairNoDebug:
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
 
+repairPGO:
+	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
+	./repair-p$(EXTRA) ext/dblp.xml
+	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
+
 #RULES
 
 clean:
