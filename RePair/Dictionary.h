@@ -12,14 +12,19 @@ struct Dictionary {
 	Dictionary(Records<DataType> &initialContent) : nextIndex(0) {
 		const int maxIndex = (int)initialContent.text.size() - 1;
 		for (int i = 1; i < maxIndex; ++i) {
-			nextIndex = std::max(nextIndex, initialContent.text[i]);
+			firstIndex = std::max(firstIndex, initialContent.text[i]);
 		}
-		nextIndex++;
+		firstIndex++;
+		nextIndex = firstIndex;
 	}
 
 	DataType addPair(DataType first, DataType second) {
 		dict[nextIndex++] = std::make_pair(first, second);
 		return (nextIndex - 1);
+	}
+
+	std::pair<DataType, DataType> getProduction(const DataType key) {
+		return dict[key];
 	}
 
 	uint size() {
@@ -28,6 +33,10 @@ struct Dictionary {
 
 	DataType numSymbols() {
 		return nextIndex;
+	}
+
+	DataType getFirstIndex() {
+		return firstIndex;
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const Dictionary &dict) {
@@ -39,7 +48,7 @@ struct Dictionary {
 	}
 
 private:
-	DataType nextIndex;
+	DataType nextIndex, firstIndex;
 	std::unordered_map<DataType, std::pair<DataType, DataType>> dict;
 };
 

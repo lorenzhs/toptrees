@@ -2,6 +2,7 @@
 #include <string>
 
 // Data Structures
+#include "RePair/Coder.h"
 #include "RePair/RePair.h"
 #include "Edges.h"
 #include "Nodes.h"
@@ -23,22 +24,25 @@ template <typename InType, typename DataType>
 void compress(vector<InType> &data, const std::string &description, const bool verbose = false) {
 	Timer timer;
 	cout << "RePair-ing the " << description << ", initialising… " << flush;
-	std::vector<DataType> compressedStructure;
+	std::vector<DataType> output;
 	RePair::RePair<DataType, InType> repair(data);
 	cout << timer.getAndReset() << "ms, compressing… " << flush;
-	repair.compress(compressedStructure);
+	repair.compress(output);
 	RePair::Dictionary<DataType> &dictionary = repair.getDictionary();
 	cout << "done (" << timer.getAndReset() << "ms)" << endl;
 
-	cout << "Compressed representation has " << compressedStructure.size() << " symbols, dictionary has " << dictionary.size() << " entries (" << dictionary.numSymbols() << " symbols)" << endl;
+	cout << "Compressed representation has " << output.size() << " symbols, dictionary has " << dictionary.size() << " entries (" << dictionary.numSymbols() << " symbols)" << endl;
 
 	if (verbose) {
-		for (auto elem : compressedStructure) {
+		for (auto elem : output) {
 			std::cout << elem << " ";
 		}
 		std::cout << std::endl << dictionary;
 	}
 
+	RePair::Coder<DataType> coder(output, dictionary);
+	coder.compute();
+	cout << coder.huff << " + " << coder.huff.getBitsForTableLabels() << " bits = " << (coder.getBitsNeeded() + 7) / 8 << " Bytes" << endl;
 }
 
 int main(int argc, char **argv) {
