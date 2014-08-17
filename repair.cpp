@@ -2,12 +2,14 @@
 #include <string>
 
 // Data Structures
-#include "RePair/Coder.h"
-#include "RePair/RePair.h"
 #include "Edges.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
 
+// Algorithms
+#include "RePair/Coder.h"
+#include "RePair/Prepair.h"
+#include "RePair/RePair.h"
 
 // Utils
 #include "ArgParser.h"
@@ -21,12 +23,22 @@ using std::endl;
 using std::string;
 
 template <typename InType, typename DataType>
-void compress(vector<InType> &data, const std::string &description, const bool verbose = false) {
+void compress(vector<InType> &data, const std::string &description, const bool skipPrepair = false, const bool verbose = false) {
 	Timer timer;
-	cout << "RePair-ing the " << description << ", initialising… " << flush;
+	cout << "RePair-ing the " << description;
+
+	if (!skipPrepair) {
+		cout << ", preparing… " << flush;
+		std::unordered_map<InType, InType> inputTransformations;
+		RePair::Prepair<InType>::prepare(data, inputTransformations);
+		cout << timer.getAndReset() << "ms";
+	}
+
+	cout << ", initialising… " << flush;
 	std::vector<DataType> output;
 	RePair::RePair<DataType, InType> repair(data);
 	cout << timer.getAndReset() << "ms, compressing… " << flush;
+
 	repair.compress(output);
 	RePair::Dictionary<DataType> &dictionary = repair.getDictionary();
 	cout << "done (" << timer.getAndReset() << "ms)" << endl;
@@ -65,7 +77,7 @@ int main(int argc, char **argv) {
 
 	cout << "bpstring with " << bpstring.size() << " bits, " << labelnames.size() << " bytes of labels (transformation took " << timer.getAndReset() << "ms)" << endl;
 
-	compress<bool, int>(bpstring, "tree structure", verbose);
+	compress<bool, int>(bpstring, "tree structure", false, verbose);
 	compress<unsigned char, int>(labelnames, "labels", verbose);
 	return 0;
 }

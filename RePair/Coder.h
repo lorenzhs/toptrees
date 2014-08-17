@@ -14,7 +14,7 @@ struct Coder {
 
 	void compute() {
 		huff.addItem(dict.getFirstIndex());  // encode gap for primitive symbols
-		huff.addItem(dict.numSymbols());  // encode length of table
+		huff.addItem(dict.size());  // encode length of table
 		// encode pairs from dictionary
 		for (DataType i = dict.getFirstIndex(); i < dict.numSymbols(); ++i) {
 			auto pair = dict.getProduction(i);
