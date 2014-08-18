@@ -7,11 +7,13 @@
 
 namespace RePair {
 
+/// RePair hash table using hashing with open addressing and linear probing
 template <typename DataType>
 class HashTable {
 public:
 	HashTable(Records<DataType> &records) : freeSlots(records.symbolCount), lastHashIndex(0), table(freeSlots, nullptr), text(records) {}
 
+	/// Find a PQEntry by its index
 	PQEntry* find(const int index) {
 		const int first(text.text[index]), second(text.nextSymbol(index));
 
@@ -27,12 +29,14 @@ public:
 		return entry;
 	}
 
+	/// Add a PQEntry into the hash table
 	void insert(PQEntry *entry) {
 		assert(freeSlots > 1);
 		table[lookup(entry)] = entry;
 		--freeSlots;
 	}
 
+	/// Delete a PQEntry from the hash table
 	void remove(PQEntry *entry) {
 		int index(lastHashIndex);
 		if (table[index] != entry) {
@@ -55,10 +59,13 @@ public:
 		}
 	}
 
+	/// Clear everything from the hash table. It  won't be reusable afterwards,
+	/// this is if you no longer need it and want to reclaim the memory
 	void clear() {
 		table.clear();
 	}
 
+	/// Hash two things. Maybe not the greatest hash function in the world.
 	static DataType hashPair(const DataType a, const DataType b) {
 		DataType res = a * (a + b + 1) + b * (b + 1);
 		return (res < 0) ? -res : res;

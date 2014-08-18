@@ -8,6 +8,7 @@
 
 namespace RePair {
 
+/// encode RePair output
 template <typename DataType>
 struct Coder {
 	Coder(std::vector<DataType> &output, Dictionary<DataType> &dict) : bitsForInputMapping(0), output(output), dict(dict), huff() {}

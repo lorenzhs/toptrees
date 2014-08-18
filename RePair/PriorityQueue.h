@@ -7,6 +7,7 @@
 
 namespace RePair {
 
+/// RePair Priority Queue
 struct PriorityQueue {
 	PriorityQueue(const int size = 0) : maxIndex(-1), entries(size) {}
 

@@ -11,6 +11,7 @@ namespace RePair {
 template <typename DataType>
 class HashTable;
 
+/// This class holds the text as it undergoes replacements in RePair
 template <typename DataType>
 class Records {
 public:

@@ -11,6 +11,7 @@
 
 namespace RePair {
 
+/// Main RePair compression algorithm
 template <typename DataType, typename InputType>
 struct RePair {
 	RePair(std::vector<InputType> &data) : records(data), hashTable(records), queue(), workingEntries(nullptr), dictionary(records) {}

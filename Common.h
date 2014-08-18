@@ -16,6 +16,7 @@ T log2(T val) {
 	return result;
 }
 
+/// Types of merges in the top tree (see top tree compression paper for details)
 enum MergeType { NO_MERGE = -1, VERT_WITH_BBN, VERT_NO_BBN, HORZ_LEFT_BBN, HORZ_RIGHT_BBN, HORZ_NO_BBN };
 
 

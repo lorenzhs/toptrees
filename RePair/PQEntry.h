@@ -5,10 +5,12 @@
 
 namespace RePair {
 
+/// Represents a Priority Queue Element. These can be chained into a list.
 struct PQEntry {
 	PQEntry() : index(0), count(FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
 	PQEntry(const int index, const int cnt) : index(index), count(cnt | FLAG_MASK), nextEntry(nullptr), prevEntry(nullptr) {}
 
+	/// Insert this PQEntry into a list of PQEntries
 	PQEntry* insertInto(PQEntry *list) {
 		assert(prevEntry == nullptr && nextEntry == nullptr && (list == nullptr || list->prevEntry == nullptr));
 		PQEntry *prev(nullptr), *next(list);
@@ -32,6 +34,7 @@ struct PQEntry {
 		}
 	}
 
+	/// Insert to the front of a list of PQEntries
 	PQEntry* insertBefore(PQEntry *next) {
 		assert(prevEntry == nullptr && nextEntry == nullptr);
 		if (next != nullptr) {
@@ -42,6 +45,7 @@ struct PQEntry {
 		return this;
 	}
 
+	/// Remove this PQEntry from a list
 	PQEntry* removeFrom(PQEntry *first) {
 		assert(first != nullptr);
 		if (nextEntry != nullptr) {
@@ -62,22 +66,27 @@ struct PQEntry {
 		return first;
 	}
 
+	/// Get the number of occurrences
 	int getCount() const {
 		return count & ~FLAG_MASK;
 	}
 
+	/// Check whether the flag is set
 	bool getFlag() const {
 		return (count & FLAG_MASK) != 0;
 	}
 
+	/// Unset (clear) the flag
 	void clearFlag() {
 		count &= ~FLAG_MASK;
 	}
 
+	/// Set the flag
 	void setFlag() {
 		count |= FLAG_MASK;
 	}
 
+	/// Add a delta to the number of occurrences
 	void changeCount(const int delta) {
 		count += delta;
 	}
