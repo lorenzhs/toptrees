@@ -27,15 +27,15 @@ struct Dictionary {
 		return dict[key];
 	}
 
-	uint size() {
+	uint size() const {
 		return dict.size();
 	}
 
-	DataType numSymbols() {
+	DataType numSymbols() const {
 		return nextIndex;
 	}
 
-	DataType getFirstIndex() {
+	DataType getFirstIndex() const {
 		return firstIndex;
 	}
 

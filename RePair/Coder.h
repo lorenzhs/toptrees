@@ -42,7 +42,7 @@ struct Coder {
 		bitsForInputMapping = mapping.size() * bitsPerSymbol + sizeof(InputType)*8;
 	}
 
-	long long getBitsNeeded() {
+	long long getBitsNeeded() const {
 		// don't need to code the
 		return huff.getBitsNeeded() + huff.getBitsForTableLabels() + bitsForInputMapping;
 	}

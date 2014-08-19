@@ -207,7 +207,7 @@ struct DagEntropy {
 		labelDataEntropy.construct();
 	}
 
-	long long getTotalSize() {
+	long long getTotalSize() const {
 		// Code dag pointers as fixed-length ints
 		// Size can be deduced from decoded dag structure data
 		long long bits_per_pointer = log2(dag.nodes.size());

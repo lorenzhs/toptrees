@@ -104,7 +104,7 @@ public:
 		return text[index] == first && nextSymbol(index) == second;
 	}
 
-	int nextNonOverlappingOccurrence(int index) {
+	int nextNonOverlappingOccurrence(int index) const {
 		const int nextIdx = nextIndex(index);
 		index = next[index];
 		if (index == nextIdx) {
@@ -165,7 +165,7 @@ public:
 		prev[nextIndex] = index;
 	}
 
-	int findInHash(const DataType first, const DataType second, std::vector<int> &hash) {
+	int findInHash(const DataType first, const DataType second, const std::vector<int> &hash) const {
 		int previousValue, hashIndex(HashTable<DataType>::hashPair(first, second));
 		do {
 			hashIndex = (hashIndex + 1) % hash.size();

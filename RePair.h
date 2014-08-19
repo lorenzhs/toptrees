@@ -59,7 +59,7 @@ struct Records {
 
 template <typename Pair>
 struct RecordFrequencyComparator {
-	bool operator()(const Record<Pair> *record, const Record<Pair> *other) {
+	bool operator()(const Record<Pair> *record, const Record<Pair> *other) const {
 		return record->frequency > other->frequency;
 	}
 };

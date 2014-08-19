@@ -6,7 +6,7 @@ template <typename TreeType, typename DataType>
 struct NodeHasher {
 	NodeHasher(TreeType &tree, const LabelsT<DataType> &labels) : tree(tree), labels(labels) {}
 
-	void hash() {
+	void hash() const {
 		hashNode(0);
 	}
 
