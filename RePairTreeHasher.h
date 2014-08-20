@@ -12,10 +12,6 @@ struct NodeHasher {
 
 	void hashNode(int nodeId) const {
 		uint seed(0);
-		auto &node(tree.nodes[nodeId]);
-		const int numEdges(node.numEdges());
-
-		boost_hash_combine(seed, numEdges);
 		boost_hash_combine(seed, labels[nodeId]);
 
 		for (auto *edge = tree.firstEdge(nodeId); edge <= tree.lastEdge(nodeId); ++edge) {
@@ -27,7 +23,7 @@ struct NodeHasher {
 			}
 		}
 
-		node.hash = seed;
+		tree.nodes[nodeId].hash = seed;
 	}
 
 	TreeType &tree;
