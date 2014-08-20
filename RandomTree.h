@@ -158,7 +158,6 @@ protected:
 	/// [begin, end) is balanced
 	template <typename T>
 	static typename T::const_iterator reducibleIndex(typename T::const_iterator begin, typename T::const_iterator end) {
-		assert(isBalanced(begin, end));
 		int delta(0);
 		for (typename T::const_iterator it = begin; it != end; ++it) {
 			delta += *it ? 1 : -1;
