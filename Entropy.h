@@ -212,17 +212,18 @@ struct DagEntropy {
 		// Size can be deduced from decoded dag structure data
 		long long bits_per_pointer = log2(dag.nodes.size());
 		long long bits =
-			// node IDs are implicit
-			dagStructureEntropy.huffman.getBitsNeeded() +
+			// node IDs are implicit, but we need to encode the blocked huffman's table (it's quite small)
+			dagStructureEntropy.huffman.getBitsNeeded() + dagStructureEntropy.huffman.getBitsForTableLabels() +
 			// pointers are not implicit, need to store them
 			dagPointerEntropy.getBitsNeeded() +	dagPointerEntropy.getNumSymbols() * bits_per_pointer +
 			// merge type needs a mapping as well (it's tiny anyway)
 			mergeEntropy.huffman.getBitsNeeded() + mergeEntropy.huffman.getBitsForTableLabels() +
 			// label strings do need a kind of a table
 			labelDataEntropy.huffman.getBitsNeeded() + labelDataEntropy.getExtraSize() +
-			// lengths of each data segment, except for the last, as ints
+			// lengths of each data segment, except for the last, as 32 bit ints
 			// we don't need to code the length of the pointer table (we can infer that from the decoded dag structure),
-			// nor for the merge entropy (we know that it's log2(5)*5 = 15 bit)
+			// nor for the dag structure or merge entropy (we can count the number of symbols encountered and know the
+			// size of each).
 			4*sizeof(int)*8;
 		return bits;
 	}
