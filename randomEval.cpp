@@ -46,7 +46,7 @@ void usage(char* name) {
 std::mutex debugMutex;
 
 void runIteration(const int iteration, RandomGeneratorType &generator, const uint seed, const int size,
-		const int numLabels, const bool verbose, const bool extraVerbose, const bool saveRatios,
+		const int numLabels, const bool verbose, const bool extraVerbose,
 		Statistics &statistics, ProgressBar &bar, const string &treePath) {
 	// Seed RNG
 	generator.seed(seed);
@@ -78,7 +78,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	TopTree<int> topTree(tree._numNodes, labels);
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-	topTreeConstructor.construct(&debugInfo, saveRatios);
+	topTreeConstructor.construct(&debugInfo);
 
 	if (debugInfo.minEdgeRatio < 1.2) {
 		cout << "minRatio = " << debugInfo.minEdgeRatio << " for seed " << seed << endl;
@@ -131,7 +131,6 @@ int main(int argc, char **argv) {
 	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
 	const bool extraVerbose = argParser.isSet("vv");
 	const string ratioFilename = argParser.get<string>("r", "");
-	const bool saveRatios = (ratioFilename != "");
 	const string debugFilename = argParser.get<string>("o", "");
 	const string treePath = argParser.get<string>("w", "");
 
@@ -162,7 +161,7 @@ int main(int argc, char **argv) {
 	auto worker = [&](int start, int end) {
 		RandomGeneratorType engine{};
 		for (int i = start; i < end; ++i) {
-			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, saveRatios, statistics, bar, treePath);
+			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, statistics, bar, treePath);
 		}
 	};
 

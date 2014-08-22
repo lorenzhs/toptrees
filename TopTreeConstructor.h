@@ -40,12 +40,12 @@ public:
 
 	/// Perform the top tree construction procedure
 	/// \param debugInfo pointer to a DebugInfo object, should you wish logging of debug information
-	void construct(DebugInfo *debugInfo = NULL, const bool saveRatios = false) {
+	void construct(DebugInfo *debugInfo = NULL) {
 		for (int i = 0; i < tree._numNodes; ++i) {
 			nodeIds[i] = i;
 		}
 
-		doMerges(debugInfo, saveRatios);
+		doMerges(debugInfo);
 	}
 
 protected:
@@ -60,7 +60,7 @@ protected:
 	/// \param debugInfo the DebugInfo object or NULL
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
-	void doMerges(DebugInfo *debugInfo, const bool saveRatios = false) {
+	void doMerges(DebugInfo *debugInfo) {
 		int iteration = 0;
 		Timer timer;
 		const std::streamsize precision = cout.precision();
@@ -94,7 +94,7 @@ protected:
 			if (verbose && ratio < 1.2) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
 			if (verbose) cout << std::endl;
 
-			if (saveRatios && debugInfo != NULL)
+			if (debugInfo != NULL)
 				debugInfo->addEdgeRatio(ratio);
 			iteration++;
 			tree.checkConsistency();
