@@ -68,7 +68,12 @@ private:
 		const Cluster<DataType> &cluster = topTree.clusters[clusterId];
 		int boundaryNode(nodeId);
 		if (isLeaf(cluster.left)) {
-			tree.addEdge(nodeId, cluster.left, extraSpace);
+			if (cluster.left != 0) {
+				tree.addEdge(nodeId, cluster.left, extraSpace);
+			} else {
+				// Don't add the loop
+				assert(nodeId == 0);
+			}
 			handleLeaf(cluster.left);
 			boundaryNode = cluster.left;
 		} else {

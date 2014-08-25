@@ -98,7 +98,7 @@ private:
 template <typename DataType>
 class BinaryDagUnpacker {
 public:
-	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree<DataType> &topTree) : nextLeafId(1), dag(dag), topTree(topTree) {}
+	BinaryDagUnpacker(BinaryDag<DataType> &dag, TopTree<DataType> &topTree) : nextLeafId(0), dag(dag), topTree(topTree) {}
 
 	void unpack() {
 		assert((int)topTree.clusters.size() == topTree.numLeaves);
