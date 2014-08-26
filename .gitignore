@@ -17,7 +17,7 @@ test-*
 
 data/
 ext
-eval*
+eval*/
 
 testTT
 testTT-*
