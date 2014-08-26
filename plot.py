@@ -16,6 +16,10 @@ def plotstats(inputfile):
 	cr = [orig/comp for (orig, comp) in zip(orig, comp)]
 	y = [ratio / log(n, 4*sigma) for (ratio, n) in zip(cr, orig)]
 
+	elems = list(sorted(zip(orig, y)))
+	for (o,res) in elems:
+		print('({orig}, {res})'.format(orig=o, res=res))
+
 	fig, ax = subplots()
 	plot(orig, y, 'o')
 	ax.set_xscale('log', basex = 2.0)
