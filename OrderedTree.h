@@ -527,6 +527,10 @@ public:
 		return (double)countAndSum.second / countAndSum.first;
 	}
 
+	void clear() {
+		initialise(0, 0);
+	}
+
 protected:
 	/// Initialise the tree
 	/// \param n number of nodes to reserve space for

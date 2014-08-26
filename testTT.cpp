@@ -54,6 +54,8 @@ int main(int argc, char **argv) {
 		topTreeConstructor.construct();
 	}
 
+	t.clear();
+
 	cout << "Top tree construction took " << timer.getAndReset() << "ms, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
 
 	// Construct top DAG

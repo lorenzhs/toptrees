@@ -80,6 +80,8 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
 	topTreeConstructor.construct(&debugInfo);
 
+	tree.clear();  // free memory
+
 	if (debugInfo.minEdgeRatio < 1.2) {
 		cout << "minRatio = " << debugInfo.minEdgeRatio << " for seed " << seed << endl;
 	}
