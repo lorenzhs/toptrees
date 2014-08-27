@@ -43,13 +43,23 @@ int main(int argc, char **argv) {
 		cout << "Graphed DOT file in " << timer.getAndReset() << "ms" << endl;
 	}
 
-	IdLabels labels(10);
+	IdLabels labels(size);
 	TopTree<int> topTree(tree._numNodes, labels);
 	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
 
 	timer.reset();
 	topTreeConstructor.construct();
 	cout << "Top tree construction took " << timer.getAndReset() << "ms" << endl;
+
+	if (size <= 10000) {
+		TopTreeDotGraphExporter<int>().write(topTree, "/tmp/toptree.dot", topTree.clusters.size() - 1);
+		cout << "Wrote DOT file in " << timer.getAndReset() << "ms" << endl;
+	}
+
+	if (size <= 1000) {
+		TopTreeDotGraphExporter<int>::drawSvg("/tmp/toptree.dot", "/tmp/toptree.svg");
+		cout << "Graphed DOT file in " << timer.getAndReset() << "ms" << endl;
+	}
 
 	BinaryDag<int> dag;
 	DagBuilder<int> builder(topTree, dag);

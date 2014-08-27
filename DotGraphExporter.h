@@ -58,7 +58,9 @@ protected:
 	void writeNode(std::ostream &out, const TopTree<DataType> &tree, const int clusterId) {
 		const auto &cluster = tree.clusters[clusterId];
 		if (cluster.label != NULL) {
-			out << "\t" << clusterId << " [label=\"" << *cluster.label << "\"]" << std::endl;
+			out << "\t" << clusterId << " [label=\"" << clusterId << "/" << *cluster.label << "\"]" << std::endl;
+		} else {
+			out << "\t" << clusterId << " [label=\"" << clusterId << ";" << cluster.mergeType << "\"]" << std::endl;
 		}
 		if (cluster.left >= 0) {
 			out << "\t" << clusterId << " -> " << cluster.left << ";" << std::endl;
