@@ -13,12 +13,10 @@ using std::endl;
 /// Cluster type for a top tree, holding a pointer to some data
 template <typename DataType>
 struct Cluster {
-	Cluster() : mergeType(NO_MERGE), left(-1), right(-1), label(NULL)
-		/*, rLeft(-1), lRight(-1), rRight(-1), height(-1), size(-1), distTBleft(-1), distTBright(-1)*/ {}
-	Cluster(int l, int r, MergeType t) : mergeType(t), left(l), right(r), label(NULL)
-		/*, rLeft(-1), lRight(-1), rRight(-1), height(-1), size(-1), distTBleft(-1), distTBright(-1)*/ {}
+	Cluster() : mergeType(NO_MERGE), left(-1), right(-1), label(NULL) {}
+	Cluster(int l, int r, MergeType t) : mergeType(t), left(l), right(r), label(NULL) {}
 	MergeType mergeType;
-	int left, right /*, rLeft, lRight, rRight, height, size, distTBleft, distTBright*/;
+	int left, right;
 	const DataType *label;
 
 	friend std::ostream &operator<<(std::ostream &os, const Cluster &cluster) {
