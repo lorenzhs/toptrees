@@ -1,5 +1,5 @@
-CC=clang++-3.4
-GCC=g++-4.9
+CC=clang++
+GCC=g++
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold
 BASEFLAGS=-std=c++11 -Wall -Wextra -Werror
