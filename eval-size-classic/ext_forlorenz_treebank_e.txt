@@ -1,0 +1,39 @@
+Reading ext/forlorenz/treebank_e.xml…  974.096ms; parsing… 282.246ms; building tree… 413.028ms.
+Tree with n = 2437666 m = 2437665; Height: 36 Avg depth: 7.87279
+It.  0: merging horz…   53.8ms; gc…   23.5ms; vert…   30.5 ms; Tree with n = 2437665 m = 1488903
+It.  1: merging horz…   18.6ms; gc…   17.1ms; vert…   35.2 ms; Tree with n = 2437665 m =  912924
+It.  2: merging horz…   13.0ms; gc…   13.7ms; vert…   26.8 ms; Tree with n = 2437664 m =  573318
+It.  3: merging horz…   10.6ms; gc…   11.1ms; vert…   21.6 ms; Tree with n = 2437664 m =  356910
+It.  4: merging horz…    8.6ms; gc…    8.5ms; vert…   19.1 ms; Tree with n = 2437658 m =  222090
+It.  5: merging horz…    7.6ms; gc…    7.3ms; vert…   13.6 ms; Tree with n = 2437640 m =  137301
+It.  6: merging horz…    7.9ms; gc…    7.4ms; vert…   10.2 ms; Tree with n = 2437608 m =   82616
+It.  7: merging horz…    4.8ms; gc…    8.6ms; vert…    8.5 ms; Tree with n = 2437605 m =   47983
+It.  8: merging horz…    4.2ms; gc…    6.5ms; vert…    5.6 ms; Tree with n = 2437556 m =   27654
+It.  9: merging horz…    4.2ms; gc…    8.5ms; vert…    5.0 ms; Tree with n = 2437556 m =   15937
+It. 10: merging horz…    3.9ms; gc…    6.3ms; vert…    4.6 ms; Tree with n = 2434392 m =    9183
+It. 11: merging horz…    4.0ms; gc…    8.6ms; vert…    4.5 ms; Tree with n = 2434392 m =    5294
+It. 12: merging horz…    3.8ms; gc…    6.2ms; vert…    4.3 ms; Tree with n = 2434392 m =    3056
+It. 13: merging horz…    3.8ms; gc…    7.9ms; vert…    4.9 ms; Tree with n = 2434392 m =    1765
+It. 14: merging horz…    3.8ms; gc…    6.6ms; vert…    5.1 ms; Tree with n = 2434392 m =    1018
+It. 15: merging horz…    3.7ms; gc…    6.9ms; vert…    5.7 ms; Tree with n = 2434392 m =     588
+It. 16: merging horz…    3.8ms; gc…    6.2ms; vert…    4.0 ms; Tree with n = 2434392 m =     339
+It. 17: merging horz…    3.7ms; gc…    6.1ms; vert…    4.2 ms; Tree with n = 2434392 m =     196
+It. 18: merging horz…    5.2ms; gc…    6.8ms; vert…    4.1 ms; Tree with n = 2289098 m =     113
+It. 19: merging horz…    3.5ms; gc…    5.9ms; vert…    3.8 ms; Tree with n = 2233164 m =      67
+It. 20: merging horz…    3.6ms; gc…    8.0ms; vert…    3.7 ms; Tree with n = 2233164 m =      37
+It. 21: merging horz…    3.4ms; gc…    5.7ms; vert…    3.6 ms; Tree with n = 2233164 m =      21
+It. 22: merging horz…    3.4ms; gc…    5.9ms; vert…    5.2 ms; Tree with n = 2233164 m =      13
+It. 23: merging horz…    4.0ms; gc…    5.6ms; vert…    3.7 ms; Tree with n = 2233164 m =       7
+It. 24: merging horz…    3.4ms; gc…    5.7ms; vert…    3.6 ms; Tree with n = 2233164 m =       4
+It. 25: merging horz…    4.0ms; gc…    7.3ms; vert…    6.5 ms; Tree with n = 51515 m =     2
+It. 26: merging horz…    0.2ms; gc…    0.0ms; vert…    0.0 ms; Tree with n = 3660 m =    1
+Tree with n = 3660 m =    1
+Top tree construction took 74.362ms, avg node depth 26.599 (min 2); took 662.469 ms
+Top dag has 565824 nodes, 1131148 edges (46.4029% of original tree, 2.1:1)
+Top dag construction took in 763.491ms
+DAG Structure: Huffman with 81 symbols and 97536 occurrences, need 593644 bits
+DAG Pointers:  Huffman with 55745 symbols and 565526 occurrences, need 7017953 bits
+Merge Types:   Huffman with 603 symbols and 141393 occurrences, need 1069577 bits
+Label strings: Huffman with 63 symbols and 1744 occurrences, need 8506 bits + 504 bits for symbols
+Huffman calcuation took 102.38ms; 
+Output file needs 9755380 bits (1219423 bytes), vs 2396061 bytes for orig succ tree, 2.0:1

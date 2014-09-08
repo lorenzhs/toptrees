@@ -1,0 +1,10 @@
+Reading ext/forlorenz/enwiki-latest-pages-articles12.xml…  29734.1ms; parsing… 5278.83ms; building tree… 2257.64ms.
+Tree with n = 14018880 m = 14018879; Height: 5 Avg depth: 3.70281
+bpstring with 28037760 bits, 93863900 bytes of labels (transformation took 446.157ms)
+RePair-ing the tree structure, preparing… 98.175ms, initialising… 420.97ms, compressing… done (4366.22ms)
+Compressed representation has 208903 symbols, dictionary has 21665 entries (54331 symbols)
+Huffman with 21668 symbols and 252235 occurrences, need 3108292 bits + 303352 bits = 426457 Bytes
+RePair-ing the labels, preparing… 1133.24ms, initialising… 1758.7ms, compressing… done (27125.3ms)
+Compressed representation has 214844 symbols, dictionary has 22295 entries (54961 symbols)
+Huffman with 22318 symbols and 259436 occurrences, need 3205088 bits + 312452 bits = 439705 Bytes
+Output file needs 6929288 bits (866161 Bytes)

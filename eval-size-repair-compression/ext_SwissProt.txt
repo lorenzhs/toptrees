@@ -1,0 +1,10 @@
+Reading ext/SwissProt.xml…  1232.35ms; parsing… 337.848ms; building tree… 472.898ms.
+Tree with n = 2977031 m = 2977030; Height: 5 Avg depth: 3.55671
+bpstring with 5954062 bits, 18157662 bytes of labels (transformation took 99.99ms)
+RePair-ing the tree structure, preparing… 24.963ms, initialising… 96.186ms, compressing… done (929.509ms)
+Compressed representation has 101697 symbols, dictionary has 15041 entries (47670 symbols)
+Huffman with 15044 symbols and 131781 occurrences, need 1637579 bits + 195572 bits = 229145 Bytes
+RePair-ing the labels, preparing… 213.364ms, initialising… 319.72ms, compressing… done (5481.64ms)
+Compressed representation has 170076 symbols, dictionary has 33093 entries (65722 symbols)
+Huffman with 33140 symbols and 236264 occurrences, need 3267554 bits + 497100 bits = 470613 Bytes
+Output file needs 5598056 bits (699757 Bytes)

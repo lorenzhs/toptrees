@@ -1,0 +1,10 @@
+Reading ext/forlorenz/treebank_e.xml…  987.458ms; parsing… 267.48ms; building tree… 451.126ms.
+Tree with n = 2437666 m = 2437665; Height: 36 Avg depth: 7.87279
+bpstring with 4875332 bits, 9301179 bytes of labels (transformation took 82.795ms)
+RePair-ing the tree structure, preparing… 31.746ms, initialising… 85.149ms, compressing… done (1081.85ms)
+Compressed representation has 266176 symbols, dictionary has 31560 entries (64263 symbols)
+Huffman with 31563 symbols and 329298 occurrences, need 4314305 bits + 441882 bits = 594525 Bytes
+RePair-ing the labels, preparing… 131.701ms, initialising… 163.133ms, compressing… done (3198.96ms)
+Compressed representation has 383788 symbols, dictionary has 50930 entries (83633 symbols)
+Huffman with 50993 symbols and 485650 occurrences, need 6777255 bits + 764895 bits = 942810 Bytes
+Output file needs 12298668 bits (1537334 Bytes)

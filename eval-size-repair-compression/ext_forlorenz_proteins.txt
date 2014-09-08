@@ -1,0 +1,10 @@
+Reading ext/forlorenz/proteins.xml…  7852.41ms; parsing… 1546.34ms; building tree… 3502.2ms.
+Tree with n = 21305818 m = 21305817; Height: 7 Avg depth: 5.15147
+bpstring with 42611636 bits, 150599364 bytes of labels (transformation took 724.781ms)
+RePair-ing the tree structure, preparing… 161.674ms, initialising… 656.337ms, compressing… done (7966.18ms)
+Compressed representation has 275726 symbols, dictionary has 49622 entries (82270 symbols)
+Huffman with 49624 symbols and 374972 occurrences, need 5396851 bits + 744360 bits = 767653 Bytes
+RePair-ing the labels, preparing… 651.27ms, initialising… 2657.43ms, compressing… done (51016ms)
+Compressed representation has 277451 symbols, dictionary has 49823 entries (82471 symbols)
+Huffman with 49853 symbols and 377099 occurrences, need 5408851 bits + 747795 bits = 769597 Bytes
+Output file needs 12297993 bits (1537250 Bytes)

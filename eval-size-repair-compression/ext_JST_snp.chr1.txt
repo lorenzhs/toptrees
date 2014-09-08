@@ -1,0 +1,10 @@
+Reading ext/JST_snp.chr1.xml…  506.954ms; parsing… 119.468ms; building tree… 126.612ms.
+Tree with n = 803596 m = 803595; Height: 8 Avg depth: 4.97631
+bpstring with 1607192 bits, 12449030 bytes of labels (transformation took 46.441ms)
+RePair-ing the tree structure, preparing… 6.649ms, initialising… 25.286ms, compressing… done (251.507ms)
+Compressed representation has 10687 symbols, dictionary has 2507 entries (35089 symbols)
+Huffman with 2510 symbols and 15703 occurrences, need 166404 bits + 27610 bits = 24253 Bytes
+RePair-ing the labels, preparing… 49.864ms, initialising… 246.446ms, compressing… done (3952.72ms)
+Compressed representation has 10943 symbols, dictionary has 2775 entries (35357 symbols)
+Huffman with 2805 symbols and 16495 occurrences, need 177769 bits + 30855 bits = 26094 Bytes
+Output file needs 402770 bits (50347 Bytes)

@@ -1,0 +1,10 @@
+Reading ext/1998statistics.xml…  13.754ms; parsing… 4.991ms; building tree… 10.289ms.
+Tree with n = 28306 m = 28305; Height: 6 Avg depth: 5.95058
+bpstring with 56612 bits, 255666 bytes of labels (transformation took 2.558ms)
+RePair-ing the tree structure, preparing… 0.518ms, initialising… 2.026ms, compressing… done (13.159ms)
+Compressed representation has 43 symbols, dictionary has 33 entries (32662 symbols)
+Huffman with 36 symbols and 111 occurrences, need 619 bits + 180 bits = 101 Bytes
+RePair-ing the labels, preparing… 2.046ms, initialising… 9.651ms, compressing… done (74.319ms)
+Compressed representation has 259 symbols, dictionary has 294 entries (32923 symbols)
+Huffman with 319 symbols and 849 occurrences, need 7146 bits + 2552 bits = 1226 Bytes
+Output file needs 10609 bits (1327 Bytes)

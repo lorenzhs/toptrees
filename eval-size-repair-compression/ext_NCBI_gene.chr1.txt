@@ -1,0 +1,10 @@
+Reading ext/NCBI_gene.chr1.xml…  796.511ms; parsing… 150.636ms; building tree… 175.697ms.
+Tree with n = 1065787 m = 1065786; Height: 7 Avg depth: 6.45656
+bpstring with 2131574 bits, 16050766 bytes of labels (transformation took 56.9ms)
+RePair-ing the tree structure, preparing… 6.863ms, initialising… 31.068ms, compressing… done (276.623ms)
+Compressed representation has 6992 symbols, dictionary has 1309 entries (34070 symbols)
+Huffman with 1312 symbols and 9612 occurrences, need 94917 bits + 13120 bits = 13506 Bytes
+RePair-ing the labels, preparing… 79.846ms, initialising… 292.223ms, compressing… done (3627.43ms)
+Compressed representation has 7417 symbols, dictionary has 1741 entries (34502 symbols)
+Huffman with 1773 symbols and 10901 occurrences, need 113386 bits + 17730 bits = 16406 Bytes
+Output file needs 239293 bits (29912 Bytes)

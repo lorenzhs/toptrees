@@ -1,0 +1,10 @@
+Reading ext/forlorenz/factor12.xml…  14927.4ms; parsing… 2038.42ms; building tree… 3491.23ms.
+Tree with n = 20047329 m = 20047328; Height: 12 Avg depth: 5.55022
+bpstring with 40094658 bits, 149608752 bytes of labels (transformation took 755.39ms)
+RePair-ing the tree structure, preparing… 182.76ms, initialising… 661.756ms, compressing… done (8533.67ms)
+Compressed representation has 41526 symbols, dictionary has 205138 entries (237897 symbols)
+Huffman with 205140 symbols and 451804 occurrences, need 7581233 bits + 3487380 bits = 1383578 Bytes
+RePair-ing the labels, preparing… 517.591ms, initialising… 2779.07ms, compressing… done (54404.6ms)
+Compressed representation has 49369 symbols, dictionary has 253175 entries (285934 symbols)
+Huffman with 253202 symbols and 555721 occurrences, need 9364379 bits + 4304434 bits = 1708617 Bytes
+Output file needs 24737550 bits (3092194 Bytes)

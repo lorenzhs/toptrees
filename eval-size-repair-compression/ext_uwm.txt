@@ -1,0 +1,10 @@
+Reading ext/uwm.xml…  35.408ms; parsing… 4.814ms; building tree… 12.308ms.
+Tree with n = 66729 m = 66728; Height: 5 Avg depth: 3.95243
+bpstring with 133458 bits, 548429 bytes of labels (transformation took 2.71ms)
+RePair-ing the tree structure, preparing… 0.507ms, initialising… 2.773ms, compressing… done (19.781ms)
+Compressed representation has 841 symbols, dictionary has 203 entries (32800 symbols)
+Huffman with 206 symbols and 1249 occurrences, need 9180 bits + 1442 bits = 1329 Bytes
+RePair-ing the labels, preparing… 7.199ms, initialising… 10.025ms, compressing… done (138.553ms)
+Compressed representation has 845 symbols, dictionary has 299 entries (32896 symbols)
+Huffman with 321 symbols and 1445 occurrences, need 11514 bits + 2568 bits = 1772 Bytes
+Output file needs 24804 bits (3101 Bytes)
