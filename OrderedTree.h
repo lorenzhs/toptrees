@@ -435,7 +435,8 @@ public:
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
 			// While a bit counterintuitive at first, this check speeds things up because now
 			// we don't need to fetch two edges just to determine if we need to copy anything
-			if (nodes[nodeId].hasChildren()) {
+			const bool hasChildren = nodes[nodeId].hasChildren();
+			if (hasChildren) {
 				for (EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
 					if (edge->valid) {
 						newEdges.push_back(*edge);
@@ -445,7 +446,10 @@ public:
 			nodes[nodeId].firstEdgeIndex = oldSize;
 			oldSize = (int)newEdges.size();
 			nodes[nodeId].lastEdgeIndex = oldSize - 1;
-			if (nodes[nodeId].hasChildren()) newEdges.resize(newEdges.size() + nodes[nodeId].numEdges() * (factor - 1));
+			if (hasChildren)  {
+				oldSize += nodes[nodeId].numEdges() * (factor - 1);
+				newEdges.resize(oldSize);
+			}
 		}
 		_firstFreeEdge = newEdges.size();
 		edges.swap(newEdges);
