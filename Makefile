@@ -59,6 +59,7 @@ randomEvalNoDebug:
 randomEvalPGO:
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomEval-p$(EXTRA) randomEval.cpp
 	./randomEval-p$(EXTRA) -n 100 -m 100000
+	./randomEval-p$(EXTRA) -n 100 -m 100000 -r
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomEval-p$(EXTRA) randomEval.cpp
 
 randomVerify:

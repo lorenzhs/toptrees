@@ -17,6 +17,7 @@
 // Algorithms
 #include "RandomTree.h"
 #include "DagBuilder.h"
+#include "RePairCombiner.h"
 #include "TopTreeConstructor.h"
 
 // Utils
@@ -35,7 +36,8 @@ void usage(char* name) {
 		 << "  -n <int>  number of trees to test (default: 100)" << endl
 		 << "  -l <int>  number of different labels to assign to the nodes (default: 2)" << endl
 		 << "  -s <int>  seed (default: 12345678)" << endl
-		 << "  -r <file> set output file for edge compression ratios (default: no output)" << endl
+		 << "  -r        use RePair-inspired combiner" << endl
+		 << "  -g <file> set output file for edge compression ratios (default: no output)" << endl
 		 << "  -o <file> set output file for debug information (default: no output)" << endl
 		 << "  -w <path> set output folder for generated trees as XML files (default: don't write)" << endl
 		 << "  -t <int>  number of threads to use (default: #cores)" << endl
@@ -46,7 +48,7 @@ void usage(char* name) {
 std::mutex debugMutex;
 
 void runIteration(const int iteration, RandomGeneratorType &generator, const uint seed, const int size,
-		const int numLabels, const bool verbose, const bool extraVerbose,
+		const int numLabels, const bool useRepair, const bool verbose, const bool extraVerbose,
 		Statistics &statistics, ProgressBar &bar, const string &treePath) {
 	// Seed RNG
 	generator.seed(seed);
@@ -77,8 +79,13 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	}
 
 	TopTree<int> topTree(tree._numNodes, labels);
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-	topTreeConstructor.construct(&debugInfo);
+	if (useRepair) {
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, labels,  verbose, extraVerbose);
+		topTreeConstructor.construct(&debugInfo);
+	} else {
+		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
+		topTreeConstructor.construct(&debugInfo);
+	}
 
 	tree.clear();  // free memory
 
@@ -132,7 +139,8 @@ int main(int argc, char **argv) {
 	const uint seed = argParser.get<uint>("s", 12345678);
 	const bool verbose = argParser.isSet("v") || argParser.isSet("vv");
 	const bool extraVerbose = argParser.isSet("vv");
-	const string ratioFilename = argParser.get<string>("r", "");
+	const bool useRepair = argParser.isSet("r");
+	const string ratioFilename = argParser.get<string>("g", "");
 	const string debugFilename = argParser.get<string>("o", "");
 	const string treePath = argParser.get<string>("w", "");
 
@@ -163,7 +171,7 @@ int main(int argc, char **argv) {
 	auto worker = [&](int start, int end) {
 		RandomGeneratorType engine{};
 		for (int i = start; i < end; ++i) {
-			runIteration(i, engine, seeds[i], size, numLabels, verbose, extraVerbose, statistics, bar, treePath);
+			runIteration(i, engine, seeds[i], size, numLabels, useRepair, verbose, extraVerbose, statistics, bar, treePath);
 		}
 	};
 
