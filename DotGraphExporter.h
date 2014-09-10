@@ -38,15 +38,26 @@ protected:
 };
 
 /// Export a tree as a DOT graph
-template <typename NodeType,typename EdgeType>
-struct OrderedTreeDotGraphExporter : DotGraphExporter<OrderedTree<NodeType, EdgeType>> {
+template <typename NodeType, typename EdgeType, typename DataType>
+struct OrderedTreeDotGraphExporter {
+	/// write a tree's dot graph to a file
+	/// \param tree the tree to write
+	/// \param filename output filename (path must exist)
+	void write(const OrderedTree<NodeType, EdgeType> &tree,  const LabelsT<DataType> &labels, const string &filename, const int nodeId = 0) {
+		std::ofstream out(filename);
+		assert(out.is_open());
+		out << "digraph myTree {" << std::endl;
+		writeNode(out, tree, labels, nodeId);
+		out << "}" << std::endl;
+	}
 protected:
 	/// iteratively write the tree to an output stream
-	void writeNode(std::ostream &out, const OrderedTree<NodeType, EdgeType> &tree, const int nodeId) {
+	void writeNode(std::ostream &out, const OrderedTree<NodeType, EdgeType> &tree, const LabelsT<DataType> &labels, const int nodeId) {
+		out << "\t" << nodeId << " [label=\"" << nodeId << "/" << labels[nodeId] << "\"]" << std::endl;
 		FORALL_OUTGOING_EDGES(tree, nodeId, edge) {
 			if (!edge->valid) continue;
 			out << "\t" << nodeId << " -> " << edge->headNode << ";" << std::endl;
-			writeNode(out, tree, edge->headNode);
+			writeNode(out, tree, labels, edge->headNode);
 		}
 	}
 };
@@ -95,7 +106,9 @@ protected:
 		alreadyProcessed[nodeId] = true;
 		const auto &node = dag.nodes[nodeId];
 		if (node.label != NULL) {
-			out << "\t" << nodeId << " [label=\"" << *node.label << "\"]" << std::endl;
+			out << "\t" << nodeId << " [label=\"" << nodeId << "/" << *node.label << "\"]" << std::endl;
+		} else {
+			out << "\t" << nodeId << " [label=\"" << nodeId << ";" << node.mergeType << "\"]" << std::endl;
 		}
 		if (node.left >= 0) {
 			out << "\t" << nodeId << " -> " << node.left << ";" << std::endl;

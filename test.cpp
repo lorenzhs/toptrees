@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
 	if (writeDotFiles) {
-		OrderedTreeDotGraphExporter<TreeNode, TreeEdge>().write(t, "/tmp/tree.dot");
+		OrderedTreeDotGraphExporter<TreeNode, TreeEdge, string>().write(t, labels, "/tmp/tree.dot");
 	}
 
 	TopTree<string> topTree(t._numNodes, labels);

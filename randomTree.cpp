@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 		if (size <= 30) cout << tree << endl;
 
 		if (size <= 10000) {
-			OrderedTreeDotGraphExporter<TreeNode, TreeEdge>().write(tree, "/tmp/tree.dot");
+			OrderedTreeDotGraphExporter<TreeNode, TreeEdge, int>().write(tree, labels, "/tmp/tree.dot");
 			cout << "Wrote DOT file in " << timer.getAndReset() << "ms" << endl;
 		}
 
@@ -120,4 +120,18 @@ int main(int argc, char **argv) {
 		cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
 			 << "% of original tree, " << ratio << ":1)" << endl
 			 << "Top dag construction took in " << timer.get() << "ms" << endl;
+
+	if (dump) {
+		if (size <= 10000) {
+			BinaryDagDotGraphExporter<int>().write(dag, "/tmp/topdag.dot");
+			if (verbose) cout << "Wrote DOT file in " << timer.get() << "ms" << endl;
+			timer.reset();
+		}
+
+		if (size <= 1000) {
+			BinaryDagDotGraphExporter<int>::drawSvg("/tmp/topdag.dot", "/tmp/topdag.svg");
+			if (verbose) cout << "Graphed DOT file in " << timer.get() << "ms" << endl;
+			timer.reset();
+		}
+	}
 }
