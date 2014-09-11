@@ -176,17 +176,20 @@ int main(int argc, char **argv) {
 	};
 
 	const int treesPerThread = numIterations / numWorkers;
-	const int extraForLast = numIterations % numWorkers;
+	const int leftovers = numIterations % numWorkers;
 
 	vector<std::thread> workers;
 
 	cout << " using " << numWorkers << " threads" << endl;
 
+	int min(0), max(treesPerThread);
 	for (int i = 0; i < numWorkers; ++i) {
-		int min = i * treesPerThread;
-		int max = min + treesPerThread;
-		if (i == 0) max += extraForLast;
+		if (i < leftovers) {
+			max++;
+		}
 		workers.push_back(std::thread(worker, min, max));
+		min = max;
+		max += treesPerThread;
 	}
 
 	for (std::thread &worker : workers) {
