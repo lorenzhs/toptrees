@@ -59,7 +59,6 @@ public:
 protected:
 	void mergeCallback(const int u, const int v, const int n, const MergeType type) {
 		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
-		hasher.hashNode(n);
 	}
 
 
@@ -71,7 +70,6 @@ protected:
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
 	void doMerges(DebugInfo *debugInfo) {
-		hasher.hash();
 
 		int iteration = 0;
 		Timer timer;
@@ -80,6 +78,8 @@ protected:
 		cout << std::fixed << std::setprecision(1);
 		while (tree._numEdges > 1) {
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
+			// Need to update all hashes for each iteration, as child merges change all ancestors' hashes
+			hasher.hash();
 
 			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
