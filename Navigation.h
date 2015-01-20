@@ -51,31 +51,24 @@ public:
 	}
 
 	bool isLeaf() {
-		/*if (dagStack.size() == 1) {
-			// we haven't really started yet, special case
-			return false;
-		}*/
 		DStackT stack(dagStack);
-		bool prevLeft(stack.top().left);
-		stack.pop();
 		while (!stack.empty()) {
 			NavigationRecord record = stack.top();
-			MergeType mergeType = dag.nodes[record.nodeId].mergeType;
+			MergeType mergeType = dag.nodes[record.parentId].mergeType;
 
-			if ((!prevLeft && (mergeType == VERT_NO_BBN || mergeType == HORZ_LEFT_BBN)) || // b or c from the right
-				(prevLeft && mergeType == HORZ_RIGHT_BBN) || // d from the left
+			if ((!record.left && (mergeType == VERT_NO_BBN || mergeType == HORZ_LEFT_BBN)) || // b or c from the right
+				(record.left && mergeType == HORZ_RIGHT_BBN) || // d from the left
 				mergeType == HORZ_NO_BBN ||  // type e, either side
-				(record.nodeId == (int)dag.nodes.size() - 1 && !prevLeft)) { // reached root from the right
-				//std::cout << "iL: true (n=" << record.nodeId << " p=" << record.parentId << " l="  << prevLeft << " mT=" << mergeType << ") "<< std::flush;
+				(record.nodeId == (int)dag.nodes.size() - 1 && !record.left)) { // reached root from the right
+				//if (verbose) std::cout << "iL: true (n=" << record.nodeId << " p=" << record.parentId << " l="  << record.left << " mT=" << mergeType << ") "<< std::flush;
 				return true;
 			}
 
-			if (prevLeft && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
-				//std::cout << "iL: false (n=" << record.nodeId << " p=" << record.parentId << " l="  << prevLeft << " mT=" << mergeType << ") "<< std::flush;
+			if (record.left && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
+				//if (verbose) std::cout << "iL: false (n=" << record.nodeId << " p=" << record.parentId << " l="  << record.left << " mT=" << mergeType << ") "<< std::flush;
 				return false;
 			}
-			//std::cout << "iL: up up and away (n=" << record.nodeId << " p=" << record.parentId << " l="  << prevLeft << " mT=" << mergeType << ") "<< std::endl;
-			prevLeft = record.left;
+			//if (verbose) std::cout << "iL: up up and away (n=" << record.nodeId << " p=" << record.parentId << " l="  << record.left << " mT=" << mergeType << ") "<< std::endl;
 			stack.pop();
 		}
 		std::cout << "waah" << std::endl;
@@ -83,70 +76,69 @@ public:
 	}
 
 	bool firstChild() {
-		//dumpDagStack();
+		if (verbose) dumpDagStack();
 		if (isLeaf()) {
 			//std::cout << "fC: isLeaf. " << std::flush;
 			return false;
 		}
 		treeStack.push(dagStack);
-		bool prevLeft(dagStack.top().left);
-		dagStack.pop();
 		while (!dagStack.empty()) {
 			NavigationRecord record = dagStack.top();
-			MergeType mergeType = dag.nodes[record.nodeId].mergeType;
+			MergeType mergeType = dag.nodes[record.parentId].mergeType;
 
-			if (prevLeft && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
+			if (record.left && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
 				break;
 			}
-			prevLeft = record.left;
 			dagStack.pop();
 		}
-		int nodeId(dagStack.top().nodeId);
+		int nodeId(dagStack.top().parentId);
 		int nextNode = dag.nodes[nodeId].right;
+		dagStack.pop();
 		dagStack.push(NavigationRecord(nextNode, nodeId, false));
-		//std::cout << "fC: pushing " << dagStack.top() << std::endl;
+		if (verbose) std::cout << "fC: pushing " << dagStack.top() << std::endl;
 
 		while ((nodeId = nextNode) > 0 && (nextNode = dag.nodes[nextNode].left) > 0) {
 			dagStack.push(NavigationRecord(nextNode, nodeId, true));
-			//std::cout << "fC: pushing " << dagStack.top() << std::endl;
+			if (verbose) std::cout << "fC: pushing " << dagStack.top() << std::endl;
 		}
 		return true;
 	}
 
 	bool nextSibling() {
-		//dumpDagStack();
+		if (verbose) dumpDagStack();
 
-		bool prevLeft(dagStack.top().left);
-		bool alreadyHadCDE(false);
-		dagStack.pop();
-		while (!dagStack.empty()) {
-			NavigationRecord record = dagStack.top();
-			MergeType mergeType = dag.nodes[record.nodeId].mergeType;
-			if (prevLeft && (mergeType == HORZ_LEFT_BBN || mergeType == HORZ_RIGHT_BBN || mergeType == HORZ_NO_BBN)) {
+		DStackT stack(dagStack);
+		//bool alreadyHadCDE(false);
+		while (!stack.empty()) {
+			NavigationRecord record = stack.top();
+			MergeType mergeType = dag.nodes[record.parentId].mergeType;
+			if (record.left && (mergeType == HORZ_LEFT_BBN || mergeType == HORZ_RIGHT_BBN || mergeType == HORZ_NO_BBN)) {
 				break;
 			}
-			if ((!prevLeft || alreadyHadCDE) && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
-				// a or b from right, or from either side after CDE => abort
+			if ((!record.left) && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
+				// a or b from right //, or from either side after CDE => abort
 				return false;
 			}
 
-			alreadyHadCDE |= (mergeType == HORZ_LEFT_BBN || mergeType == HORZ_RIGHT_BBN || mergeType == HORZ_NO_BBN);
-			prevLeft = record.left;
-			dagStack.pop();
+			//alreadyHadCDE |= (mergeType == HORZ_LEFT_BBN || mergeType == HORZ_RIGHT_BBN || mergeType == HORZ_NO_BBN);
+			stack.pop();
 		}
 
-		if (dagStack.empty()) {
+		if (stack.empty()) {
 			return false;
 		}
 
-		int nodeId = dagStack.top().nodeId;
+		dagStack = stack;
+
+		int nodeId = dagStack.top().parentId;
 		int nextNode = dag.nodes[nodeId].right;
+		dagStack.pop();
 		dagStack.push(NavigationRecord(nextNode, nodeId, false));
-		//std::cout << "nS: pushing " << dagStack.top() << std::endl;
+		if (verbose) std::cout << "nS: pushing " << dagStack.top() << std::endl;
 
 		while ((nodeId = nextNode) > 0 && (nextNode = dag.nodes[nextNode].left) > 0) {
 			dagStack.push(NavigationRecord(nextNode, nodeId, true));
-			//std::cout << "nS: pushing " << dagStack.top() << std::endl;
+			if (verbose) std::cout << "nS: pushing " << dagStack.top() << std::endl;
 		}
 		return true;
 	}
@@ -165,4 +157,5 @@ private:
 	const DAGType &dag;
 	DStackT dagStack;
 	TStackT treeStack;
+	static const bool verbose = false;
 };
