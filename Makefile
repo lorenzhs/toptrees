@@ -7,12 +7,12 @@ FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
-EXECS=test testTT randomTree randomEval randomVerify coding repair
+EXECS=test testTT randomTree randomEval randomVerify coding repair testnav
 #EXECS
 
 all: $(EXECS)
 
-.PHONY: $(EXECS)
+#.PHONY: $(EXECS)
 
 test:
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
@@ -105,6 +105,15 @@ repairPGO:
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
 	./repair-p$(EXTRA) ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
+
+testnav: testnav.cpp *.h
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
+
+testnavDebug: testnav.cpp *.h
+	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
+
+testnavNoDebug: testnav.cpp *.h
+	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
 
 #RULES
 
