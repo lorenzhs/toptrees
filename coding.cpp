@@ -17,6 +17,7 @@
 
 // Utils
 #include "ArgParser.h"
+#include "FileWriter.h"
 #include "Timer.h"
 #include "XML.h"
 
@@ -66,21 +67,12 @@ int main(int argc, char **argv) {
 	const double ratio = ((int)(1000 / percentage)) / 10.0;
 	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
 		 << "% of original tree, " << ratio << ":1)" << endl
-		 << "Top dag construction took in " << timer.getAndReset() << "ms" << endl;
+		 << "Top dag construction took " << timer.getAndReset() << "ms" << endl;
 
-	BitWriter writer("/tmp/foo");
-	DagEntropy<string> entropy(dag, labels, writer);
-	entropy.calculate();
-	cout << "DAG Structure: " << entropy.dagStructureEntropy.huffman << endl;
-	cout << "DAG Pointers:  " << entropy.dagPointerEntropy << endl;
-	cout << "Merge Types:   " << entropy.mergeEntropy.huffman << endl;
-	cout << "Label strings: " << entropy.labelDataEntropy.huffman << " + " << entropy.labelDataEntropy.getExtraSize() << " bits for symbols" << endl;
-	cout << "Huffman calcuation took " << timer.getAndReset() << "ms; " << endl;
-	long long bits = entropy.getTotalSize();
+	long long bits = FileWriter::write(dag, labels, "/tmp/foo");
+
 	cout << "Output file needs " << bits << " bits (" << (bits+7)/8 << " bytes), vs " << (treeSize+7)/8 << " bytes for orig succ tree, "
 		 << std::fixed << std::setprecision(1) << (double)treeSize/bits << ":1" << endl;
 
-	entropy.write();
-	writer.close();
 	return 0;
 }

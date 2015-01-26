@@ -11,7 +11,7 @@ class BitWriter {
 public:
 	static const int buffersize = 1024;
 
-	BitWriter(const std::string &fn): fn(fn), bufitem(0), itempos(7) {
+	BitWriter(const std::string &fn): fn(fn), bufitem(0), itempos(7), bytesWritten(0) {
 		out.open(fn, std::ios::binary | std::ios::out);
 		memset(buffer, 0, buffersize);
 	}
@@ -48,6 +48,7 @@ public:
 	}
 
 	void write() {
+		bytesWritten += bufitem;
 		out.write((char*)&buffer, bufitem);
 		memset(buffer, 0, bufitem);
 		bufitem = 0;
@@ -71,8 +72,13 @@ public:
 		std::cout << std::endl;
 	}
 
+	unsigned long long getBytesWritten() {
+		return bytesWritten;
+	}
+
 protected:
 	void writeBuffer() {
+		bytesWritten += buffersize;
 		out.write((char*)&buffer, buffersize);
 		bufitem = 0;
 		memset(buffer, 0, buffersize);
@@ -82,4 +88,5 @@ protected:
 	unsigned char buffer[buffersize];
 	unsigned int bufitem;
 	unsigned int itempos;
+	unsigned long long bytesWritten;
 };
