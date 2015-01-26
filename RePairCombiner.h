@@ -43,22 +43,24 @@ public:
 	/// \param topTree the output top tree
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
-	RePairCombiner(TreeType &tree, TopTree<DataType> &topTree, const LabelsT<DataType> &labels, const bool verbose = true, const bool extraVerbose = false)
-		: tree(tree), topTree(topTree), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes), hasher(tree, labels) {}
+	RePairCombiner(TreeType &tree, TopTree<DataType> &topTree, const bool verbose = true, const bool extraVerbose = false)
+		: tree(tree), topTree(topTree), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes), hasher(tree, topTree, nodeIds) {
+			for (int i = 0; i < tree._numNodes; ++i) {
+				nodeIds[i] = i;
+			}
+			hasher.prepare();
+		}
 
 	/// Perform the top tree construction procedure
 	/// \param debugInfo pointer to a DebugInfo object, should you wish logging of debug information
 	void construct(DebugInfo *debugInfo = NULL) {
-		for (int i = 0; i < tree._numNodes; ++i) {
-			nodeIds[i] = i;
-		}
-
 		doMerges(debugInfo);
 	}
 
 protected:
 	void mergeCallback(const int u, const int v, const int n, const MergeType type) {
 		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
+		hasher.hashNode(n);
 	}
 
 
@@ -74,13 +76,12 @@ protected:
 		int iteration = 0;
 		Timer timer;
 
+		hasher.hashTree();
+
 		const std::streamsize precision = cout.precision();
 		cout << std::fixed << std::setprecision(1);
 		while (tree._numEdges > 1) {
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
-			// Need to update all hashes for each iteration, as child merges change all ancestors' hashes
-			hasher.hash();
-
 			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
 			int oldNumEdges = tree._numEdges;
