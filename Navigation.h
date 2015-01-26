@@ -73,6 +73,7 @@ public:
 		}
 		std::cout << "waah" << std::endl;
 		assert(false);
+		return false;
 	}
 
 	bool firstChild() {
