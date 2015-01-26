@@ -12,66 +12,64 @@ EXECS=test testTT randomTree randomEval randomVerify coding repair testnav
 
 all: $(EXECS)
 
-#.PHONY: $(EXECS)
-
-test:
+test: test.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
-testDebug:
+testDebug: test.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
-testNoDebug:
+testNoDebug: test.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
-testPGO:
+testPGO: test.cpp *.h
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
 	./test-p$(EXTRA) ext/dblp.xml
 	./test-p$(EXTRA) -r ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o test-p$(EXTRA) test.cpp
 
-testTT:
+testTT: testTT.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
-testTTDebug:
+testTTDebug: testTT.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
-testTTNoDebug:
+testTTNoDebug: testTT.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
 
-randomTree:
+randomTree: randomTree.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
 
-randomTreeDebug:
+randomTreeDebug: randomTree.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
 
-randomTreeNoDebug:
+randomTreeNoDebug: randomTree.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
 
-randomEval:
+randomEval: randomEval.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
-randomEvalDebug:
+randomEvalDebug: randomEval.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
-randomEvalNoDebug:
+randomEvalNoDebug: randomEval.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
-randomEvalPGO:
+randomEvalPGO: randomEval.cpp *.h
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomEval-p$(EXTRA) randomEval.cpp
 	./randomEval-p$(EXTRA) -n 100 -m 100000
 	./randomEval-p$(EXTRA) -n 100 -m 100000 -r
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomEval-p$(EXTRA) randomEval.cpp
 
-randomVerify:
+randomVerify: randomVerify.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
 
-randomVerifyDebug:
+randomVerifyDebug: randomVerify.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
 
-randomVerifyNoDebug:
+randomVerifyNoDebug: randomVerify.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
 
-randomVerifyPGO:
+randomVerifyPGO: randomVerify.cpp *.h
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomVerify-p$(EXTRA) randomVerify.cpp
 	./randomVerify-p$(EXTRA) -n 100 -m 100000
 	./randomVerify-p$(EXTRA) -r -n 100 -m 100000
@@ -92,16 +90,16 @@ codingPGO: coding.cpp *.h
 	./coding-p$(EXTRA) -r ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
 
-repair:
+repair: repair.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
 
-repairDebug:
+repairDebug: repair.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
 
-repairNoDebug:
+repairNoDebug: repair.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
 
-repairPGO:
+repairPGO: repair.cpp *.h
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
 	./repair-p$(EXTRA) ext/dblp.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
