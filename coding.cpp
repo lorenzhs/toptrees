@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
 		 << "% of original tree, " << ratio << ":1)" << endl
 		 << "Top dag construction took in " << timer.getAndReset() << "ms" << endl;
 
-	DagEntropy<string> entropy(dag, labels);
+	BitWriter writer("/tmp/foo");
+	DagEntropy<string> entropy(dag, labels, writer);
 	entropy.calculate();
 	cout << "DAG Structure: " << entropy.dagStructureEntropy.huffman << endl;
 	cout << "DAG Pointers:  " << entropy.dagPointerEntropy << endl;
@@ -78,5 +79,8 @@ int main(int argc, char **argv) {
 	long long bits = entropy.getTotalSize();
 	cout << "Output file needs " << bits << " bits (" << (bits+7)/8 << " bytes), vs " << (treeSize+7)/8 << " bytes for orig succ tree, "
 		 << std::fixed << std::setprecision(1) << (double)treeSize/bits << ":1" << endl;
+
+	entropy.write();
+	writer.close();
 	return 0;
 }

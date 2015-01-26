@@ -77,16 +77,16 @@ randomVerifyPGO:
 	./randomVerify-p$(EXTRA) -r -n 100 -m 100000
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomVerify-p$(EXTRA) randomVerify.cpp
 
-coding:
+coding: coding.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
 
-codingDebug:
+codingDebug: coding.cpp *.h
 	$(CC) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
 
-codingNoDebug:
+codingNoDebug: coding.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
 
-codingPGO:
+codingPGO: coding.cpp *.h
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
 	./coding-p$(EXTRA) ext/dblp.xml
 	./coding-p$(EXTRA) -r ext/dblp.xml

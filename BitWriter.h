@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 class BitWriter {
 public:
@@ -22,9 +23,21 @@ public:
 	}
 
 	void writeBits(int data, size_t length) {
-		for (unsigned int i = length; i--; i>=0) {
+		for (unsigned int i = length; i--;) {
 			std::cout << "Processing bit " << i << " of " << length << ": ORing buffer[" << bufitem << "] with " << (((data >> i) & 0x1) << itempos) << " (itempos " << itempos << ")" << std::endl;
 			buffer[bufitem] |= ((data >> i) & 0x1) << itempos;
+			bufitem += (itempos == 0);
+			itempos = (itempos - 1) & 0x7;
+
+			if (bufitem == buffersize) {
+				writeBuffer();
+			}
+		}
+	}
+
+	void writeBits(const std::vector<bool> &vec) {
+		for (bool bit : vec) {
+			buffer[bufitem] |= bit << itempos;
 			bufitem += (itempos == 0);
 			itempos = (itempos - 1) & 0x7;
 

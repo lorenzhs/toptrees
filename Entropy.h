@@ -119,6 +119,15 @@ struct LabelDataEntropy<std::string> {
 		huffman.construct();
 	}
 
+	void addToWriter(HuffmanWriter<std::string::value_type> &writer) {
+		for (const std::string* label : labels.valueIndex) {
+			if (label != NULL) {
+				writer.addItems(label->cbegin(), label->cend());
+			}
+			writer.addItem(0);
+		}
+	}
+
 	/// Additional amount of information that needs to be stored, in bits
 	/// (e.g. for mapping code points to symbols)
 	int getExtraSize() const {
@@ -135,11 +144,16 @@ enum NodeEncoding { IMPLICIT, MISSING };
 /// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag, const Labels<DataType> &labels) :
+	DagEntropy(const BinaryDag<DataType> &dag, const Labels<DataType> &labels, BitWriter &writer) :
 		dagStructureEntropy(),
 		dagPointerEntropy(),
 		mergeEntropy(),
 		labelDataEntropy(labels),
+		writer(writer),
+		dagStructureWriter(dagStructureEntropy.huffman, writer),
+		dagPointerWriter(dagPointerEntropy, writer),
+		mergeWriter(mergeEntropy.huffman, writer),
+		labelWriter(labelDataEntropy.huffman, writer),
 		dag(dag)
 	{}
 
@@ -207,6 +221,72 @@ struct DagEntropy {
 		labelDataEntropy.construct();
 	}
 
+	/// Write the stuff to huffman writers
+	void write() {
+		vector<bool> alreadyVisited(dag.nodes.size(), false);
+
+		const auto isLeafOrPointer([&](const int nodeId) {
+			assert((dag.nodes[nodeId].left < 0) == (dag.nodes[nodeId].right < 0));
+			return (alreadyVisited[nodeId] || dag.nodes[nodeId].left < 0);
+		});
+
+		// Add structure and label information for a **child** of the current node
+		const auto codeStructure([&](const int nodeId) {
+			assert(nodeId >= 0);
+			if (isLeafOrPointer(nodeId)) {
+				dagStructureWriter.addItem(MISSING);
+			} else {
+				dagStructureWriter.addItem(IMPLICIT);
+			}
+		});
+
+		// nodeId starts at 2 because 0 is a dummy node, we don't need to code it,
+		// and 1 is the tree's root, but we know that, so we don't need to code it.
+		for (uint nodeId = 2; nodeId < dag.nodes.size(); ++nodeId) {
+			// DAG node is coded as the IDs of its children, its own ID
+			// is implicit from the position in the output it appears in
+
+			const DagNode<DataType> &node(dag.nodes[nodeId]);
+
+			assert((node.left < 0) == (node.right < 0));
+			if (node.left < 0) {
+				// leaves are not coded here, they were coded before
+				assert(node.label != NULL);
+				assert(node.mergeType == NO_MERGE);
+				continue;
+			}
+
+			assert(node.label == NULL);
+			assert(node.mergeType != NO_MERGE);
+
+			// We need to code the merge type regardless of the nature of the children
+			mergeWriter.addItem((char)dag.nodes[nodeId].mergeType);
+
+			// if both children are leaves / pointers, they don't need to be coded in the structure
+			if (!isLeafOrPointer(node.left) || !isLeafOrPointer(node.right)) {
+				codeStructure(node.left);
+				codeStructure(node.right);
+			}
+
+			if (isLeafOrPointer(node.left)) {
+				dagPointerWriter.addItem(node.left);
+			}
+			if (isLeafOrPointer(node.right)) {
+				dagPointerWriter.addItem(node.right);
+			}
+
+			alreadyVisited[node.left] = true;
+			alreadyVisited[node.right] = true;
+		}
+
+		dagStructureWriter.writeBuffer();
+		dagPointerWriter.writeBuffer();
+		mergeWriter.writeBuffer();
+		labelDataEntropy.addToWriter(labelWriter);
+		labelWriter.writeBuffer();
+		writer.write();
+	}
+
 	long long getTotalSize() const {
 		// Code dag pointers as fixed-length ints
 		// Size can be deduced from decoded dag structure data
@@ -232,5 +312,12 @@ struct DagEntropy {
 	HuffmanBuilder<int> dagPointerEntropy;
 	HuffmanBlocker<char, uint16_t, 4, 16> mergeEntropy;
 	LabelDataEntropy<DataType> labelDataEntropy;
+
+	BitWriter &writer;
+	BlockedHuffmanWriter<bool, uint8_t, 1, 8> dagStructureWriter;
+	HuffmanWriter<int> dagPointerWriter;
+	BlockedHuffmanWriter<char, uint16_t, 4, 16> mergeWriter;
+	HuffmanWriter<std::string::value_type> labelWriter;
+
 	const BinaryDag<DataType> &dag;
 };

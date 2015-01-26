@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "BitWriter.h"
+
 // This implementation of Huffman codes is based on the C++ implementation from Rosetta code
 // The original is licensed under the GNU Free Documentation License 1.2
 // It can be found at http://rosettacode.org/wiki/Huffman_coding#C.2B.2B
@@ -85,8 +87,8 @@ public:
 	}
 
 	/// Get the code for a symbol. Must to have called construct() before.
-	HuffCode getCode(const SymbolType &symbol) const {
-		assert(symbols[symbol] < codes.size());
+	HuffCode getCode(const SymbolType &symbol) {
+		assert(symbols[symbol] < (SymbolType) codes.size());
 		return codes[symbols[symbol]];
 	}
 
@@ -219,4 +221,91 @@ struct HuffmanBlocker {
 	const uint blockingFactor;
 	std::vector<InputType> tempStore;
 	HuffmanBuilder<OutputType> huffman;
+};
+
+template <typename SymbolType>
+class HuffmanWriter {
+public:
+	HuffmanWriter(HuffmanBuilder<SymbolType> &huffman, BitWriter &writer): huffman(huffman), writer(writer) {}
+
+	void write(const SymbolType &sym) {
+		std::cout << "HW: Writing " << (int) sym << std::endl;
+		writer.writeBits(huffman.getCode(sym));
+	}
+
+	void addItem(const SymbolType &sym) {
+		const std::vector<bool> &vec(huffman.getCode(sym));
+		buffer.insert(buffer.end(), vec.begin(), vec.end());
+	}
+
+	template <typename InputIterator>
+	void addItems(InputIterator begin, InputIterator end) {
+		for (InputIterator it = begin; it != end; ++it) {
+			addItem(*it);
+		}
+	}
+
+	void writeBuffer() {
+		std::cout << "HuffmanWriter: writing buffer of " << buffer.size() << " bits" << std::endl;
+		writer.writeBits(buffer);
+		buffer.clear();
+	}
+
+protected:
+	HuffmanBuilder<SymbolType> &huffman;
+	BitWriter &writer;
+	std::vector<bool> buffer;
+};
+
+template <typename InputType, typename OutputType, int inputSize = sizeof(InputType)*8, int outputSize = sizeof(OutputType)*8>
+class BlockedHuffmanWriter {
+public:
+	BlockedHuffmanWriter(HuffmanBuilder<OutputType> &huffman, BitWriter &writer)
+		: huffman(huffman)
+		, writer(writer)
+		, blockingFactor(outputSize / inputSize)
+		, tempStore() {
+		assert(outputSize % inputSize == 0);
+		tempStore.reserve(blockingFactor);
+	}
+
+	void addItem(const InputType &symbol) {
+		tempStore.push_back(symbol);
+		if (tempStore.size() == blockingFactor) {
+			flushTempStore();
+		}
+	}
+
+	template <class InputIterator>
+	void addItems(InputIterator begin, InputIterator end) {
+		for (auto it = begin; it != end; ++it) {
+			addItem(*it);
+		}
+	}
+
+	void writeBuffer() {
+		flushTempStore();
+		std::cout << "BlockedHuffmanWriter: writing    " << buffer.size() << " bits" << std::endl;
+		writer.writeBits(buffer);
+		buffer.clear();
+	}
+
+
+protected:
+	void flushTempStore() {
+		// move into huffman
+		OutputType result{};
+		for (uint i = 0; i < blockingFactor; ++i) {
+			result |= (tempStore[i] << (i * inputSize));
+		}
+		const std::vector<bool> &vec(huffman.getCode(result));
+		buffer.insert(buffer.end(), vec.begin(), vec.end());
+		tempStore.clear();
+	}
+
+	HuffmanBuilder<OutputType> &huffman;
+	BitWriter &writer;
+	const uint blockingFactor;
+	std::vector<InputType> tempStore;
+	std::vector<bool> buffer;
 };
