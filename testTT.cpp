@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 
 	// construct top tree
 	if (useRePair) {
-		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree, labels);
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 		topTreeConstructor.construct();
 	} else {
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);

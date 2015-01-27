@@ -80,7 +80,7 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	TopTree<int> topTree(tree._numNodes, labels);
 	if (useRepair) {
-		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, labels,  verbose, extraVerbose);
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
 		topTreeConstructor.construct(&debugInfo);
 	} else {
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
