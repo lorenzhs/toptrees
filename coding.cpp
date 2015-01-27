@@ -72,8 +72,11 @@ int main(int argc, char **argv) {
 
 	long long bits = FileWriter::write(dag, labels, "/tmp/foo");
 
+	const std::streamsize precision = cout.precision();
 	cout << "Output file needs " << bits << " bits (" << (bits+7)/8 << " bytes), vs " << (treeSize+7)/8 << " bytes for orig succ tree, "
 		 << std::fixed << std::setprecision(1) << (double)treeSize/bits << ":1" << endl;
+	cout.unsetf(std::ios_base::fixed);
+	cout << std::setprecision(precision);
 
 	cout << "RESULT compressed=" << bits << " succinct=" << treeSize << " minRatio=" << minRatio
 		 << " repair=" << useRePair << " file=" << filename << endl;
