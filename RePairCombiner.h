@@ -53,8 +53,8 @@ public:
 
 	/// Perform the top tree construction procedure
 	/// \param debugInfo pointer to a DebugInfo object, should you wish logging of debug information
-	void construct(DebugInfo *debugInfo = NULL) {
-		doMerges(debugInfo);
+	void construct(DebugInfo *debugInfo = NULL, const double minRatio = 1.2) {
+		doMerges(debugInfo, minRatio);
 	}
 
 protected:
@@ -71,7 +71,7 @@ protected:
 	/// \param debugInfo the DebugInfo object or NULL
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
-	void doMerges(DebugInfo *debugInfo) {
+	void doMerges(DebugInfo *debugInfo, const double minRatio = 1.2) {
 
 		int iteration = 0;
 		Timer timer;
@@ -84,10 +84,12 @@ protected:
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
 			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
-			int oldNumEdges = tree._numEdges;
+			const int oldNumEdges = tree._numEdges;
 			// First, do RePair merges, then whatever else is possible
 			horizontalMergesRePair(iteration);
-			normalHorizontalMerges(iteration);
+			if ((1.0 * oldNumEdges) / tree._numEdges < minRatio) {
+				normalHorizontalMerges(iteration);
+			}
 			tree.killNodes();
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
 
@@ -103,7 +105,6 @@ protected:
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << " ms; " << tree.summary();
 
 			double ratio = (oldNumEdges * 1.0) / tree._numEdges;
-			if (verbose && ratio < 1.2) cout << " ratio " << std::setprecision(5) << ratio << std::setprecision(1) << std::endl << tree.shortString();
 			if (verbose) cout << std::endl;
 
 			if (debugInfo != NULL)
@@ -131,13 +132,12 @@ protected:
 		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
 			for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
 				assert((edge+1)->valid);
-				if (!tree.nodes[edge->headNode].isLeaf() && !tree.nodes[(edge+1)->headNode].isLeaf()) {
+				if (tree.nodes[edge->headNode].isLeaf() || tree.nodes[(edge+1)->headNode].isLeaf()) {
 					// We're only interested in merging if one is a leaf
-					continue;
+					Pair pair(nodeId, tree.edgeId(edge));
+					hashMap.add(getRePairHash(edge), pair);
+					++numPairs;
 				}
-				Pair pair(nodeId, tree.edgeId(edge));
-				hashMap.add(getRePairHash(edge), pair);
-				++numPairs;
 			}
 		}
 

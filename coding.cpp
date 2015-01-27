@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
 		string arg = argParser.get<string>("r", "");
 		filename = (arg == "") ? filename : arg;
 	}
+	const double minRatio = argParser.get<double>("m", 1.2);
 
 	OrderedTree<TreeNode, TreeEdge> t;
 	Labels<string> labels;
@@ -51,7 +52,7 @@ int main(int argc, char **argv) {
 	Timer timer;
 	if (useRePair) {
 		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
-		topTreeConstructor.construct();
+		topTreeConstructor.construct(NULL, minRatio);
 	} else {
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 		topTreeConstructor.construct();
