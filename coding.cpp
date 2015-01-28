@@ -37,14 +37,16 @@ int main(int argc, char **argv) {
 		string arg = argParser.get<string>("r", "");
 		filename = (arg == "") ? filename : arg;
 	}
-	const double minRatio = argParser.get<double>("m", 1.2);
+	const double minRatio = argParser.get<double>("m", 1.22);
 
 	OrderedTree<TreeNode, TreeEdge> t;
 	Labels<string> labels;
 
 	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
 
-	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
+	const int origNodes(t._numNodes), origEdges(t._numEdges), origHeight(t.height());
+	const double origAvgDepth(t.avgDepth());
+	cout << t.summary() << "; Height: " << origHeight << " Avg depth: " << origAvgDepth << endl;
 
 	TopTree<string> topTree(t._numNodes, labels);
 	const long long treeSize = TreeSizeEstimation<OrderedTree<TreeNode, TreeEdge>>::compute(t, labels);
@@ -57,17 +59,23 @@ int main(int argc, char **argv) {
 		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
 		topTreeConstructor.construct();
 	}
-	cout << "Top tree construction took " << timer.getAndReset() << "ms, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
+	cout << "Top tree construction took " << timer.getAndReset() << "ms, ";
+
+	const double ttAvgDepth(topTree.avgDepth());
+	const int ttMinDepth(topTree.minDepth()), ttHeight(topTree.height());
+	cout << "avg node depth " << ttAvgDepth << " (min " << ttMinDepth << ", height " << ttHeight << "); "
+	     << "took " << timer.getAndReset() << "ms" << endl;
 
 	BinaryDag<string> dag;
 	DagBuilder<string> builder(topTree, dag);
 	builder.createDag();
 
-	const int edges = dag.countEdges();
-	const double percentage = (edges * 100.0) / topTree.numLeaves;
-	const double ratio = ((int)(1000 / percentage)) / 10.0;
-	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-		 << "% of original tree, " << ratio << ":1)" << endl
+	const int edges(dag.countEdges()), nodes((int)dag.nodes.size() - 1);
+	const double edgePercentage = (edges * 100.0) / origEdges;
+	const double nodePercentage = (nodes * 100.0) / origNodes;
+	const double ratio = ((int)(1000 / edgePercentage)) / 10.0;
+	cout << "Top dag has " << nodes << " nodes (" << nodePercentage << "%), "
+		 << edges << " edges (" << edgePercentage << "% of original tree, " << ratio << ":1)" << endl
 		 << "Top dag construction took " << timer.getAndReset() << "ms" << endl;
 
 	long long bits = FileWriter::write(dag, labels, "/tmp/foo");
@@ -78,8 +86,22 @@ int main(int argc, char **argv) {
 	cout.unsetf(std::ios_base::fixed);
 	cout << std::setprecision(precision);
 
-	cout << "RESULT compressed=" << bits << " succinct=" << treeSize << " minRatio=" << minRatio
-		 << " repair=" << useRePair << " file=" << filename << endl;
+	cout << "RESULT"
+		 << " compressed=" << bits
+		 << " succinct=" << treeSize
+		 << " minRatio=" << minRatio
+		 << " repair=" << useRePair
+		 << " nodes=" << nodes
+		 << " origNodes=" << origNodes
+		 << " edges=" << edges
+		 << " origEdges=" << origEdges
+		 << " file=" << filename
+		 << " origHeight=" << origHeight
+		 << " origAvgDepth=" << origAvgDepth
+		 << " ttAvgDepth=" << ttAvgDepth
+		 << " ttMinDepth=" << ttMinDepth
+		 << " ttHeight=" << ttHeight
+		 << endl;
 
 	return 0;
 }

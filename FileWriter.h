@@ -22,10 +22,10 @@ public:
 			 << "Label strings: " << entropy.labelDataEntropy.huffman << " + " << entropy.labelDataEntropy.getExtraSize() << " bits for symbols" << endl
 			 << "Huffman calcuation took " << timer.getAndReset() << "ms; " << endl;
 
-		entropy.write();
+		//entropy.write();
 		writer.close();
 
-		if (verbose) std::cout << "Wrote a total of " << writer.getBytesWritten() << " Bytes (" << writer.getBytesWritten()*8 << " bits) to " << fn << endl;
+		//if (verbose) std::cout << "Wrote a total of " << writer.getBytesWritten() << " Bytes (" << writer.getBytesWritten()*8 << " bits) to " << fn << endl;
 
 		return entropy.getTotalSize();
 	}
