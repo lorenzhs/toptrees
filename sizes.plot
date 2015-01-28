@@ -7,6 +7,7 @@ set pointsize 0.7
 
 set logscale x 1.00001
 set xrange [1:1.5]
+set yrange [0.8:1.1]
 
 set grid xtics ytics
 
