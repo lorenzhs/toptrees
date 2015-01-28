@@ -193,20 +193,9 @@ struct HuffmanBlocker {
 
 	/// add an occurence to the frequency statistics
 	void addItem(const InputType &symbol) {
-		const bool verbose = false;
-
 		tempStore.push_back(symbol);
 		if (tempStore.size() == blockingFactor) {
-			// move into huffman
-			OutputType result{};
-			if (verbose) std::cout << "Combining: ";
-			for (uint i = 0; i < blockingFactor; ++i) {
-				result |= (tempStore[i] << (i * inputSize));
-				if (verbose) std::cout << (uint) tempStore[i] << " ";
-			}
-			if (verbose) std::cout << " => " << (uint)result << std::endl;
-			huffman.addItem(result);
-			tempStore.clear();
+			flushQueue();
 		}
 	}
 
@@ -216,6 +205,27 @@ struct HuffmanBlocker {
 		for (auto it = begin; it != end; ++it) {
 			addItem(*it);
 		}
+	}
+
+	void flushQueue() {
+		const bool verbose = false;
+
+		if (verbose && tempStore.size() < blockingFactor)
+			std::cout << "Filling up: have " << tempStore.size() << " need " << blockingFactor << std::endl;
+		while (tempStore.size() < blockingFactor) {
+			tempStore.push_back(InputType{});
+		}
+
+		// move into huffman
+		OutputType result{};
+		if (verbose) std::cout << "Combining: ";
+		for (uint i = 0; i < blockingFactor; ++i) {
+			result |= (tempStore[i] << (i * inputSize));
+			if (verbose) std::cout << (uint) tempStore[i] << " ";
+		}
+		if (verbose) std::cout << " => " << (uint)result << std::endl;
+		huffman.addItem(result);
+		tempStore.clear();
 	}
 
 	const uint blockingFactor;

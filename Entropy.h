@@ -215,6 +215,8 @@ struct DagEntropy {
 			alreadyVisited[node.right] = true;
 		}
 
+		dagStructureEntropy.flushQueue();
+		mergeEntropy.flushQueue();
 		dagStructureEntropy.huffman.construct();
 		dagPointerEntropy.construct();
 		mergeEntropy.huffman.construct();
