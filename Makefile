@@ -22,6 +22,7 @@ testNoDebug: test.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
 
 testPGO: test.cpp *.h
+	rm -f test.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
 	./test-p$(EXTRA) data/dblp_small.xml
 	./test-p$(EXTRA) -r data/dblp_small.xml
@@ -55,6 +56,7 @@ randomEvalNoDebug: randomEval.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
 
 randomEvalPGO: randomEval.cpp *.h
+	rm -f randomEval.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomEval-p$(EXTRA) randomEval.cpp
 	./randomEval-p$(EXTRA) -n 100 -m 100000
 	./randomEval-p$(EXTRA) -n 100 -m 100000 -r
@@ -70,6 +72,7 @@ randomVerifyNoDebug: randomVerify.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
 
 randomVerifyPGO: randomVerify.cpp *.h
+	rm -f randomVerify.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomVerify-p$(EXTRA) randomVerify.cpp
 	./randomVerify-p$(EXTRA) -n 100 -m 100000
 	./randomVerify-p$(EXTRA) -r -n 100 -m 100000
@@ -85,6 +88,7 @@ codingNoDebug: coding.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
 
 codingPGO: coding.cpp *.h
+	rm -f coding.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
 	./coding-p$(EXTRA) data/dblp_small.xml
 	./coding-p$(EXTRA) -r data/dblp_small.xml
@@ -100,6 +104,7 @@ repairNoDebug: repair.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
 
 repairPGO: repair.cpp *.h
+	rm -f repair.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
 	./repair-p$(EXTRA) data/dblp_small.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
