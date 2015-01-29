@@ -16,7 +16,7 @@ log_*
 test
 test-*
 
-xml/
+xml*/
 data/
 data
 ext
