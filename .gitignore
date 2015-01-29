@@ -42,3 +42,5 @@ repair
 repair-*
 testnav
 testnav-*
+
+*.sublime-*

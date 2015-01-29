@@ -1,4 +1,5 @@
-# IMPORT-DATA eval eval-size/*/*.txt
+# IMPORT-DATA eval eval-size/result.txt
+# IMPORT-DATA old eval-size-m/result.txt
 
 set terminal pdf size 48cm,27cm linewidth 2.0
 set output "sizes.pdf"
@@ -7,7 +8,7 @@ set pointsize 0.7
 
 set logscale x 1.00001
 set xrange [1:1.5]
-set yrange [0.8:1.1]
+set yrange [1:1.25]
 
 set grid xtics ytics
 
@@ -15,11 +16,11 @@ set key top left
 
 set title 'Comparison of RePair Combiner Minimum Merge Ratios'
 set xlabel 'Filename'
-set ylabel 'Compression ratio vs compression ratio for m=1.225'
+set ylabel 'Compression ratio vs minimum compression ratio'
 
 ## MULTIPLOT(file) SELECT minratio AS x, succinct*1.0/compressed / aggregate AS y, MULTIPLOT
 ## FROM eval JOIN
-## (SELECT succinct*1.0/compressed AS aggregate, MULTIPLOT as multi FROM eval WHERE minratio = 1.225 GROUP BY MULTIPLOT) avgt
+## (SELECT MIN(succinct*1.0/compressed) AS aggregate, MULTIPLOT as multi FROM eval  GROUP BY MULTIPLOT) avgt
 ## ON eval.MULTIPLOT = avgt.multi GROUP BY MULTIPLOT,x ORDER BY MULTIPLOT,x
 plot \
     'sizes-data.txt' index 0 title "file=xml/1998statistics.xml" with linespoints, \
