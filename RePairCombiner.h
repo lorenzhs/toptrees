@@ -35,6 +35,10 @@ class RePairCombiner {
 	struct Pair {
 		Pair(int parentId, int leftEdgeIndex) : parentId(parentId), leftEdgeIndex(leftEdgeIndex) {}
 		int parentId, leftEdgeIndex;
+
+		friend std::ostream &operator<<(std::ostream &os, const Pair &pair) {
+			return os << "(" << pair.parentId << ", " << pair.leftEdgeIndex << ")";
+		}
 	};
 
 public:
@@ -131,7 +135,7 @@ protected:
 		uint numPairs(0);
 		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
 			for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
-				assert((edge+1)->valid);
+				assert(edge->valid && (edge+1)->valid);
 				if (tree.nodes[edge->headNode].isLeaf() || tree.nodes[(edge+1)->headNode].isLeaf()) {
 					// We're only interested in merging if one is a leaf
 					Pair pair(nodeId, tree.edgeId(edge));
@@ -172,15 +176,17 @@ protected:
 				if (leftEdge > tree.nodes[pair.parentId].firstEdgeIndex) {
 					if (tree.edges[leftEdge - 1].valid && !queue.empty()) {
 						const uint hash = getRePairHash(&tree.edges[leftEdge - 1]);
-						auto *record = &records[hashMap.recordMap[hash]];
-						queue.decrementFrequency(record);
+						auto *rec = &records[hashMap.recordMap[hash]];
+						if (rec != record)
+							queue.decrementFrequency(rec);
 					}
 				}
 				if (rightEdge < tree.nodes[pair.parentId].lastEdgeIndex) {
 					if (tree.edges[rightEdge + 1].valid && !queue.empty()) {
 						const uint hash = getRePairHash(&tree.edges[rightEdge]);
-						auto *record = &records[hashMap.recordMap[hash]];
-						queue.decrementFrequency(record);
+						auto *rec = &records[hashMap.recordMap[hash]];
+						if (rec != record)
+							queue.decrementFrequency(rec);
 					}
 				}
 

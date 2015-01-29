@@ -33,15 +33,15 @@ struct Record {
 	std::vector<Pair> occurrences;
 
 	friend std::ostream &operator<<(std::ostream &os, const Record<Pair> &record) {
-		return os << "(" << record.frequency << "x" << record.hash << ")";
+		return os << "(" << record.frequency << "<" << record.occurrences.size() << "x" << record.hash << ")";
 	}
 };
 
 template <typename Pair>
 struct Records {
-	Records() : records(1) {}
+	Records() : records() { add(0); /* dummy for unordered_map stuff */ }
+
 	int add(uint hash) {
-		// add a dummy record for std::unordered_map stuff
 		records.emplace_back(Record<Pair>(hash));
 		return records.size()-1;
 	}
@@ -120,7 +120,10 @@ struct PriorityQueue {
 				lists[bucket - 1].insert(record);
 			}
 		} else {
-			frequentRecords.erase(record);
+			if (frequentRecords.erase(record) == 0) {
+				// Record wasn't there
+				return;
+			}
 			record->frequency--;
 			if (record->frequency < lists.size()) {
 				if (record->frequency >= 2) {
