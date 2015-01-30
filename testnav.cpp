@@ -84,8 +84,11 @@ int main(int argc, char **argv) {
 	cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
 	cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
 */
+
+	timer.reset();
 	PreorderTraversal<string> trav(dag);
-	trav.run();
+	long long maxTreeStackSize = trav.run();
+	cout << "Preorder traversal took " << timer.get() << "ms, max tree stack size = " << maxTreeStackSize << " Bytes" << endl;
 
 /*/
 

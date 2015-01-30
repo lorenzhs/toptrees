@@ -22,13 +22,13 @@ class Navigator {
 public:
 	using DAGType = BinaryDag<DataType>;
 	using DStackT = std::stack<NavigationRecord>;
-	using TStackT = std::stack<DStackT>;
+	using TStackT = std::deque<DStackT>;
 
-	Navigator(const DAGType &dag): dag(dag), dagStack(), treeStack() {
-		std::cout << dag << std::endl;
+	Navigator(const DAGType &dag): dag(dag), dagStack(), treeStack(), maxTreeStackSize(0) {
+		if (verbose) std::cout << dag << std::endl;
 
 		int nodeId = -1;
-		int nextNode = (int)dag.nodes.size() - 1; 
+		int nextNode = (int)dag.nodes.size() - 1;
 		while (nextNode > 0) {
 			dagStack.push(NavigationRecord(nextNode, nodeId, true));
 			nodeId = nextNode;
@@ -44,8 +44,8 @@ public:
 		if (treeStack.empty()) {
 			return false;
 		} else {
-			dagStack = treeStack.top();
-			treeStack.pop();
+			dagStack = treeStack.back();
+			treeStack.pop_back();
 			return true;
 		}
 	}
@@ -60,18 +60,14 @@ public:
 				(record.left && mergeType == HORZ_RIGHT_BBN) || // d from the left
 				mergeType == HORZ_NO_BBN ||  // type e, either side
 				(record.nodeId == (int)dag.nodes.size() - 1 && !record.left)) { // reached root from the right
-				//if (verbose) std::cout << "iL: true (n=" << record.nodeId << " p=" << record.parentId << " l="  << record.left << " mT=" << mergeType << ") "<< std::flush;
 				return true;
 			}
 
 			if (record.left && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
-				//if (verbose) std::cout << "iL: false (n=" << record.nodeId << " p=" << record.parentId << " l="  << record.left << " mT=" << mergeType << ") "<< std::flush;
 				return false;
 			}
-			//if (verbose) std::cout << "iL: up up and away (n=" << record.nodeId << " p=" << record.parentId << " l="  << record.left << " mT=" << mergeType << ") "<< std::endl;
 			stack.pop();
 		}
-		std::cout << "waah" << std::endl;
 		assert(false);
 		return false;
 	}
@@ -79,10 +75,10 @@ public:
 	bool firstChild() {
 		if (verbose) dumpDagStack();
 		if (isLeaf()) {
-			//std::cout << "fC: isLeaf. " << std::flush;
 			return false;
 		}
-		treeStack.push(dagStack);
+		treeStack.push_back(dagStack);
+		maxTreeStackSize = std::max(maxTreeStackSize, getTreeStackSize());
 		while (!dagStack.empty()) {
 			NavigationRecord record = dagStack.top();
 			MergeType mergeType = dag.nodes[record.parentId].mergeType;
@@ -109,22 +105,21 @@ public:
 		if (verbose) dumpDagStack();
 
 		DStackT stack(dagStack);
-		//bool alreadyHadCDE(false);
 		while (!stack.empty()) {
-			NavigationRecord record = stack.top();
+			NavigationRecord &record = stack.top();
 			MergeType mergeType = dag.nodes[record.parentId].mergeType;
 			if (record.left && (mergeType == HORZ_LEFT_BBN || mergeType == HORZ_RIGHT_BBN || mergeType == HORZ_NO_BBN)) {
 				break;
 			}
 			if ((!record.left) && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
-				// a or b from right //, or from either side after CDE => abort
+				// a or b from right => abort
 				return false;
 			}
 
-			//alreadyHadCDE |= (mergeType == HORZ_LEFT_BBN || mergeType == HORZ_RIGHT_BBN || mergeType == HORZ_NO_BBN);
 			stack.pop();
 		}
 
+		// No more next siblings in the tree, we've exhausted the stack
 		if (stack.empty()) {
 			return false;
 		}
@@ -154,9 +149,23 @@ public:
 		std::cout << std::endl;
 	}
 
+	long long getTreeStackSize() const {
+		long long treeStackSize(0);
+		for (const DStackT &stack : treeStack) {
+			treeStackSize += stack.size();
+		}
+		treeStackSize *= sizeof(DStackT::value_type);
+		return treeStackSize;
+	}
+
+	long long getMaxTreeStackSize() const {
+		return maxTreeStackSize;
+	}
+
 private:
 	const DAGType &dag;
 	DStackT dagStack;
 	TStackT treeStack;
+	long long maxTreeStackSize;
 	static const bool verbose = false;
 };
