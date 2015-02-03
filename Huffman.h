@@ -108,6 +108,23 @@ public:
 			bits += frequencies[i] * codes[i].size();
 		}
 		bits += (symbols.size() - 1) * 2;
+		//bits += getBitsForTree();
+		return bits;
+	}
+
+	/// Get the number of bits to encode the *structure* of the huffman table/tree
+	/// Codes only code lengths (in unary)
+	long long getBitsForTree() const {
+		long long bits(0);
+		size_t maxLen(0);
+		for (uint i = 0; i < codes.size(); ++i) {
+			maxLen = (codes[i].size() > maxLen) ? codes[i].size() : maxLen;
+		}
+		bits += 2*log2(maxLen) + 1; // code maxLen using gamma coding
+		for (uint i = 0; i < codes.size(); ++i) {
+			auto number = maxLen - codes[i].size();
+			bits += number + 1; // code in unary
+		}
 		return bits;
 	}
 
