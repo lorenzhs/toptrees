@@ -86,5 +86,12 @@ int main(int argc, char **argv) {
 	totalSize += compress<bool, int>(bpstring, "tree structure", false, verbose);
 	totalSize += compress<unsigned char, int>(labelnames, "labels", verbose);
 	cout << "Output file needs " << totalSize << " bits (" << (totalSize + 7)/8 << " Bytes)" << endl;
+
+	cout << "RESULT"
+		 << " file=" << filename
+		 << " compressed=" << totalSize
+		 << " bpstringbits=" << bpstring.size()
+		 << " labelstringits=" << labelnames.size() * 8
+		 << endl;
 	return 0;
 }
