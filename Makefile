@@ -118,6 +118,9 @@ testnavDebug: testnav.cpp *.h
 testnavNoDebug: testnav.cpp *.h
 	$(CC) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
 
+strip: strip.cpp *.h
+	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o strip$(EXTRA) strip.cpp
+
 #RULES
 
 clean:

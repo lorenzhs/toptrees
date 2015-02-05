@@ -126,26 +126,28 @@ struct XmlWriter<OrderedTree<NodeType, EdgeType>> {
 	/// \param labels the nodes' labels
 	/// \param filename filename to use. Directory must exist.
 	template <typename DataType>
-	static void write(const OrderedTree<NodeType, EdgeType> &tree, const LabelsT<DataType> &labels, const string &filename) {
+	static void write(const OrderedTree<NodeType, EdgeType> &tree, const LabelsT<DataType> &labels, const string &filename, const bool indent=true) {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());
 
 		const std::function<void (const int, const int)> writeNode([&](const int nodeId, const int depth) {
-			for (int i = 0; i < depth; ++i) out << " ";
+			if (indent) for (int i = 0; i < depth; ++i) out << " ";
 			out << "<" << labels[nodeId] << ">";
 			if (tree.nodes[nodeId].isLeaf()) {
-				out << "</" << labels[nodeId] << ">" << endl;
+				out << "</" << labels[nodeId] << ">";
+				if (indent) out << endl;
 				return;
 			}
-			out << endl;
+			if (indent) out << endl;
 
 			FORALL_OUTGOING_EDGES(tree, nodeId, edge) {
 				if (edge->valid)
 					writeNode(edge->headNode, depth + 1);
 			}
 
-			for (int i = 0; i < depth; ++i) out << " ";
-			out << "</" << labels[nodeId] << ">" << endl;
+			if (indent) for (int i = 0; i < depth; ++i) out << " ";
+			out << "</" << labels[nodeId] << ">";
+			if (indent) out << endl;
 		});
 
 		writeNode(0, 0);
