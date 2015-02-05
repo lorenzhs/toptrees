@@ -41,6 +41,7 @@ int main(int argc, char **argv) {
 		string arg = argParser.get<string>("r", "");
 		filename = (arg == "") ? filename : arg;
 	}
+	const bool print = argParser.isSet("p");
 
 	Labels<string> labels;
 	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
@@ -86,7 +87,7 @@ int main(int argc, char **argv) {
 */
 
 	timer.reset();
-	PreorderTraversal<string> trav(dag);
+	PreorderTraversal<string> trav(dag, print);
 	long long maxTreeStackSize = trav.run();
 	cout << "Preorder traversal took " << timer.get() << "ms, max tree stack size = " << maxTreeStackSize << " Bytes" << endl;
 

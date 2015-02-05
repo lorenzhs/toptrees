@@ -7,31 +7,49 @@
 template <typename DataType>
 class PreorderTraversal {
 public:
-	PreorderTraversal(const BinaryDag<DataType> &dag) : nav(dag) {}
+	PreorderTraversal(const BinaryDag<DataType> &dag, const bool print=false) : nav(dag), print(print) {}
 
 	long long run() {
-		traverse();
+		openTag(0);
+		traverse(0);
 		return nav.getMaxTreeStackSize();
 	}
 
 protected:
-	void traverse() {
+	void openTag(int depth=0, const bool newline=true) {
+		if (!print) return;
+		for (int i = 0; i < depth; ++i) cout << " ";
+		std::cout << "<" << *nav.getLabel() << ">";
+		if (newline) std::cout << std::endl;
+	}
+
+	void closeTag(int depth=0, const bool indent=true) {
+		if (!print) return;
+		if (indent) for (int i = 0; i < depth; ++i) cout << " ";
+		std::cout << "</" << *nav.getLabel() << ">" << std::endl;
+	}
+
+	void traverse(int depth=0) {
 		if (!nav.isLeaf()) {
 			nav.firstChild();
-		} else if (nav.nextSibling()) {
-			// already moved there, nothing to do here
+			openTag(++depth, !nav.isLeaf());
 		} else {
-			while (!nav.nextSibling()) {
-				bool hasParent = nav.parent();
-				if (hasParent) {
-				} else {
-					return;
+			closeTag(depth, !nav.isLeaf());
+			if (nav.nextSibling()) {
+				openTag(depth, !nav.isLeaf());
+			} else {
+				while (!nav.nextSibling()) {
+					bool hasParent = nav.parent();
+					if (depth > 0) closeTag(--depth);
+					if (!hasParent) return;
 				}
+				openTag(depth);
 			}
 		}
-		traverse();
+		traverse(depth);
 	}
 
 protected:
-	Navigator<DataType> nav;	
+	Navigator<DataType> nav;
+	const bool print;
 };

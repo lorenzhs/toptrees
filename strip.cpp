@@ -21,6 +21,7 @@ int main(int argc, char **argv) {
 	ArgParser argParser(argc, argv);
 	string filename = argParser.get<string>("i", "data/1998statistics.xml");
 	string outputfolder = argParser.get<string>("o", "/tmp");
+	const bool indent = argParser.isSet("p");
 
 	// Read input file
 	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
@@ -33,7 +34,7 @@ int main(int argc, char **argv) {
 	Timer timer;
 	auto pos = filename.find_last_of("/\\");
 	string outname = outputfolder + "/" + filename.substr(pos + 1) + ".stripped";
-	XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(t, labels, outname, false);
+	XmlWriter<OrderedTree<TreeNode, TreeEdge>>::write(t, labels, outname, indent);
 
 	cout << "Wrote trimmed XML file in " << timer.getAndReset() << "ms: " << t.summary() << endl;
 
