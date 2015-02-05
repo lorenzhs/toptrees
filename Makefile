@@ -7,7 +7,7 @@ FLAGS=-O3 -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
-EXECS=test testTT randomTree randomEval randomVerify coding repair testnav
+EXECS=test testTT randomTree randomEval randomVerify coding repair testnav strip
 #EXECS
 
 all: $(EXECS)
