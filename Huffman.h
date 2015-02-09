@@ -107,6 +107,8 @@ public:
 		for (uint i = 0; i < frequencies.size(); ++i) {
 			bits += frequencies[i] * codes[i].size();
 		}
+		// For each inner node, store whether left and right children are inner nodes or leaves
+		// As we're dealing with a binary tree, this suffices.
 		bits += (symbols.size() - 1) * 2;
 		//bits += getBitsForTree();
 		return bits;
