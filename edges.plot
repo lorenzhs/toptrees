@@ -8,7 +8,6 @@ set pointsize 0.7
 
 set logscale x 1.00001
 set xrange [1:1.5]
-set yrange [1:1.25]
 
 set grid xtics ytics
 
@@ -18,9 +17,9 @@ set title 'Comparison of RePair Combiner Minimum Merge Ratios'
 set xlabel 'Filename'
 set ylabel 'Edge compression ratio vs minimum edge compression ratio'
 
-## MULTIPLOT(file) SELECT minratio AS x, origEdges*1.0/edges / aggregate AS y, MULTIPLOT
+## MULTIPLOT(file) SELECT minratio AS x, 2 - 1.0*edges / refval AS y, MULTIPLOT
 ## FROM eval JOIN
-## (SELECT MIN(origEdges*1.0/edges) AS aggregate, MULTIPLOT as multi FROM eval GROUP BY MULTIPLOT) avgt
+## (SELECT edges AS refval, MULTIPLOT as multi FROM eval WHERE minratio=1.25 GROUP BY MULTIPLOT) avgt
 ## ON eval.MULTIPLOT = avgt.multi GROUP BY MULTIPLOT,x ORDER BY MULTIPLOT,x
 plot \
     'edges-data.txt' index 0 title "file=xml/1998statistics.xml" with linespoints, \
