@@ -4,30 +4,13 @@
 #include <functional>
 #include <vector>
 
+#include "Nodes.h"
 #include "Labels.h"
 
 using std::function;
 using std::cout;
 using std::endl;
 
-/// Cluster type for a top tree, holding a pointer to some data
-template <typename DataType>
-struct Cluster {
-	Cluster() : mergeType(NO_MERGE), left(-1), right(-1), label(NULL) {}
-	Cluster(int l, int r, MergeType t) : mergeType(t), left(l), right(r), label(NULL) {}
-	MergeType mergeType;
-	int left, right;
-	const DataType *label;
-
-	friend std::ostream &operator<<(std::ostream &os, const Cluster &cluster) {
-		os << "(" << cluster.left << "," << cluster.right << "/" << cluster.mergeType << "; ";
-		if (cluster.label == NULL)
-			os << "NULL";
-		else
-			os << *cluster.label;
-		return os << ")";
-	}
-};
 
 /// Top tree data structure
 template <typename DataType>
