@@ -7,18 +7,18 @@
 #include "Common.h"
 
 // Data Structures
-#include "BinaryDag.h"
 #include "Edges.h"
 #include "Labels.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
+#include "TopDag.h"
 #include "TopTree.h"
 
 // Algorithms
 #include "RandomTree.h"
-#include "DagBuilder.h"
+#include "TopDagUnpacker.h"
 #include "RePairCombiner.h"
-#include "TopTreeConstructor.h"
+#include "TopDagConstructor.h"
 
 // Utils
 #include "ArgParser.h"
@@ -78,13 +78,14 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 		debugInfo.ioDuration = timer.getAndReset();
 	}
 
-	TopTree<int> topTree(tree._numNodes, labels);
+	const int treeEdges = tree._numEdges;
+	TopDag<int> dag(tree._numNodes, labels);
 	if (useRepair) {
-		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-		topTreeConstructor.construct(&debugInfo);
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topDagConstructor(tree, dag, verbose, extraVerbose);
+		topDagConstructor.construct(&debugInfo);
 	} else {
-		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-		topTreeConstructor.construct(&debugInfo);
+		TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, int> topDagConstructor(tree, dag, verbose, extraVerbose);
+		topDagConstructor.construct(&debugInfo);
 	}
 
 	tree.clear();  // free memory
@@ -95,26 +96,22 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 
 	debugInfo.mergeDuration = timer.get();
 	if (verbose)
-		cout << "Top tree construction took " << timer.get() << "ms" << endl;
+		cout << "Top DAG construction took " << timer.get() << "ms" << endl;
 	timer.reset();
-
+/*
 	debugInfo.topTreeHeight = topTree.height();
 	debugInfo.topTreeAvgDepth = topTree.avgDepth();
 	debugInfo.topTreeMinDepth = topTree.minDepth();
 	debugInfo.statDuration += timer.getAndReset();
-
-	BinaryDag<int> dag;
-	DagBuilder<int> builder(topTree, dag);
-	builder.createDag();
+*/
 
 	const int edges = dag.countEdges();
-	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const double percentage = (edges * 100.0) / treeEdges;
 	const double ratio = ((int)(1000 / percentage)) / 10.0;
 	debugInfo.dagDuration = timer.get();
 	if (verbose)
 		cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-			 << "% of original tree, " << ratio << ":1)" << endl << "Top dag construction took "
-			 << timer.get() << "ms" << endl;
+			 << "% of original tree, " << ratio << ":1)" << endl;
 
 	debugInfo.numDagEdges = edges;
 	debugInfo.numDagNodes = dag.nodes.size() - 1;

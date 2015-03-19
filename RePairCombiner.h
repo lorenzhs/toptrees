@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Timer.h"
-#include "TopTree.h"
+#include "TopDag.h"
 #include "Statistics.h"
 
 #include "RePair.h"
@@ -44,11 +44,11 @@ class RePairCombiner {
 public:
 	/// Instantiate a top tree constructor
 	/// \param tree the tree which shall be transformed. WILL BE MODIFIED
-	/// \param topTree the output top tree
+	/// \param topDag the output top tree
 	/// \param verbose whether to print detailed information about the iterations
 	/// \param extraVerbose whether to print the tree in each iteration
-	RePairCombiner(TreeType &tree, TopTree<DataType> &topTree, const bool verbose = true, const bool extraVerbose = false)
-		: tree(tree), topTree(topTree), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes), hasher(tree, topTree, nodeIds) {
+	RePairCombiner(TreeType &tree, TopDag<DataType> &topDag, const bool verbose = true, const bool extraVerbose = false)
+		: tree(tree), topDag(topDag), verbose(verbose), extraVerbose(extraVerbose), nodeIds(tree._numNodes), hasher(tree, topDag, nodeIds) {
 			for (int i = 0; i < tree._numNodes; ++i) {
 				nodeIds[i] = i;
 			}
@@ -63,7 +63,7 @@ public:
 
 protected:
 	void mergeCallback(const int u, const int v, const int n, const MergeType type) {
-		nodeIds[n] = topTree.addCluster(nodeIds[u], nodeIds[v], type);
+		nodeIds[n] = topDag.addCluster(nodeIds[u], nodeIds[v], type);
 		hasher.hashNode(n);
 	}
 
@@ -298,7 +298,7 @@ protected:
 	}
 
 	TreeType &tree;
-	TopTree<DataType> &topTree;
+	TopDag<DataType> &topDag;
 	const bool verbose, extraVerbose;
 	vector<int> nodeIds;
 	NodeHasher<TreeType, DataType> hasher;

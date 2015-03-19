@@ -3,7 +3,7 @@
 #include <cassert>
 #include <stack>
 
-#include "BinaryDag.h"
+#include "TopDag.h"
 
 struct NavigationRecord {
 	int nodeId;
@@ -20,7 +20,7 @@ struct NavigationRecord {
 template <typename DataType>
 class Navigator {
 public:
-	using DAGType = BinaryDag<DataType>;
+	using DAGType = TopDag<DataType>;
 	using DStackT = std::stack<NavigationRecord>;
 	using TStackT = std::deque<DStackT>;
 

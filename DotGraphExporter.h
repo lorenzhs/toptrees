@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "BinaryDag.h"
+#include "TopDag.h"
 #include "OrderedTree.h"
 #include "TopTree.h"
 
@@ -86,11 +86,11 @@ protected:
 
 
 template <typename DataType>
-struct BinaryDagDotGraphExporter : DotGraphExporter<BinaryDag<DataType>> {
+struct TopDagDotGraphExporter : DotGraphExporter<TopDag<DataType>> {
 	/// write a tree's dot graph to a file
 	/// \param tree the tree to write
 	/// \param filename output filename (path must exist)
-	void write(const BinaryDag<DataType> &dag, const string &filename) {
+	void write(const TopDag<DataType> &dag, const string &filename) {
 		alreadyProcessed.assign(dag.nodes.size(), false);
 
 		std::ofstream out(filename);
@@ -101,7 +101,7 @@ struct BinaryDagDotGraphExporter : DotGraphExporter<BinaryDag<DataType>> {
 	}
 protected:
 	/// iteratively write the tree to an output stream
-	void writeNode(std::ostream &out, const BinaryDag<DataType> &dag, const int nodeId) {
+	void writeNode(std::ostream &out, const TopDag<DataType> &dag, const int nodeId) {
 		if (alreadyProcessed[nodeId]) return;
 		alreadyProcessed[nodeId] = true;
 		const auto &node = dag.nodes[nodeId];

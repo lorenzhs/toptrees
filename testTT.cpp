@@ -1,17 +1,15 @@
 #include <iostream>
 #include <string>
 
-#include "BinaryDag.h"
 #include "Edges.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
-
-#include "TopTree.h"
+#include "TopDag.h"
 #include "XML.h"
 #include "Timer.h"
 
-#include "DagBuilder.h"
-#include "TopTreeConstructor.h"
+#include "TopDagUnpacker.h"
+#include "TopDagConstructor.h"
 #include "RePairCombiner.h"
 #include "TopTreeUnpacker.h"
 
@@ -42,38 +40,31 @@ int main(int argc, char **argv) {
 
 	// Prepare for construction of top tree
 	const int size = t._numNodes;
-	TopTree<string> topTree(size, labels);
+	TopDag<string> dag(size, labels);
 	timer.reset();
 
 	// construct top tree
 	if (useRePair) {
-		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
-		topTreeConstructor.construct();
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
+		topDagConstructor.construct();
 	} else {
-		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, string> topTreeConstructor(t, topTree);
-		topTreeConstructor.construct();
+		TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
+		topDagConstructor.construct();
 	}
 
 	t.clear();
 
-	cout << "Top tree construction took " << timer.getAndReset() << "ms, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
-
-	// Construct top DAG
-	BinaryDag<string> dag;
-	DagBuilder<string> builder(topTree, dag);
-	builder.createDag();
+	cout << "Top DAG construction took " << timer.getAndReset() << "ms" << endl;
+	//", avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
 
 	cout << "Top DAG has " << dag.nodes.size() - 1 << " nodes, " << dag.countEdges() << " edges" << endl;
-	cout << "Top DAG construction took in " << timer.getAndReset() << "ms" << endl;
 
 	// Unpack top DAG to recoveredTopTree
 	TopTree<string> recoveredTopTree(size);
-	BinaryDagUnpacker<string> dagUnpacker(dag, recoveredTopTree);
+	TopDagUnpacker<string> dagUnpacker(dag, recoveredTopTree);
 	dagUnpacker.unpack();
 
-	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, has " << recoveredTopTree.clusters.size()
-		 << " clusters" << endl
-		 << "Equality check... " << topTree.isEqual(recoveredTopTree) << endl;
+	cout << "Unpacked Top DAG in " << timer.getAndReset() << "ms, top tree has " << recoveredTopTree.clusters.size() << " clusters" << endl;
 
 	// unpack recovered top tree
 	OrderedTree<TreeNode, TreeEdge> recoveredTree;

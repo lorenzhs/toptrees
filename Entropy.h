@@ -5,7 +5,7 @@
 #include <sstream>
 #include <unordered_map>
 
-#include "BinaryDag.h"
+#include "TopDag.h"
 #include "Labels.h"
 
 #include "Huffman.h"
@@ -141,10 +141,10 @@ struct LabelDataEntropy<std::string> {
 
 enum NodeEncoding { IMPLICIT, MISSING };
 
-/// Calculate the different entropies of a BinaryDAG - its structure, its merge types, and its labels
+/// Calculate the different entropies of a TopDag - its structure, its merge types, and its labels
 template <typename DataType>
 struct DagEntropy {
-	DagEntropy(const BinaryDag<DataType> &dag, const Labels<DataType> &labels, BitWriter &writer) :
+	DagEntropy(const TopDag<DataType> &dag, const Labels<DataType> &labels, BitWriter &writer) :
 		dagStructureEntropy(),
 		dagPointerEntropy(),
 		mergeEntropy(),
@@ -321,5 +321,5 @@ struct DagEntropy {
 	BlockedHuffmanWriter<char, uint16_t, 4, 16> mergeWriter;
 	HuffmanWriter<std::string::value_type> labelWriter;
 
-	const BinaryDag<DataType> &dag;
+	const TopDag<DataType> &dag;
 };

@@ -24,8 +24,8 @@ testNoDebug: test.cpp *.h
 testPGO: test.cpp *.h
 	rm -f test.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
-	./test-p$(EXTRA) data/dblp_small.xml
-	./test-p$(EXTRA) -r data/dblp_small.xml
+	./test-p$(EXTRA) data/others/dblp_small.xml
+	./test-p$(EXTRA) -r data/others/dblp_small.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o test-p$(EXTRA) test.cpp
 
 testTT: testTT.cpp *.h
@@ -90,8 +90,8 @@ codingNoDebug: coding.cpp *.h
 codingPGO: coding.cpp *.h
 	rm -f coding.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
-	./coding-p$(EXTRA) data/dblp_small.xml
-	./coding-p$(EXTRA) -r data/dblp_small.xml
+	./coding-p$(EXTRA) data/others/dblp_small.xml
+	./coding-p$(EXTRA) -r data/others/dblp_small.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
 
 repair: repair.cpp *.h
@@ -106,7 +106,7 @@ repairNoDebug: repair.cpp *.h
 repairPGO: repair.cpp *.h
 	rm -f repair.gcda
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
-	./repair-p$(EXTRA) data/dblp_small.xml
+	./repair-p$(EXTRA) data/others/dblp_small.xml
 	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
 
 testnav: testnav.cpp *.h

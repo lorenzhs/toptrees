@@ -8,7 +8,7 @@
 class FileWriter {
 public:
 	template <typename DataType>
-	static long long write(const BinaryDag<DataType> &dag, const Labels<DataType> &labels, const std::string &fn, const bool verbose = true) {
+	static long long write(const TopDag<DataType> &dag, const Labels<DataType> &labels, const std::string &fn, const bool verbose = true) {
 		Timer timer;
 
 		BitWriter writer(fn);

@@ -3,11 +3,12 @@
 #include <iostream>
 
 #include "Navigation.h"
+#include "TopDag.h"
 
 template <typename DataType>
 class PreorderTraversal {
 public:
-	PreorderTraversal(const BinaryDag<DataType> &dag, const bool print=false) : nav(dag), print(print) {}
+	PreorderTraversal(const TopDag<DataType> &dag, const bool print=false) : nav(dag), print(print) {}
 
 	long long run() {
 		openTag(0);

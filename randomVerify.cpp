@@ -7,18 +7,18 @@
 #include "Common.h"
 
 // Data Structures
-#include "BinaryDag.h"
 #include "Edges.h"
 #include "Labels.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
+#include "TopDag.h"
 #include "TopTree.h"
 
 // Algorithms
 #include "RandomTree.h"
-#include "DagBuilder.h"
+#include "TopDagUnpacker.h"
 #include "RePairCombiner.h"
-#include "TopTreeConstructor.h"
+#include "TopDagConstructor.h"
 #include "TopTreeUnpacker.h"
 
 // Utils
@@ -82,24 +82,31 @@ void runIteration(const int iteration, RandomGeneratorType &generator, const uin
 	debugInfo.statDuration = timer.getAndReset();
 
 	// Construct top tree
-	TopTree<int> topTree(tree._numNodes, labels);
+	TopDag<int> dag(tree._numNodes, labels);
 	if (useRePair) {
-		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-		topTreeConstructor.construct(&debugInfo);
+		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, int> topDagConstructor(tree, dag, verbose, extraVerbose);
+		topDagConstructor.construct(&debugInfo);
 	} else {
-		TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree, verbose, extraVerbose);
-		topTreeConstructor.construct(&debugInfo);
+		TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, int> topDagConstructor(tree, dag, verbose, extraVerbose);
+		topDagConstructor.construct(&debugInfo);
 	}
 
 	debugInfo.mergeDuration = timer.get();
 	if (verbose)
-		cout << "Top tree construction took " << timer.get() << "ms" << endl;
+		cout << "Top DAG construction took " << timer.get() << "ms" << endl;
 	timer.reset();
 
+/*
 	debugInfo.topTreeHeight = topTree.height();
 	debugInfo.topTreeAvgDepth = topTree.avgDepth();
 	debugInfo.topTreeMinDepth = topTree.minDepth();
 	debugInfo.statDuration += timer.getAndReset();
+*/
+
+	// Unpack top DAG to topTree
+	TopTree<int> topTree(size + 1);
+	TopDagUnpacker<int> dagUnpacker(dag, topTree);
+	dagUnpacker.unpack();
 
 	// Unpack top tree
 	OrderedTree<TreeNode, TreeEdge> unpackedTree;

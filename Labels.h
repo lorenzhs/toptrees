@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <random>
 #include <vector>
 #include <unordered_map>

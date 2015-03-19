@@ -4,8 +4,8 @@
 
 template <typename TreeType, typename DataType>
 struct NodeHasher {
-	NodeHasher(TreeType &tree, const TopTree<DataType> &topTree, const std::vector<int> &nodeIds) :
-		tree(tree), topTree(topTree), nodeIds(nodeIds), cache(tree._numNodes * 2, 0) {}
+	NodeHasher(TreeType &tree, const TopDag<DataType> &topDag, const std::vector<int> &nodeIds) :
+		tree(tree), topDag(topDag), nodeIds(nodeIds), cache(tree._numNodes * 2, 0) {}
 
 	void prepare() {
 		for (int i = 0; i < tree._numNodes; ++i) {
@@ -19,26 +19,27 @@ struct NodeHasher {
 	}
 
 	uint hashCluster(const int clusterId) {
-		assert(clusterId < (int)topTree.clusters.size());
+		assert(clusterId < (int)topDag.clusterToDag.size());
 
 		uint hash = 0;
-		const Cluster<DataType> &cluster = topTree.clusters[clusterId];
+		const int nodeId = topDag.clusterToDag[clusterId];
+		const DagNode<DataType> &dagNode = topDag.nodes[nodeId];
 
 		// Hash merge type
-		boost_hash_combine(hash, (int)cluster.mergeType);
+		boost_hash_combine(hash, (int)dagNode.mergeType);
 
 		// Hash label
-		if (cluster.label != NULL) {
-			assert(cluster.left < 0 && cluster.right < 0);
-			boost_hash_combine<DataType>(hash, *cluster.label);
+		if (dagNode.label != NULL) {
+			assert(dagNode.left < 0 && dagNode.right < 0);
+			boost_hash_combine<DataType>(hash, *dagNode.label);
 		} else {
-			assert(cluster.left >= 0 && cluster.right >= 0);
-			assert(cache[cluster.left] > 0 && cache[cluster.right] > 0);
-			boost_hash_combine(hash, cache[cluster.left]);
-			boost_hash_combine(hash, cache[cluster.right]);
+			assert(dagNode.left >= 0 && dagNode.right >= 0);
+			assert(cache[dagNode.left] > 0 && cache[dagNode.right] > 0);
+			boost_hash_combine(hash, cache[dagNode.left]);
+			boost_hash_combine(hash, cache[dagNode.right]);
 		}
 
-		cache[clusterId] = hash;
+		cache[nodeId] = hash;
 		return hash;
 	}
 
@@ -52,7 +53,7 @@ struct NodeHasher {
 	}
 
 	TreeType &tree;
-	const TopTree<DataType> &topTree;
+	const TopDag<DataType> &topDag;
 	const std::vector<int> &nodeIds;
 	std::vector<uint> cache;
 };

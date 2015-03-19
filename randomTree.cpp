@@ -1,18 +1,18 @@
 #include <iostream>
 
 // Data Structures
-#include "BinaryDag.h"
 #include "Edges.h"
 #include "Labels.h"
 #include "Nodes.h"
 #include "OrderedTree.h"
+#include "TopDag.h"
 #include "TopTree.h"
 
 // Algorithms
-#include "DagBuilder.h"
+#include "TopDagUnpacker.h"
 #include "DotGraphExporter.h"
 #include "RandomTree.h"
-#include "TopTreeConstructor.h"
+#include "TopDagConstructor.h"
 
 // Utils
 #include "ArgParser.h"
@@ -87,49 +87,31 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	TopTree<int> topTree(tree._numNodes, labels);
-	TopTreeConstructor<OrderedTree<TreeNode, TreeEdge>, int> topTreeConstructor(tree, topTree);
+	const int treeEdges = tree._numEdges;
+	TopDag<int> dag(tree._numNodes, labels);
+	TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, int> topDagConstructor(tree, dag);
 
 	timer.reset();
-	topTreeConstructor.construct();
-	if (verbose) cout << "Top tree construction took " << timer.get() << "ms" << endl;
+	topDagConstructor.construct();
+	if (verbose) cout << "Top DAG construction took " << timer.get() << "ms" << endl;
 	timer.reset();
-
-	if (dump) {
-		if (size <= 10000) {
-			TopTreeDotGraphExporter<int>().write(topTree, "/tmp/toptree.dot", topTree.clusters.size() - 1);
-			if (verbose) cout << "Wrote DOT file in " << timer.get() << "ms" << endl;
-			timer.reset();
-		}
-
-		if (size <= 1000) {
-			TopTreeDotGraphExporter<int>::drawSvg("/tmp/toptree.dot", "/tmp/toptree.svg");
-			if (verbose) cout << "Graphed DOT file in " << timer.get() << "ms" << endl;
-			timer.reset();
-		}
-	}
-
-	BinaryDag<int> dag;
-	DagBuilder<int> builder(topTree, dag);
-	builder.createDag();
 
 	const int edges = dag.countEdges();
-	const double percentage = (edges * 100.0) / topTree.numLeaves;
+	const double percentage = (edges * 100.0) / treeEdges;
 	const double ratio = ((int)(1000 / percentage)) / 10.0;
 	if (verbose)
 		cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-			 << "% of original tree, " << ratio << ":1)" << endl
-			 << "Top dag construction took in " << timer.get() << "ms" << endl;
+			 << "% of original tree, " << ratio << ":1)" << endl;
 
 	if (dump) {
 		if (size <= 10000) {
-			BinaryDagDotGraphExporter<int>().write(dag, "/tmp/topdag.dot");
+			TopDagDotGraphExporter<int>().write(dag, "/tmp/topdag.dot");
 			if (verbose) cout << "Wrote DOT file in " << timer.get() << "ms" << endl;
 			timer.reset();
 		}
 
 		if (size <= 1000) {
-			BinaryDagDotGraphExporter<int>::drawSvg("/tmp/topdag.dot", "/tmp/topdag.svg");
+			TopDagDotGraphExporter<int>::drawSvg("/tmp/topdag.dot", "/tmp/topdag.svg");
 			if (verbose) cout << "Graphed DOT file in " << timer.get() << "ms" << endl;
 			timer.reset();
 		}
