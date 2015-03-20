@@ -3,7 +3,7 @@ GCC=g++
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold
 BASEFLAGS=-std=c++11 -Wall -Wextra -Werror
-FLAGS=-O3 -ffast-math -flto
+FLAGS=-Ofast -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
@@ -11,6 +11,8 @@ EXECS=test testTT randomTree randomEval randomVerify coding repair testnav strip
 #EXECS
 
 all: $(EXECS)
+
+pgo: testPGO randomEvalPGO randomVerifyPGO codingPGO repairPGO
 
 test: test.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
