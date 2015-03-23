@@ -135,11 +135,12 @@ protected:
 		// Populate the HashMap with the pairs
 		uint numPairs(0);
 		for (int nodeId = 0; nodeId < tree._numNodes; ++nodeId) {
-			for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
+			for (int edgeId = tree.nodes[nodeId].firstEdgeIndex, stop = tree.nodes[nodeId].lastEdgeIndex; edgeId < stop; ++edgeId) {
+				EdgeType *edge = tree.edges.data() + edgeId;
 				assert(edge->valid && (edge+1)->valid);
 				if (tree.nodes[edge->headNode].isLeaf() || tree.nodes[(edge+1)->headNode].isLeaf()) {
 					// We're only interested in merging if one is a leaf
-					Pair pair(nodeId, tree.edgeId(edge));
+					Pair pair(nodeId, edgeId);
 					hashMap.add(getRePairHash(edge), pair);
 					++numPairs;
 				}
