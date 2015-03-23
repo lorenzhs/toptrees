@@ -512,6 +512,39 @@ public:
 				 << timer.get() << "ms" << endl;
 	}
 
+	/// Do an inplace compaction of only the dirty vertices
+	/// This is faster than rebuilding compaction.
+	void inplaceCompact(std::vector<bool> &dirty, const bool verbose = true) {
+		Timer timer;
+		int count = 0;
+		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
+			if (likely(!dirty[nodeId])) continue;
+			NodeType &node = nodes[nodeId];
+			// While maybe a bit counterintuitive at first, this check speeds thing up because
+			// we don't need to do all the other more expensive checks for nodes without children
+			if (!node.hasChildren()) continue;
+			int freeEdgeId = node.firstEdgeIndex;
+			for (int edgeId = node.firstEdgeIndex; edgeId <= node.lastEdgeIndex; ++edgeId) {
+				EdgeType *edge = edges.data() + edgeId;
+				if (!edge->valid) continue;
+				if (edgeId != freeEdgeId) {
+					// edges are trivially copyable
+					std::memcpy(edges.data() + freeEdgeId, edge, sizeof(EdgeType));
+					edge->valid = false;
+					count++;
+				}
+				freeEdgeId++;
+			}
+			for (int edgeId = freeEdgeId; edgeId <= node.lastEdgeIndex; ++edgeId) {
+				edges[edgeId].valid = false;
+			}
+			node.lastEdgeIndex = freeEdgeId - 1;
+		}
+		if (verbose)
+			cout << "Inplace compaction moved " << count << " edges (" << (count * 100.0 / _numEdges) << "%) in "
+				 << timer.get() << "ms" << endl;
+	}
+
 	// for statistics, mainly
 
 	/// Perform a left fold over each node's children in post-order

@@ -88,6 +88,9 @@ protected:
 			if (verbose) cout << "It. " << std::setw(2) << iteration << ": merging horz… " << flush;
 			if (extraVerbose) cout << endl << tree.shortString() << endl;
 
+			// It is faster to reset all of them than flip the individual bits
+			dirty.assign(tree._numNodes, false);
+
 			const int oldNumEdges = tree._numEdges;
 			// First, do RePair merges, then whatever else is possible
 			horizontalMergesRePair(iteration);
@@ -99,7 +102,7 @@ protected:
 
 			// We need to compact here because the horizontal merges don't but
 			// the vertical merges need correct edge counts, so this is important!
-			tree.inplaceCompact(false);
+			tree.inplaceCompact(dirty, false);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
 			verticalMerges(iteration);
@@ -195,8 +198,9 @@ protected:
 				tree.nodes[right].lastMergedIn = iteration;
 				MergeType mergeType;
 				int newNode;
-				tree.mergeSiblings(&tree.edges[leftEdge], &tree.edges[rightEdge], newNode, mergeType);
+				tree.mergeSiblings(tree.edges.data() + leftEdge, tree.edges.data() + rightEdge, newNode, mergeType);
 				mergeCallback(tree.edges[leftEdge].headNode, tree.edges[rightEdge].headNode, newNode, mergeType);
+				dirty[pair.parentId] = true;
 			}
 		}
 	}
@@ -240,6 +244,7 @@ protected:
 					tree.nodes[right].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
 					mergeCallback(left, right, newNode, mergeType);
+					dirty[nodeId] = true;
 					++edgeNum;
 				}
 			}
@@ -300,4 +305,5 @@ protected:
 	const bool verbose, extraVerbose;
 	vector<int> nodeIds;
 	NodeHasher<TreeType, DataType> hasher;
+	vector<bool> dirty;
 };
