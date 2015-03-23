@@ -81,9 +81,7 @@ protected:
 
 			// We need to compact here because the horizontal merges don't but
 			// the vertical merges need correct edge counts, so this is important!
-			// And it turns out that rebuild compation is faster than inplace,
-			// maybe because of subsequent cache efficiency?
-			tree.compact(false);
+			tree.inplaceCompact(false);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
 			verticalMerges(iteration);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <cstring>
 #include <functional>
 #include <iostream>
 #include <iomanip>
@@ -460,24 +461,26 @@ public:
 	}
 
 	/// Do an inplace compaction of each node's vertices
-	/// Seems rather slow so consider removing this in the future
+	/// This is faster than rebuilding compaction.
 	void inplaceCompact(const bool verbose = true) {
 		Timer timer;
 		int count = 0;
 		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
 			NodeType &node = nodes[nodeId];
+			// While maybe a bit counterintuitive at first, this check speeds thing up because
+			// we don't need to do all the other more expensive checks for nodes without children
+			if (!node.hasChildren()) continue;
 			int freeEdgeId = node.firstEdgeIndex;
 			for (int edgeId = node.firstEdgeIndex; edgeId <= node.lastEdgeIndex; ++edgeId) {
 				EdgeType *edge = edges.data() + edgeId;
 				if (!edge->valid) continue;
-				if (edgeId == freeEdgeId) {
-					freeEdgeId++;
-					continue;
-				} else {
-					edges[freeEdgeId] = edges[edgeId];
-					freeEdgeId++;
+				if (edgeId != freeEdgeId) {
+					// edges are trivially copyable
+					std::memcpy(edges.data() + freeEdgeId, edge, sizeof(EdgeType));
+					edges[edgeId].valid = false;
 					count++;
 				}
+				freeEdgeId++;
 			}
 			for (int edgeId = freeEdgeId; edgeId <= node.lastEdgeIndex; ++edgeId) {
 				edges[edgeId].valid = false;
