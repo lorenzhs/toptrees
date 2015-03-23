@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 		string arg = argParser.get<string>("r", "");
 		filename = (arg == "") ? filename : arg;
 	}
-	const double minRatio = argParser.get<double>("m", 1.22);
+	const double minRatio = argParser.get<double>("m", 1.26);
 
 	OrderedTree<TreeNode, TreeEdge> t;
 	Labels<string> labels;
