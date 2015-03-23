@@ -108,7 +108,9 @@ struct RandomLabels : LabelsT<int> {
  */
 template <typename Value>
 struct Labels : LabelsT<Value> {
-	Labels(int sizeHint = 0) : LabelsT<Value>(), keys(sizeHint), valueIndex(), values() {}
+	Labels(int sizeHint = 0) : LabelsT<Value>(), keys(), valueIndex(), values() {
+		keys.reserve(sizeHint);
+	}
 
 	const Value &operator[](uint index) const {
 		return *valueIndex[keys[index]];

@@ -24,33 +24,6 @@ struct XmlParser {
 	// TODO figure out if we can keep the char pointers instead of converting them
 	// to string, this currently uses more than half of the parsing time
 	static void parse(const string &filename, TreeType &tree, Labels<string> &labels, const bool verbose = true) {
-		// recursively parse the XML tree
-		const std::function<void (rapidxml::xml_node<>*, const int)> parseStructure([&](rapidxml::xml_node<> *node, const int id) {
-			rapidxml::xml_node<> *child = node->first_node();
-			int numChildren(0), childId;
-			// Add the children before processing them
-			// Otherwise, the edges would have to be moved all the time
-			// in the tree because of the adjacency array data structure
-			while (child != NULL) {
-				numChildren++;
-				childId = tree.addNode();
-				tree.addEdge(id, childId);
-				labels.set(childId, child->name());
-				child = child->next_sibling();
-			}
-
-			if (numChildren == 0) return;
-			childId -= numChildren - 1;
-			child = node->first_node();
-			// recurse to the children
-			while (child != NULL) {
-				parseStructure(child, childId);
-				childId++;
-				child = child->next_sibling();
-			}
-		});
-
-
 		if (verbose) cout << "Reading " << filename << "… " << flush;
 		Timer timer;
 
@@ -65,9 +38,35 @@ struct XmlParser {
 		const int rootId = tree.addNode();
 		assert((int)labels.size() == rootId);
 		labels.set(rootId, root->name());
-		parseStructure(root, rootId);
+		parseStructure(tree, labels, root, rootId);
 
 		if (verbose) cout << timer.get() << "ms." << endl;
+	}
+
+protected:
+	static void parseStructure(TreeType &tree, Labels<string> &labels, rapidxml::xml_node<> *node, const int id) {
+		rapidxml::xml_node<> *child = node->first_node();
+		int numChildren(0), childId;
+		// Add the children before processing them
+		// Otherwise, the edges would have to be moved all the time
+		// in the tree because of the adjacency array data structure
+		while (child != NULL) {
+			numChildren++;
+			childId = tree.addNode();
+			tree.addEdge(id, childId);
+			labels.set(childId, child->name());
+			child = child->next_sibling();
+		}
+
+		if (numChildren == 0) return;
+		childId -= numChildren - 1;
+		child = node->first_node();
+		// recurse to the children
+		while (child != NULL) {
+			parseStructure(tree, labels, child, childId);
+			childId++;
+			child = child->next_sibling();
+		}
 	}
 };
 
