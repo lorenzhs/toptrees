@@ -77,11 +77,6 @@ protected:
 			horizontalMerges(iteration);
 #endif
 			tree.killNodes();
-			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; gc… " << flush;
-
-			// We need to compact here because the horizontal merges don't but
-			// the vertical merges need correct edge counts, so this is important!
-			tree.inplaceCompact(false);
 			if (verbose) cout << std::setw(6) << timer.getAndReset() << "ms; vert… " << flush;
 
 			verticalMerges(iteration);
@@ -118,6 +113,7 @@ protected:
 				assert(tree.nodes[edge->headNode].parent == nodeId);
 			}
 #endif
+			bool hasMerged=false;
 			EdgeType *leftEdge, *rightEdge, *baseEdge(tree.firstEdge(nodeId));
 			int left, right, newNode, edgeNum;
 			MergeType mergeType;
@@ -136,6 +132,7 @@ protected:
 					tree.nodes[right].lastMergedIn = iteration;
 					tree.mergeSiblings(leftEdge, rightEdge, newNode, mergeType);
 					mergeCallback(left, right, newNode, mergeType);
+					hasMerged = true;
 				}
 			}
 
@@ -146,20 +143,23 @@ protected:
 				// merged in this iteration so far (because neither is a leaf)
 				leftEdge = tree.lastEdge(nodeId);
 				left = leftEdge->headNode;
-				if (!tree.nodes[left].isLeaf() || tree.nodes[nodeId].numEdges() <= 2 || !(leftEdge - 1)->valid || !(leftEdge - 2)->valid) {
-					continue;
+				if (tree.nodes[left].isLeaf() && tree.nodes[nodeId].numEdges() > 2 && (leftEdge - 1)->valid && (leftEdge - 2)->valid) {
+					const int childMinusOne = (leftEdge - 1)->headNode;
+					const int childMinusTwo = (leftEdge - 2)->headNode;
+					if (!tree.nodes[childMinusOne].isLeaf() && !tree.nodes[childMinusTwo].isLeaf()) {
+						// Everything is go for a merge in the "odd case"
+						assert(tree.nodes[left].lastMergedIn < iteration);
+						assert(tree.nodes[childMinusOne].lastMergedIn < iteration);
+						tree.nodes[left].lastMergedIn = iteration;
+						tree.nodes[childMinusOne].lastMergedIn = iteration;
+						tree.mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
+						mergeCallback(childMinusOne, left, newNode, mergeType);
+						hasMerged = true;
+					}
 				}
-				const int childMinusOne = (leftEdge - 1)->headNode;
-				const int childMinusTwo = (leftEdge - 2)->headNode;
-				if (!tree.nodes[childMinusOne].isLeaf() && !tree.nodes[childMinusTwo].isLeaf()) {
-					// Everything is go for a merge in the "odd case"
-					assert(tree.nodes[left].lastMergedIn < iteration);
-					assert(tree.nodes[childMinusOne].lastMergedIn < iteration);
-					tree.nodes[left].lastMergedIn = iteration;
-					tree.nodes[childMinusOne].lastMergedIn = iteration;
-					tree.mergeSiblings(leftEdge - 1, leftEdge, newNode, mergeType);
-					mergeCallback(childMinusOne, left, newNode, mergeType);
-				}
+			}
+			if (hasMerged) {
+				tree.compactNode(nodeId);
 			}
 		}
 	}

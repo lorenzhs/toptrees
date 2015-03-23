@@ -460,6 +460,26 @@ public:
 				 << (edges.size() * 100.0) / newEdges.size() << "%)" << endl;
 	}
 
+	void compactNode(const int nodeId) {
+		NodeType &node = nodes[nodeId];
+		int freeEdgeId = node.firstEdgeIndex;
+		for (int edgeId = node.firstEdgeIndex; edgeId <= node.lastEdgeIndex; ++edgeId) {
+			EdgeType *edge = edges.data() + edgeId;
+			if (!edge->valid) continue;
+			if (edgeId != freeEdgeId) {
+				assert(freeEdgeId < edgeId);
+				// edges are trivially copyable
+				std::memcpy(edges.data() + freeEdgeId, edge, sizeof(EdgeType));
+				edge->valid = false;
+			}
+			freeEdgeId++;
+		}
+		for (int edgeId = freeEdgeId; edgeId <= node.lastEdgeIndex; ++edgeId) {
+			edges[edgeId].valid = false;
+		}
+		node.lastEdgeIndex = freeEdgeId - 1;
+	}
+
 	/// Do an inplace compaction of each node's vertices
 	/// This is faster than rebuilding compaction.
 	void inplaceCompact(const bool verbose = true) {
@@ -477,7 +497,7 @@ public:
 				if (edgeId != freeEdgeId) {
 					// edges are trivially copyable
 					std::memcpy(edges.data() + freeEdgeId, edge, sizeof(EdgeType));
-					edges[edgeId].valid = false;
+					edge->valid = false;
 					count++;
 				}
 				freeEdgeId++;
