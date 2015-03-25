@@ -9,10 +9,7 @@
 #include "TopTree.h"
 #include "Labels.h"
 
-#define PUGIXML_MEMORY_PAGE_SIZE 65536
-#define PUGIXML_HEADER_ONLY
 #include "3rdparty/pugixml.hpp"
-#include "3rdparty/pugixml.cpp"
 
 
 using std::cout;
