@@ -7,6 +7,9 @@ FLAGS=-Ofast -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
+# this is going to fail miserably on non-Linux
+NPROCS=$(shell grep -c ^processor /proc/cpuinfo)
+
 EXECS=test testTT randomTree randomEval randomVerify coding repair testnav strip
 #EXECS
 
@@ -25,10 +28,10 @@ testNoDebug: test.cpp *.h
 
 testPGO: test.cpp *.h
 	rm -f test.gcda
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
 	./test-p$(EXTRA) data/others/dblp_small.xml
 	./test-p$(EXTRA) -r data/others/dblp_small.xml
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o test-p$(EXTRA) test.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o test-p$(EXTRA) test.cpp
 
 testTT: testTT.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
@@ -59,10 +62,10 @@ randomEvalNoDebug: randomEval.cpp *.h
 
 randomEvalPGO: randomEval.cpp *.h
 	rm -f randomEval.gcda
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomEval-p$(EXTRA) randomEval.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomEval-p$(EXTRA) randomEval.cpp
 	./randomEval-p$(EXTRA) -n 100 -m 100000
 	./randomEval-p$(EXTRA) -n 100 -m 100000 -r
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomEval-p$(EXTRA) randomEval.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomEval-p$(EXTRA) randomEval.cpp
 
 randomVerify: randomVerify.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
@@ -75,10 +78,10 @@ randomVerifyNoDebug: randomVerify.cpp *.h
 
 randomVerifyPGO: randomVerify.cpp *.h
 	rm -f randomVerify.gcda
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomVerify-p$(EXTRA) randomVerify.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-generate -o randomVerify-p$(EXTRA) randomVerify.cpp
 	./randomVerify-p$(EXTRA) -n 100 -m 100000
 	./randomVerify-p$(EXTRA) -r -n 100 -m 100000
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomVerify-p$(EXTRA) randomVerify.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomVerify-p$(EXTRA) randomVerify.cpp
 
 coding: coding.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
@@ -91,10 +94,10 @@ codingNoDebug: coding.cpp *.h
 
 codingPGO: coding.cpp *.h
 	rm -f coding.gcda
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
 	./coding-p$(EXTRA) data/others/dblp_small.xml
 	./coding-p$(EXTRA) -r data/others/dblp_small.xml
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
 
 repair: repair.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
@@ -107,9 +110,9 @@ repairNoDebug: repair.cpp *.h
 
 repairPGO: repair.cpp *.h
 	rm -f repair.gcda
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
 	./repair-p$(EXTRA) data/others/dblp_small.xml
-	$(GCC) $(FLAGS)=4 -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
+	$(GCC) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
 
 testnav: testnav.cpp *.h
 	$(CC) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
