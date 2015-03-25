@@ -9,8 +9,11 @@
 #include "TopTree.h"
 #include "Labels.h"
 
-#include "3rdparty/rapidxml.hpp"
-#include "3rdparty/rapidxml_utils.hpp"
+#define PUGIXML_MEMORY_PAGE_SIZE 65536
+#define PUGIXML_HEADER_ONLY
+#include "3rdparty/pugixml.hpp"
+#include "3rdparty/pugixml.cpp"
+
 
 using std::cout;
 using std::endl;
@@ -23,49 +26,44 @@ template <typename TreeType>
 struct XmlParser {
 	// TODO figure out if we can keep the char pointers instead of converting them
 	// to string, this currently uses more than half of the parsing time
-	static void parse(const string &filename, TreeType &tree, Labels<string> &labels, const bool verbose = true) {
-		if (verbose) cout << "Reading " << filename << "… " << flush;
+	static bool parse(const string &filename, TreeType &tree, Labels<string> &labels, const bool verbose = true) {
+		if (verbose) cout << "Reading and parsing " << filename << "… " << flush;
 		Timer timer;
 
-		rapidxml::file<> file(filename.c_str());
-		rapidxml::xml_document<> xml;
-		if (verbose) cout << " " << timer.getAndReset() << "ms; parsing… " << flush;
+		pugi::xml_document doc;
+		pugi::xml_parse_result result = doc.load_file(filename.c_str(), pugi::parse_minimal);
+		if (!result) { // parse failed
+			return false;
+		}
 
-		xml.parse<rapidxml::parse_no_data_nodes>(file.data());
-		rapidxml::xml_node<> *root = xml.first_node();
 		if (verbose) cout << timer.getAndReset() << "ms; building tree… " << flush;
 
 		const int rootId = tree.addNode();
 		assert((int)labels.size() == rootId);
-		labels.set(rootId, root->name());
-		parseStructure(tree, labels, root, rootId);
+
+		pugi::xml_node root(doc.root().first_child());
+		labels.set(rootId, root.name());
+		parseStructure(tree, labels, root, rootId); 
 
 		if (verbose) cout << timer.get() << "ms." << endl;
+		return true;
 	}
 
 protected:
-	static void parseStructure(TreeType &tree, Labels<string> &labels, rapidxml::xml_node<> *node, const int id) {
-		rapidxml::xml_node<> *child = node->first_node();
-		int numChildren(0), childId;
-		// Add the children before processing them
-		// Otherwise, the edges would have to be moved all the time
-		// in the tree because of the adjacency array data structure
-		while (child != NULL) {
-			numChildren++;
+	static void parseStructure(TreeType &tree, Labels<string> &labels, pugi::xml_node node, const int id) {
+		int childId, firstChildId = tree._numNodes;
+		for (pugi::xml_node child : node.children()) {
+
 			childId = tree.addNode();
 			tree.addEdge(id, childId);
-			labels.set(childId, child->name());
-			child = child->next_sibling();
+			labels.set(childId, child.name());
 		}
+		childId = firstChildId;
 
-		if (numChildren == 0) return;
-		childId -= numChildren - 1;
-		child = node->first_node();
-		// recurse to the children
-		while (child != NULL) {
+		// Recurse into children
+		for (pugi::xml_node child : node.children()) {
 			parseStructure(tree, labels, child, childId);
-			childId++;
-			child = child->next_sibling();
+			++childId;
 		}
 	}
 };

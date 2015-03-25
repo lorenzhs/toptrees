@@ -42,7 +42,11 @@ int main(int argc, char **argv) {
 	OrderedTree<TreeNode, TreeEdge> t;
 	Labels<string> labels;
 
-	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
+	const bool result = XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
+	if (!result) {
+		std::cout << "Could not parse input file, aborting" << std::endl;
+		exit(1);
+	}
 
 	const int origNodes(t._numNodes), origEdges(t._numEdges), origHeight(t.height());
 	const double origAvgDepth(t.avgDepth());
