@@ -51,17 +51,15 @@ struct XmlParser {
 
 protected:
 	static void parseStructure(TreeType &tree, Labels<string> &labels, pugi::xml_node node, const int id) {
-		int childId, firstChildId = tree._numNodes;
-		for (pugi::xml_node child : node.children()) {
-
-			childId = tree.addNode();
-			tree.addEdge(id, childId);
-			labels.set(childId, child.name());
+		const size_t numChildren = std::distance(node.children().begin(), node.children().end());
+		int childId = tree.addNodes(numChildren);
+		for (size_t i = 0; i < numChildren; ++i) {
+			tree.addEdge(id, childId + i);
 		}
-		childId = firstChildId;
 
 		// Recurse into children
 		for (pugi::xml_node child : node.children()) {
+			labels.set(childId, child.name());
 			parseStructure(tree, labels, child, childId);
 			++childId;
 		}
