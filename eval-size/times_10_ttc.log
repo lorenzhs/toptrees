@@ -1,5 +1,5 @@
 Reading xml/1998statistics.xml... done.
-RESULT time=0.01 job=tt-classic file=xml/1998statistics.xml
+RESULT time=0.00 job=tt-classic file=xml/1998statistics.xml
 RESULT time=0.00 job=tt-classic file=xml/1998statistics.xml
 RESULT time=0.00 job=tt-classic file=xml/1998statistics.xml
 RESULT time=0.00 job=tt-classic file=xml/1998statistics.xml
@@ -11,109 +11,109 @@ RESULT time=0.00 job=tt-classic file=xml/1998statistics.xml
 RESULT time=0.00 job=tt-classic file=xml/1998statistics.xml
 
 Reading xml/dblp.xml... done.
-RESULT time=6.46 job=tt-classic file=xml/dblp.xml
-RESULT time=6.41 job=tt-classic file=xml/dblp.xml
-RESULT time=6.42 job=tt-classic file=xml/dblp.xml
-RESULT time=6.43 job=tt-classic file=xml/dblp.xml
-RESULT time=6.46 job=tt-classic file=xml/dblp.xml
-RESULT time=6.41 job=tt-classic file=xml/dblp.xml
-RESULT time=6.44 job=tt-classic file=xml/dblp.xml
-RESULT time=6.41 job=tt-classic file=xml/dblp.xml
-RESULT time=6.45 job=tt-classic file=xml/dblp.xml
-RESULT time=6.42 job=tt-classic file=xml/dblp.xml
+RESULT time=6.08 job=tt-classic file=xml/dblp.xml
+RESULT time=6.04 job=tt-classic file=xml/dblp.xml
+RESULT time=6.05 job=tt-classic file=xml/dblp.xml
+RESULT time=6.04 job=tt-classic file=xml/dblp.xml
+RESULT time=6.02 job=tt-classic file=xml/dblp.xml
+RESULT time=6.11 job=tt-classic file=xml/dblp.xml
+RESULT time=6.08 job=tt-classic file=xml/dblp.xml
+RESULT time=6.11 job=tt-classic file=xml/dblp.xml
+RESULT time=6.03 job=tt-classic file=xml/dblp.xml
+RESULT time=6.09 job=tt-classic file=xml/dblp.xml
 
 Reading xml/enwiki-latest-pages-articles12.xml... done.
-RESULT time=4.21 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.21 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.18 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.20 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.18 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.29 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.18 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.19 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.21 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=4.20 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.98 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.99 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=3.97 job=tt-classic file=xml/enwiki-latest-pages-articles12.xml
 
 Reading xml/factor12.xml... done.
-RESULT time=7.61 job=tt-classic file=xml/factor12.xml
-RESULT time=7.62 job=tt-classic file=xml/factor12.xml
-RESULT time=7.62 job=tt-classic file=xml/factor12.xml
-RESULT time=7.62 job=tt-classic file=xml/factor12.xml
-RESULT time=7.59 job=tt-classic file=xml/factor12.xml
-RESULT time=7.62 job=tt-classic file=xml/factor12.xml
-RESULT time=7.60 job=tt-classic file=xml/factor12.xml
-RESULT time=7.60 job=tt-classic file=xml/factor12.xml
-RESULT time=7.61 job=tt-classic file=xml/factor12.xml
-RESULT time=7.66 job=tt-classic file=xml/factor12.xml
+RESULT time=7.20 job=tt-classic file=xml/factor12.xml
+RESULT time=7.23 job=tt-classic file=xml/factor12.xml
+RESULT time=7.19 job=tt-classic file=xml/factor12.xml
+RESULT time=7.21 job=tt-classic file=xml/factor12.xml
+RESULT time=7.21 job=tt-classic file=xml/factor12.xml
+RESULT time=7.22 job=tt-classic file=xml/factor12.xml
+RESULT time=7.20 job=tt-classic file=xml/factor12.xml
+RESULT time=7.51 job=tt-classic file=xml/factor12.xml
+RESULT time=7.23 job=tt-classic file=xml/factor12.xml
+RESULT time=7.21 job=tt-classic file=xml/factor12.xml
 
 Reading xml/factor2.xml... done.
-RESULT time=1.30 job=tt-classic file=xml/factor2.xml
-RESULT time=1.28 job=tt-classic file=xml/factor2.xml
-RESULT time=1.33 job=tt-classic file=xml/factor2.xml
-RESULT time=1.31 job=tt-classic file=xml/factor2.xml
-RESULT time=1.28 job=tt-classic file=xml/factor2.xml
-RESULT time=1.27 job=tt-classic file=xml/factor2.xml
-RESULT time=1.29 job=tt-classic file=xml/factor2.xml
-RESULT time=1.29 job=tt-classic file=xml/factor2.xml
-RESULT time=1.28 job=tt-classic file=xml/factor2.xml
-RESULT time=1.31 job=tt-classic file=xml/factor2.xml
+RESULT time=1.23 job=tt-classic file=xml/factor2.xml
+RESULT time=1.22 job=tt-classic file=xml/factor2.xml
+RESULT time=1.23 job=tt-classic file=xml/factor2.xml
+RESULT time=1.23 job=tt-classic file=xml/factor2.xml
+RESULT time=1.22 job=tt-classic file=xml/factor2.xml
+RESULT time=1.22 job=tt-classic file=xml/factor2.xml
+RESULT time=1.22 job=tt-classic file=xml/factor2.xml
+RESULT time=1.21 job=tt-classic file=xml/factor2.xml
+RESULT time=1.22 job=tt-classic file=xml/factor2.xml
+RESULT time=1.23 job=tt-classic file=xml/factor2.xml
 
 Reading xml/factor4.8.xml... done.
-RESULT time=3.08 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.12 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.01 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.00 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.02 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.04 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.00 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.02 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.01 job=tt-classic file=xml/factor4.8.xml
-RESULT time=3.00 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.83 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.86 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.85 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.86 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.87 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.87 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.86 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.85 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.85 job=tt-classic file=xml/factor4.8.xml
+RESULT time=2.84 job=tt-classic file=xml/factor4.8.xml
 
 Reading xml/factor4.xml... done.
-RESULT time=2.56 job=tt-classic file=xml/factor4.xml
-RESULT time=2.55 job=tt-classic file=xml/factor4.xml
-RESULT time=2.55 job=tt-classic file=xml/factor4.xml
-RESULT time=2.55 job=tt-classic file=xml/factor4.xml
-RESULT time=2.56 job=tt-classic file=xml/factor4.xml
-RESULT time=2.56 job=tt-classic file=xml/factor4.xml
-RESULT time=2.54 job=tt-classic file=xml/factor4.xml
-RESULT time=2.53 job=tt-classic file=xml/factor4.xml
-RESULT time=2.54 job=tt-classic file=xml/factor4.xml
-RESULT time=2.55 job=tt-classic file=xml/factor4.xml
+RESULT time=2.44 job=tt-classic file=xml/factor4.xml
+RESULT time=2.51 job=tt-classic file=xml/factor4.xml
+RESULT time=2.42 job=tt-classic file=xml/factor4.xml
+RESULT time=2.44 job=tt-classic file=xml/factor4.xml
+RESULT time=2.42 job=tt-classic file=xml/factor4.xml
+RESULT time=2.45 job=tt-classic file=xml/factor4.xml
+RESULT time=2.42 job=tt-classic file=xml/factor4.xml
+RESULT time=2.42 job=tt-classic file=xml/factor4.xml
+RESULT time=2.43 job=tt-classic file=xml/factor4.xml
+RESULT time=2.43 job=tt-classic file=xml/factor4.xml
 
 Reading xml/factor7.xml... done.
-RESULT time=4.53 job=tt-classic file=xml/factor7.xml
-RESULT time=4.47 job=tt-classic file=xml/factor7.xml
-RESULT time=4.46 job=tt-classic file=xml/factor7.xml
-RESULT time=4.47 job=tt-classic file=xml/factor7.xml
-RESULT time=4.47 job=tt-classic file=xml/factor7.xml
-RESULT time=4.47 job=tt-classic file=xml/factor7.xml
-RESULT time=4.47 job=tt-classic file=xml/factor7.xml
-RESULT time=4.47 job=tt-classic file=xml/factor7.xml
-RESULT time=4.46 job=tt-classic file=xml/factor7.xml
-RESULT time=4.48 job=tt-classic file=xml/factor7.xml
+RESULT time=4.27 job=tt-classic file=xml/factor7.xml
+RESULT time=4.24 job=tt-classic file=xml/factor7.xml
+RESULT time=4.25 job=tt-classic file=xml/factor7.xml
+RESULT time=4.24 job=tt-classic file=xml/factor7.xml
+RESULT time=4.24 job=tt-classic file=xml/factor7.xml
+RESULT time=4.25 job=tt-classic file=xml/factor7.xml
+RESULT time=4.23 job=tt-classic file=xml/factor7.xml
+RESULT time=4.24 job=tt-classic file=xml/factor7.xml
+RESULT time=4.25 job=tt-classic file=xml/factor7.xml
+RESULT time=4.25 job=tt-classic file=xml/factor7.xml
 
 Reading xml/JST_gene.chr1.xml... done.
-RESULT time=0.05 job=tt-classic file=xml/JST_gene.chr1.xml
+RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
 RESULT time=0.05 job=tt-classic file=xml/JST_gene.chr1.xml
 RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
 RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
-RESULT time=0.05 job=tt-classic file=xml/JST_gene.chr1.xml
-RESULT time=0.05 job=tt-classic file=xml/JST_gene.chr1.xml
 RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
-RESULT time=0.05 job=tt-classic file=xml/JST_gene.chr1.xml
+RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
+RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
+RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
 RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
 RESULT time=0.04 job=tt-classic file=xml/JST_gene.chr1.xml
 
 Reading xml/JST_snp.chr1.xml... done.
-RESULT time=0.26 job=tt-classic file=xml/JST_snp.chr1.xml
 RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
-RESULT time=0.28 job=tt-classic file=xml/JST_snp.chr1.xml
-RESULT time=0.26 job=tt-classic file=xml/JST_snp.chr1.xml
 RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
-RESULT time=0.27 job=tt-classic file=xml/JST_snp.chr1.xml
-RESULT time=0.26 job=tt-classic file=xml/JST_snp.chr1.xml
+RESULT time=0.24 job=tt-classic file=xml/JST_snp.chr1.xml
+RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
+RESULT time=0.24 job=tt-classic file=xml/JST_snp.chr1.xml
+RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
+RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
 RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
 RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
 RESULT time=0.25 job=tt-classic file=xml/JST_snp.chr1.xml
@@ -123,62 +123,65 @@ RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
-RESULT time=0.17 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
-RESULT time=0.16 job=tt-classic file=xml/nasa.xml
+RESULT time=0.15 job=tt-classic file=xml/nasa.xml
+RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 RESULT time=0.15 job=tt-classic file=xml/nasa.xml
 
 Reading xml/NCBI_gene.chr1.xml... done.
-RESULT time=0.34 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.34 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
-RESULT time=0.33 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.35 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.35 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
+RESULT time=0.32 job=tt-classic file=xml/NCBI_gene.chr1.xml
 
 Reading xml/proteins.xml... done.
-RESULT time=7.32 job=tt-classic file=xml/proteins.xml
-RESULT time=7.33 job=tt-classic file=xml/proteins.xml
-RESULT time=7.70 job=tt-classic file=xml/proteins.xml
-RESULT time=7.35 job=tt-classic file=xml/proteins.xml
-RESULT time=7.34 job=tt-classic file=xml/proteins.xml
-RESULT time=7.39 job=tt-classic file=xml/proteins.xml
-RESULT time=7.35 job=tt-classic file=xml/proteins.xml
-RESULT time=7.34 job=tt-classic file=xml/proteins.xml
-RESULT time=7.32 job=tt-classic file=xml/proteins.xml
-RESULT time=7.35 job=tt-classic file=xml/proteins.xml
+RESULT time=7.01 job=tt-classic file=xml/proteins.xml
+RESULT time=7.00 job=tt-classic file=xml/proteins.xml
+RESULT time=7.01 job=tt-classic file=xml/proteins.xml
+RESULT time=7.00 job=tt-classic file=xml/proteins.xml
+RESULT time=6.99 job=tt-classic file=xml/proteins.xml
+RESULT time=7.00 job=tt-classic file=xml/proteins.xml
+RESULT time=6.99 job=tt-classic file=xml/proteins.xml
+RESULT time=7.01 job=tt-classic file=xml/proteins.xml
+RESULT time=7.03 job=tt-classic file=xml/proteins.xml
+RESULT time=7.02 job=tt-classic file=xml/proteins.xml
 
 Reading xml/SwissProt.xml... done.
-RESULT time=1.27 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.18 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.18 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.24 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.17 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.17 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.17 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.18 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.26 job=tt-classic file=xml/SwissProt.xml
-RESULT time=1.18 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.13 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.15 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.15 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.14 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.15 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.14 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.15 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.14 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.14 job=tt-classic file=xml/SwissProt.xml
+RESULT time=1.13 job=tt-classic file=xml/SwissProt.xml
 
 Reading xml/treebank_e.xml... done.
-RESULT time=1.41 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.39 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
 RESULT time=1.37 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.42 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.41 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.38 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.40 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.40 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.39 job=tt-classic file=xml/treebank_e.xml
-RESULT time=1.39 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.37 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.36 job=tt-classic file=xml/treebank_e.xml
+RESULT time=1.37 job=tt-classic file=xml/treebank_e.xml
 
 Reading xml/uwm.xml... done.
+RESULT time=0.01 job=tt-classic file=xml/uwm.xml
+RESULT time=0.01 job=tt-classic file=xml/uwm.xml
+RESULT time=0.01 job=tt-classic file=xml/uwm.xml
 RESULT time=0.01 job=tt-classic file=xml/uwm.xml
 RESULT time=0.02 job=tt-classic file=xml/uwm.xml
 RESULT time=0.01 job=tt-classic file=xml/uwm.xml
@@ -186,19 +189,16 @@ RESULT time=0.01 job=tt-classic file=xml/uwm.xml
 RESULT time=0.01 job=tt-classic file=xml/uwm.xml
 RESULT time=0.01 job=tt-classic file=xml/uwm.xml
 RESULT time=0.01 job=tt-classic file=xml/uwm.xml
-RESULT time=0.01 job=tt-classic file=xml/uwm.xml
-RESULT time=0.01 job=tt-classic file=xml/uwm.xml
-RESULT time=0.01 job=tt-classic file=xml/uwm.xml
 
 Reading xml/wiki.xml... done.
-RESULT time=0.84 job=tt-classic file=xml/wiki.xml
-RESULT time=0.83 job=tt-classic file=xml/wiki.xml
-RESULT time=0.84 job=tt-classic file=xml/wiki.xml
-RESULT time=0.85 job=tt-classic file=xml/wiki.xml
-RESULT time=0.84 job=tt-classic file=xml/wiki.xml
-RESULT time=0.84 job=tt-classic file=xml/wiki.xml
-RESULT time=0.83 job=tt-classic file=xml/wiki.xml
-RESULT time=0.84 job=tt-classic file=xml/wiki.xml
-RESULT time=0.83 job=tt-classic file=xml/wiki.xml
-RESULT time=0.83 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.80 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
+RESULT time=0.78 job=tt-classic file=xml/wiki.xml
+RESULT time=0.79 job=tt-classic file=xml/wiki.xml
 
