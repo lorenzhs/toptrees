@@ -1,5 +1,7 @@
 #!/bin/bash
 
+LOG_C="times_10_ttc.log"
+LOG_R="times_10_ttr.log"
 LOG="times_10.log"
 
 run() {
@@ -13,18 +15,20 @@ run() {
 	done
 }
 
+rm -f $LOG $LOG_C $LOG_R
+
 # Run on stripped files
 for f in xml/*.xml; do
-	echo -n "Reading $f... "
+	echo -n "Reading $f... " | tee -a $LOG_C | tee -a $LOG_R | tee -a $LOG
 	fn=/tmp/ramdisk/$(echo $f | sed 's,.*/,,');
 	cp $f $fn; # read file to RAM
-	echo "done."
-	run "gzip" "-fk9" "gzip9" $fn $f;
-	run "bzip2" "-fk" "bzip2" $fn $f;
-	run "./repair-p" "" "repair" $fn $f;
-	run "./coding-p" "" "tt-classic" $fn $f;
-	run "./coding-p" "-r" "tt-repair" $fn $f;
-	run "./TreeRePair" "" "treerepair" $fn $f;
+	echo "done." | tee -a $LOG_C | tee -a $LOG_R | tee -a $LOG
+	run "gzip" "-fk9" "gzip9" $fn $f          | tee -a $LOG
+	run "bzip2" "-fk" "bzip2" $fn $f          | tee -a $LOG
+	run "./repair-p" "" "repair" $fn $f       | tee -a $LOG
+	run "./coding-p" "" "tt-classic" $fn $f   | tee -a $LOG_C
+	run "./coding-p" "-r" "tt-repair" $fn $f  | tee -a $LOG_R
+	run "./TreeRePair" "" "treerepair" $fn $f | tee -a $LOG
 	rm $fn;
-	echo ""
-done | tee $LOG
+	echo "" | tee -a $LOG_C | tee -a $LOG_R | tee -a $LOG
+done
