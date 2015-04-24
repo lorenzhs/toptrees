@@ -128,7 +128,7 @@ public:
 protected:
 	/// Add a node
 	int addCluster_(int left, int right, const MergeType mergeType, const DataType *label = NULL) {
-		assert(left < 0 == right < 0);
+		assert((left < 0) == (right < 0));
 		if (left >= 0) {
 			left = clusterToDag[left];
 			right = clusterToDag[right];
