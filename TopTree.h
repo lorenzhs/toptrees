@@ -1,13 +1,11 @@
 #pragma once
 
 #include <iostream>
-#include <functional>
 #include <vector>
 
 #include "Nodes.h"
 #include "Labels.h"
 
-using std::function;
 using std::cout;
 using std::endl;
 
@@ -41,12 +39,14 @@ struct TopTree {
 
 	/// Traverse the tree in post order
 	/// \param callback callback to call with the cluster ID as parameter
-	void inPostOrder(const function<void(const int)> &callback) {
+	template <typename Callback>
+	void inPostOrder(const Callback &callback) {
 		traverseTreePostOrder(clusters.size() - 1, callback);
 	}
 
 	/// Helper for inPostOrder, you shouldn't need to use this
-	void traverseTreePostOrder(const int clusterId, const function<void(const int)> &callback) {
+	template <typename Callback>
+	void traverseTreePostOrder(const int clusterId, const Callback &callback) {
 		Cluster<DataType> &cluster = clusters[clusterId];
 		if (cluster.left != -1) {
 			traverseTreePostOrder(cluster.left, callback);
@@ -60,14 +60,14 @@ struct TopTree {
 	/// Traverse the top tree in post order, applying a callback to the callback results of its children
 	/// \param callback function to be called on its results of the left and right child
 	/// \param initial value to use as "callback result" for leaves
-	template <typename T>
-	T foldPostOrder(const function<T (const T, const T)> &callback, const T initial) const {
+	template <typename T, typename Callback>
+	T foldPostOrder(const Callback &callback, const T initial) const {
 		return traverseFoldPostOrder(clusters.size() - 1, callback, initial);
 	}
 
 	/// Helper function for foldPostOrder(). You should not need to use this directly.
-	template <typename T>
-	T traverseFoldPostOrder(const int clusterId, const function<T (const T, const T)> &callback, const T initial) const {
+	template <typename T, typename Callback>
+	T traverseFoldPostOrder(const int clusterId, const Callback &callback, const T initial) const {
 		const Cluster<DataType> &cluster = clusters[clusterId];
 		T left(initial), right(initial);
 		if (cluster.left != -1) {

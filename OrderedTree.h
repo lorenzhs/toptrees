@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <cstring>
-#include <functional>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -14,7 +13,6 @@
 
 using std::cout;
 using std::endl;
-using std::function;
 using std::string;
 
 // #define awfulness
@@ -551,16 +549,15 @@ public:
 	/// \param callback a callback to be called for each node with the result of the last fold operation
 	/// \param fold the fold function. Parameters: previous value, current value
 	/// \param initial inital value for the first folding
-	template <typename T>
-	const T foldLeftPostOrder(const function<const T(const T)> &callback,
-							  const function<const T(const T, const T)> &fold, const T initial) const {
+	template <typename T, typename Fold, typename Callback>
+	const T foldLeftPostOrder(const Callback &callback, const Fold &fold, const T initial) const {
 		return traverseFoldLeftPostOrder(0, callback, fold, initial);
 	}
 
 	/// This does the work for foldLeftPostOrder() and should not be used directly
-	template <typename T>
-	const T traverseFoldLeftPostOrder(const int nodeId, const function<const T(const T)> &callback,
-									  const function<const T(const T, const T)> &fold, const T initial) const {
+	template <typename T, typename Fold, typename Callback>
+	const T traverseFoldLeftPostOrder(const int nodeId, const Callback &callback,
+									  const Fold &fold, const T initial) const {
 		assert(0 <= nodeId && nodeId < _numNodes);
 		T last(initial);
 		for (const EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {

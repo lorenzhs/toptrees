@@ -2,7 +2,7 @@ CC=clang++
 GCC=g++
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold
-BASEFLAGS=-std=c++11 -Wall -Wextra -Werror
+BASEFLAGS=-std=c++1y -Wall -Wextra -Werror
 FLAGS=-Ofast -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread

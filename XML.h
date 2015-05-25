@@ -40,7 +40,7 @@ struct XmlParser {
 
 		pugi::xml_node root(doc.root().first_child());
 		labels.set(rootId, root.name());
-		parseStructure(tree, labels, root, rootId); 
+		parseStructure(tree, labels, root, rootId);
 
 		if (verbose) cout << timer.get() << "ms." << endl;
 		return true;
@@ -78,7 +78,7 @@ struct XmlWriter<TopTree<DataType>> {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());
 
-		const std::function<void (const int, const int)> writeNode([&] (const int nodeId, const int depth) {
+		auto writeNode = [&] (const int nodeId, const int depth, const auto &writeNode) {
 			const Cluster<DataType> &node = tree.clusters[nodeId];
 			for (int i = 0; i < depth; ++i) out << " ";
 			out << "<";
@@ -89,10 +89,10 @@ struct XmlWriter<TopTree<DataType>> {
 				out << endl;
 
 				if (node.left >= 0) {
-					writeNode(node.left, depth + 1);
+					writeNode(node.left, depth + 1, writeNode);
 				}
 				if (node.right >= 0) {
-					writeNode(node.right, depth + 1);
+					writeNode(node.right, depth + 1, writeNode);
 				}
 
 				for (int i = 0; i < depth; ++i) out << " ";
@@ -101,10 +101,10 @@ struct XmlWriter<TopTree<DataType>> {
 			out << "</";
 			if (node.label == NULL) out << node.mergeType; else out << *node.label;
 			out << ">";
-		});
+		};
 
 		int rootId = tree.clusters.size() - 1;
-		writeNode(rootId, 0);
+		writeNode(rootId, 0, writeNode);
 
 		out.close();
 	}
@@ -122,7 +122,7 @@ struct XmlWriter<OrderedTree<NodeType, EdgeType>> {
 		std::ofstream out(filename.c_str());
 		assert(out.is_open());
 
-		const std::function<void (const int, const int)> writeNode([&](const int nodeId, const int depth) {
+		auto writeNode = [&] (const int nodeId, const int depth, const auto &writeNode) {
 			if (indent) for (int i = 0; i < depth; ++i) out << " ";
 			out << "<" << labels[nodeId] << ">";
 			if (tree.nodes[nodeId].isLeaf()) {
@@ -134,15 +134,15 @@ struct XmlWriter<OrderedTree<NodeType, EdgeType>> {
 
 			FORALL_OUTGOING_EDGES(tree, nodeId, edge) {
 				if (edge->valid)
-					writeNode(edge->headNode, depth + 1);
+					writeNode(edge->headNode, depth + 1, writeNode);
 			}
 
 			if (indent) for (int i = 0; i < depth; ++i) out << " ";
 			out << "</" << labels[nodeId] << ">";
 			if (indent) out << endl;
-		});
+		};
 
-		writeNode(0, 0);
+		writeNode(0, 0, writeNode);
 
 		out.close();
 	}

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <functional>
 #include <unordered_map>
 #include <vector>
 
@@ -9,7 +8,6 @@
 #include "Nodes.h"
 
 using std::vector;
-using std::function;
 
 
 /// DagNode equality tester, to enable its use in a map
@@ -97,22 +95,22 @@ public:
 
 	/// Traverse the dag in post-order
 	/// \param callback a callback to be called with the node ID and the results of the calls to its children
-	template <typename T>
-	T inPostOrder(const function<T(const int, const T, const T)> &callback) const {
-		return traverseDagPostOrder(nodes.size() - 1, callback);
+	template <typename T, typename Callback>
+	T inPostOrder(const Callback &callback) const {
+		return traverseDagPostOrder<T, Callback>(nodes.size() - 1, callback);
 	}
 
 	/// Helper for inPostOrder(), you shouldn't need to call this directly
-	template <typename T>
-	T traverseDagPostOrder(const int nodeId, const function<T(const int, const T, const T)> &callback) const {
+	template <typename T, typename Callback>
+	T traverseDagPostOrder(const int nodeId, const Callback &callback) const {
 		assert(nodeId != 0); // 0 is the dummy not and should not be reachable
 		const DagNode<DataType> &node = nodes[nodeId];
 		T left(-1), right(-1);
 		if (node.left >= 0) {
-			left = traverseDagPostOrder(node.left, callback);
+			left = traverseDagPostOrder<T, Callback>(node.left, callback);
 		}
 		if (node.right >= 0) {
-			right = traverseDagPostOrder(node.right, callback);
+			right = traverseDagPostOrder<T, Callback>(node.right, callback);
 		}
 		return callback(nodeId, left, right);
 	}
