@@ -21,6 +21,9 @@ data/
 data
 ext
 eval*/
+stat_*
+res_*
+*.log
 
 testTT
 testTT-*

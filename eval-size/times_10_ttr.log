@@ -11,88 +11,292 @@ RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
 RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
 
 Reading xml/dblp.xml... done.
-RESULT time=11.20 job=tt-repair file=xml/dblp.xml
-RESULT time=11.18 job=tt-repair file=xml/dblp.xml
-RESULT time=11.23 job=tt-repair file=xml/dblp.xml
-RESULT time=11.25 job=tt-repair file=xml/dblp.xml
-RESULT time=11.18 job=tt-repair file=xml/dblp.xml
-RESULT time=11.27 job=tt-repair file=xml/dblp.xml
-RESULT time=11.38 job=tt-repair file=xml/dblp.xml
-RESULT time=11.61 job=tt-repair file=xml/dblp.xml
-RESULT time=11.16 job=tt-repair file=xml/dblp.xml
 RESULT time=11.22 job=tt-repair file=xml/dblp.xml
+RESULT time=11.20 job=tt-repair file=xml/dblp.xml
+RESULT time=11.28 job=tt-repair file=xml/dblp.xml
+RESULT time=11.15 job=tt-repair file=xml/dblp.xml
+RESULT time=11.17 job=tt-repair file=xml/dblp.xml
+RESULT time=11.17 job=tt-repair file=xml/dblp.xml
+RESULT time=11.15 job=tt-repair file=xml/dblp.xml
+RESULT time=11.34 job=tt-repair file=xml/dblp.xml
+RESULT time=11.25 job=tt-repair file=xml/dblp.xml
+RESULT time=11.23 job=tt-repair file=xml/dblp.xml
 
 Reading xml/enwiki-latest-pages-articles12.xml... done.
-RESULT time=7.19 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.15 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.15 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.11 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
 RESULT time=7.16 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.15 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
 RESULT time=7.14 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.17 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.18 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.13 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
-RESULT time=7.15 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.16 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.12 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.14 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.14 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.14 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.08 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.11 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
 
 Reading xml/factor12.xml... done.
-RESULT time=11.73 job=tt-repair file=xml/factor12.xml
-RESULT time=11.47 job=tt-repair file=xml/factor12.xml
-RESULT time=11.62 job=tt-repair file=xml/factor12.xml
-RESULT time=11.60 job=tt-repair file=xml/factor12.xml
-RESULT time=11.61 job=tt-repair file=xml/factor12.xml
+RESULT time=11.52 job=tt-repair file=xml/factor12.xml
+RESULT time=11.48 job=tt-repair file=xml/factor12.xml
+RESULT time=11.58 job=tt-repair file=xml/factor12.xml
+RESULT time=11.63 job=tt-repair file=xml/factor12.xml
+RESULT time=11.55 job=tt-repair file=xml/factor12.xml
+RESULT time=11.54 job=tt-repair file=xml/factor12.xml
+RESULT time=11.56 job=tt-repair file=xml/factor12.xml
+RESULT time=11.57 job=tt-repair file=xml/factor12.xml
 RESULT time=11.51 job=tt-repair file=xml/factor12.xml
-RESULT time=11.51 job=tt-repair file=xml/factor12.xml
-RESULT time=11.59 job=tt-repair file=xml/factor12.xml
-RESULT time=11.51 job=tt-repair file=xml/factor12.xml
-RESULT time=11.69 job=tt-repair file=xml/factor12.xml
+RESULT time=11.50 job=tt-repair file=xml/factor12.xml
 
 Reading xml/factor2.xml... done.
-RESULT time=1.97 job=tt-repair file=xml/factor2.xml
-RESULT time=1.97 job=tt-repair file=xml/factor2.xml
-RESULT time=1.97 job=tt-repair file=xml/factor2.xml
+RESULT time=1.95 job=tt-repair file=xml/factor2.xml
+RESULT time=1.95 job=tt-repair file=xml/factor2.xml
 RESULT time=1.98 job=tt-repair file=xml/factor2.xml
-RESULT time=1.99 job=tt-repair file=xml/factor2.xml
+RESULT time=1.96 job=tt-repair file=xml/factor2.xml
+RESULT time=1.95 job=tt-repair file=xml/factor2.xml
+RESULT time=1.96 job=tt-repair file=xml/factor2.xml
 RESULT time=1.97 job=tt-repair file=xml/factor2.xml
-RESULT time=2.00 job=tt-repair file=xml/factor2.xml
-RESULT time=1.97 job=tt-repair file=xml/factor2.xml
-RESULT time=1.97 job=tt-repair file=xml/factor2.xml
+RESULT time=1.96 job=tt-repair file=xml/factor2.xml
 RESULT time=1.98 job=tt-repair file=xml/factor2.xml
+RESULT time=1.95 job=tt-repair file=xml/factor2.xml
 
 Reading xml/factor4.8.xml... done.
-RESULT time=4.89 job=tt-repair file=xml/factor4.8.xml
-RESULT time=4.81 job=tt-repair file=xml/factor4.8.xml
-RESULT time=4.79 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.74 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.65 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.65 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.70 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.70 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.67 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.70 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.65 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.71 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.69 job=tt-repair file=xml/factor4.8.xml
+
+Reading xml/factor4.xml... done.
+RESULT time=3.94 job=tt-repair file=xml/factor4.xml
+RESULT time=3.92 job=tt-repair file=xml/factor4.xml
+RESULT time=3.89 job=tt-repair file=xml/factor4.xml
+RESULT time=3.89 job=tt-repair file=xml/factor4.xml
+RESULT time=3.91 job=tt-repair file=xml/factor4.xml
+RESULT time=3.89 job=tt-repair file=xml/factor4.xml
+RESULT time=3.94 job=tt-repair file=xml/factor4.xml
+RESULT time=3.90 job=tt-repair file=xml/factor4.xml
+RESULT time=3.90 job=tt-repair file=xml/factor4.xml
+RESULT time=3.91 job=tt-repair file=xml/factor4.xml
+
+Reading xml/factor7.xml... done.
+RESULT time=6.86 job=tt-repair file=xml/factor7.xml
+RESULT time=6.88 job=tt-repair file=xml/factor7.xml
+RESULT time=6.81 job=tt-repair file=xml/factor7.xml
+RESULT time=6.81 job=tt-repair file=xml/factor7.xml
+RESULT time=6.81 job=tt-repair file=xml/factor7.xml
+RESULT time=6.80 job=tt-repair file=xml/factor7.xml
+RESULT time=6.81 job=tt-repair file=xml/factor7.xml
+RESULT time=6.82 job=tt-repair file=xml/factor7.xml
+RESULT time=6.81 job=tt-repair file=xml/factor7.xml
+RESULT time=6.85 job=tt-repair file=xml/factor7.xml
+
+Reading xml/JST_gene.chr1.xml... done.
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
+
+Reading xml/JST_snp.chr1.xml... done.
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.37 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.37 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.37 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.37 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.37 job=tt-repair file=xml/JST_snp.chr1.xml
+
+Reading xml/nasa.xml... done.
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.23 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.23 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
+RESULT time=0.23 job=tt-repair file=xml/nasa.xml
+
+Reading xml/NCBI_gene.chr1.xml... done.
+RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.50 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.50 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.50 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.50 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+
+Reading xml/proteins.xml... done.
+RESULT time=11.84 job=tt-repair file=xml/proteins.xml
+RESULT time=11.95 job=tt-repair file=xml/proteins.xml
+RESULT time=11.85 job=tt-repair file=xml/proteins.xml
+RESULT time=11.87 job=tt-repair file=xml/proteins.xml
+RESULT time=11.85 job=tt-repair file=xml/proteins.xml
+RESULT time=11.90 job=tt-repair file=xml/proteins.xml
+RESULT time=11.93 job=tt-repair file=xml/proteins.xml
+RESULT time=11.82 job=tt-repair file=xml/proteins.xml
+RESULT time=11.96 job=tt-repair file=xml/proteins.xml
+RESULT time=11.88 job=tt-repair file=xml/proteins.xml
+
+Reading xml/SwissProt.xml... done.
+RESULT time=2.15 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.13 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.14 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.13 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.14 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.11 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.13 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
+
+Reading xml/treebank_e.xml... done.
+RESULT time=2.00 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.97 job=tt-repair file=xml/treebank_e.xml
+RESULT time=2.00 job=tt-repair file=xml/treebank_e.xml
+RESULT time=2.00 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.98 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.98 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
+
+Reading xml/uwm.xml... done.
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+RESULT time=0.02 job=tt-repair file=xml/uwm.xml
+
+Reading xml/wiki.xml... done.
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.18 job=tt-repair file=xml/wiki.xml
+RESULT time=1.19 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.19 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.19 job=tt-repair file=xml/wiki.xml
+
+Reading xml/1998statistics.xml... done.
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+
+Reading xml/dblp.xml... done.
+RESULT time=11.19 job=tt-repair file=xml/dblp.xml
+RESULT time=11.20 job=tt-repair file=xml/dblp.xml
+RESULT time=11.24 job=tt-repair file=xml/dblp.xml
+RESULT time=11.22 job=tt-repair file=xml/dblp.xml
+RESULT time=11.19 job=tt-repair file=xml/dblp.xml
+RESULT time=11.19 job=tt-repair file=xml/dblp.xml
+RESULT time=11.25 job=tt-repair file=xml/dblp.xml
+RESULT time=11.22 job=tt-repair file=xml/dblp.xml
+RESULT time=11.18 job=tt-repair file=xml/dblp.xml
+RESULT time=11.28 job=tt-repair file=xml/dblp.xml
+
+Reading xml/enwiki-latest-pages-articles12.xml... done.
+RESULT time=7.14 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.11 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.11 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.12 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.17 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.20 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.11 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.11 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.15 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+RESULT time=7.14 job=tt-repair file=xml/enwiki-latest-pages-articles12.xml
+
+Reading xml/factor12.xml... done.
+RESULT time=11.55 job=tt-repair file=xml/factor12.xml
+RESULT time=11.59 job=tt-repair file=xml/factor12.xml
+RESULT time=11.53 job=tt-repair file=xml/factor12.xml
+RESULT time=11.54 job=tt-repair file=xml/factor12.xml
+RESULT time=11.59 job=tt-repair file=xml/factor12.xml
+RESULT time=11.63 job=tt-repair file=xml/factor12.xml
+RESULT time=11.59 job=tt-repair file=xml/factor12.xml
+RESULT time=11.51 job=tt-repair file=xml/factor12.xml
+RESULT time=11.54 job=tt-repair file=xml/factor12.xml
+RESULT time=11.50 job=tt-repair file=xml/factor12.xml
+
+Reading xml/factor2.xml... done.
+RESULT time=1.96 job=tt-repair file=xml/factor2.xml
+RESULT time=2.00 job=tt-repair file=xml/factor2.xml
+RESULT time=1.97 job=tt-repair file=xml/factor2.xml
+RESULT time=2.00 job=tt-repair file=xml/factor2.xml
+RESULT time=1.99 job=tt-repair file=xml/factor2.xml
+RESULT time=1.97 job=tt-repair file=xml/factor2.xml
+RESULT time=1.97 job=tt-repair file=xml/factor2.xml
+RESULT time=1.97 job=tt-repair file=xml/factor2.xml
+RESULT time=1.96 job=tt-repair file=xml/factor2.xml
+RESULT time=1.99 job=tt-repair file=xml/factor2.xml
+
+Reading xml/factor4.8.xml... done.
 RESULT time=4.73 job=tt-repair file=xml/factor4.8.xml
 RESULT time=4.68 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.69 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.76 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.68 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.68 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.68 job=tt-repair file=xml/factor4.8.xml
 RESULT time=4.72 job=tt-repair file=xml/factor4.8.xml
-RESULT time=4.67 job=tt-repair file=xml/factor4.8.xml
-RESULT time=4.73 job=tt-repair file=xml/factor4.8.xml
-RESULT time=4.71 job=tt-repair file=xml/factor4.8.xml
-RESULT time=4.66 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.74 job=tt-repair file=xml/factor4.8.xml
+RESULT time=4.72 job=tt-repair file=xml/factor4.8.xml
 
 Reading xml/factor4.xml... done.
 RESULT time=3.91 job=tt-repair file=xml/factor4.xml
-RESULT time=3.91 job=tt-repair file=xml/factor4.xml
+RESULT time=3.97 job=tt-repair file=xml/factor4.xml
+RESULT time=3.92 job=tt-repair file=xml/factor4.xml
 RESULT time=3.97 job=tt-repair file=xml/factor4.xml
 RESULT time=3.95 job=tt-repair file=xml/factor4.xml
-RESULT time=4.15 job=tt-repair file=xml/factor4.xml
-RESULT time=4.04 job=tt-repair file=xml/factor4.xml
-RESULT time=3.98 job=tt-repair file=xml/factor4.xml
 RESULT time=3.93 job=tt-repair file=xml/factor4.xml
-RESULT time=3.95 job=tt-repair file=xml/factor4.xml
-RESULT time=3.97 job=tt-repair file=xml/factor4.xml
+RESULT time=3.93 job=tt-repair file=xml/factor4.xml
+RESULT time=3.99 job=tt-repair file=xml/factor4.xml
+RESULT time=3.93 job=tt-repair file=xml/factor4.xml
+RESULT time=3.96 job=tt-repair file=xml/factor4.xml
 
 Reading xml/factor7.xml... done.
-RESULT time=6.81 job=tt-repair file=xml/factor7.xml
-RESULT time=6.83 job=tt-repair file=xml/factor7.xml
-RESULT time=6.83 job=tt-repair file=xml/factor7.xml
-RESULT time=6.83 job=tt-repair file=xml/factor7.xml
-RESULT time=6.83 job=tt-repair file=xml/factor7.xml
+RESULT time=6.89 job=tt-repair file=xml/factor7.xml
+RESULT time=6.92 job=tt-repair file=xml/factor7.xml
+RESULT time=6.80 job=tt-repair file=xml/factor7.xml
+RESULT time=6.87 job=tt-repair file=xml/factor7.xml
+RESULT time=6.86 job=tt-repair file=xml/factor7.xml
+RESULT time=6.84 job=tt-repair file=xml/factor7.xml
 RESULT time=6.88 job=tt-repair file=xml/factor7.xml
 RESULT time=6.82 job=tt-repair file=xml/factor7.xml
 RESULT time=6.87 job=tt-repair file=xml/factor7.xml
-RESULT time=6.88 job=tt-repair file=xml/factor7.xml
-RESULT time=6.83 job=tt-repair file=xml/factor7.xml
+RESULT time=6.89 job=tt-repair file=xml/factor7.xml
 
 Reading xml/JST_gene.chr1.xml... done.
 RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
@@ -103,14 +307,14 @@ RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
 RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
 RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
 RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
-RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
+RESULT time=0.07 job=tt-repair file=xml/JST_gene.chr1.xml
 RESULT time=0.06 job=tt-repair file=xml/JST_gene.chr1.xml
 
 Reading xml/JST_snp.chr1.xml... done.
 RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
-RESULT time=0.42 job=tt-repair file=xml/JST_snp.chr1.xml
-RESULT time=0.43 job=tt-repair file=xml/JST_snp.chr1.xml
-RESULT time=0.42 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
+RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
 RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
 RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
 RESULT time=0.38 job=tt-repair file=xml/JST_snp.chr1.xml
@@ -127,56 +331,56 @@ RESULT time=0.23 job=tt-repair file=xml/nasa.xml
 RESULT time=0.23 job=tt-repair file=xml/nasa.xml
 RESULT time=0.23 job=tt-repair file=xml/nasa.xml
 RESULT time=0.23 job=tt-repair file=xml/nasa.xml
-RESULT time=0.23 job=tt-repair file=xml/nasa.xml
+RESULT time=0.22 job=tt-repair file=xml/nasa.xml
 RESULT time=0.23 job=tt-repair file=xml/nasa.xml
 
 Reading xml/NCBI_gene.chr1.xml... done.
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.52 job=tt-repair file=xml/NCBI_gene.chr1.xml
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
-RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
-RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
-RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.52 job=tt-repair file=xml/NCBI_gene.chr1.xml
+RESULT time=0.52 job=tt-repair file=xml/NCBI_gene.chr1.xml
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
 RESULT time=0.51 job=tt-repair file=xml/NCBI_gene.chr1.xml
 
 Reading xml/proteins.xml... done.
-RESULT time=11.81 job=tt-repair file=xml/proteins.xml
-RESULT time=11.84 job=tt-repair file=xml/proteins.xml
-RESULT time=11.84 job=tt-repair file=xml/proteins.xml
-RESULT time=11.87 job=tt-repair file=xml/proteins.xml
-RESULT time=11.84 job=tt-repair file=xml/proteins.xml
-RESULT time=11.85 job=tt-repair file=xml/proteins.xml
+RESULT time=11.79 job=tt-repair file=xml/proteins.xml
+RESULT time=11.82 job=tt-repair file=xml/proteins.xml
 RESULT time=11.89 job=tt-repair file=xml/proteins.xml
+RESULT time=11.86 job=tt-repair file=xml/proteins.xml
+RESULT time=11.86 job=tt-repair file=xml/proteins.xml
+RESULT time=11.92 job=tt-repair file=xml/proteins.xml
+RESULT time=12.19 job=tt-repair file=xml/proteins.xml
 RESULT time=11.84 job=tt-repair file=xml/proteins.xml
-RESULT time=11.87 job=tt-repair file=xml/proteins.xml
-RESULT time=11.88 job=tt-repair file=xml/proteins.xml
+RESULT time=12.51 job=tt-repair file=xml/proteins.xml
+RESULT time=11.95 job=tt-repair file=xml/proteins.xml
 
 Reading xml/SwissProt.xml... done.
-RESULT time=2.16 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.14 job=tt-repair file=xml/SwissProt.xml
 RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
-RESULT time=2.13 job=tt-repair file=xml/SwissProt.xml
-RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
-RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
-RESULT time=2.11 job=tt-repair file=xml/SwissProt.xml
-RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.14 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.14 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.14 job=tt-repair file=xml/SwissProt.xml
 RESULT time=2.13 job=tt-repair file=xml/SwissProt.xml
 RESULT time=2.13 job=tt-repair file=xml/SwissProt.xml
 RESULT time=2.11 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.15 job=tt-repair file=xml/SwissProt.xml
+RESULT time=2.12 job=tt-repair file=xml/SwissProt.xml
 
 Reading xml/treebank_e.xml... done.
-RESULT time=1.97 job=tt-repair file=xml/treebank_e.xml
-RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
 RESULT time=1.98 job=tt-repair file=xml/treebank_e.xml
 RESULT time=1.98 job=tt-repair file=xml/treebank_e.xml
 RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
-RESULT time=1.97 job=tt-repair file=xml/treebank_e.xml
+RESULT time=2.00 job=tt-repair file=xml/treebank_e.xml
 RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
+RESULT time=2.02 job=tt-repair file=xml/treebank_e.xml
+RESULT time=2.00 job=tt-repair file=xml/treebank_e.xml
 RESULT time=1.98 job=tt-repair file=xml/treebank_e.xml
-RESULT time=1.97 job=tt-repair file=xml/treebank_e.xml
-RESULT time=2.01 job=tt-repair file=xml/treebank_e.xml
+RESULT time=1.99 job=tt-repair file=xml/treebank_e.xml
 
 Reading xml/uwm.xml... done.
 RESULT time=0.02 job=tt-repair file=xml/uwm.xml
@@ -192,13 +396,26 @@ RESULT time=0.02 job=tt-repair file=xml/uwm.xml
 
 Reading xml/wiki.xml... done.
 RESULT time=1.17 job=tt-repair file=xml/wiki.xml
-RESULT time=1.18 job=tt-repair file=xml/wiki.xml
-RESULT time=1.19 job=tt-repair file=xml/wiki.xml
-RESULT time=1.18 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
+RESULT time=1.21 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
 RESULT time=1.17 job=tt-repair file=xml/wiki.xml
 RESULT time=1.18 job=tt-repair file=xml/wiki.xml
-RESULT time=1.17 job=tt-repair file=xml/wiki.xml
-RESULT time=1.18 job=tt-repair file=xml/wiki.xml
 RESULT time=1.19 job=tt-repair file=xml/wiki.xml
-RESULT time=1.18 job=tt-repair file=xml/wiki.xml
+RESULT time=1.17 job=tt-repair file=xml/wiki.xml
 
+Reading xml/1998statistics.xml... done.
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+RESULT time=0.01 job=tt-repair file=xml/1998statistics.xml
+
+Reading xml/dblp.xml... done.
