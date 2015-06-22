@@ -44,30 +44,27 @@ std::mt19937 &getRandomGenerator() {
 
 
 /// Recursively create a path (similar to "mkdir -p")
-/// source: http://stackoverflow.com/a/11366985 by StackOverflow user "Mark"
-bool makePathRecursive(std::string path) {
-	bool success = false;
-	int nRC = mkdir(path.c_str(), 0775);
+/// see also http://stackoverflow.com/a/11366985 by StackOverflow user "Mark"
+bool makePathRecursive(std::string path, int permissions = 0755) {
+	int nRC = mkdir(path.c_str(), permissions);
 	if (nRC == -1) {
 		switch (errno) {
 		case ENOENT:
-			// parent didn't exist, try to create it
+			// parent didn't exist, try to create it recursively
 			if (makePathRecursive(path.substr(0, path.find_last_of('/'))))
 				// Now, try to create again.
-				success = 0 == mkdir(path.c_str(), 0775);
+				return 0 == mkdir(path.c_str(), permissions);
 			else
-				success = false;
-			break;
+				return false;
 		case EEXIST:
-			// Done!
-			success = true;
-			break;
+			// Exists (may not be a directory though)
+			struct stat s;
+			stat(path.c_str(), &s);
+			return S_ISDIR(s.st_mode);
 		default:
-			success = false;
-			break;
+			return false;
 		}
-	} else {
-		success = true;
 	}
-	return success;
+	// successfully created by mkdir call, no recursion needed
+	return true;
 }
