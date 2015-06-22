@@ -10,12 +10,6 @@
 
 #include "BitWriter.h"
 
-// This implementation of Huffman codes is based on the C++ implementation from Rosetta code
-// The original is licensed under the GNU Free Documentation License 1.2
-// It can be found at http://rosettacode.org/wiki/Huffman_coding#C.2B.2B
-// (as of 03 August 2014)
-// This implementation extends and improves upon it.
-
 struct HuffNode {
 	const int frequency;
 	virtual ~HuffNode() {}
@@ -165,7 +159,7 @@ protected:
 		for (uint i = 0; i < frequencies.size(); ++i) {
 			assert(frequencies[i] > 0);
 			nodes.push_back(new HuffLeaf(i, frequencies[i]));
-			queue.push(std::make_pair(frequencies[i], nodes.size() - 1));
+			queue.push(std::make_pair(frequencies[i], i));
 		}
 
 		// Process the nodes from the PQ and combine symbols until only one is left
@@ -179,18 +173,16 @@ protected:
 	}
 
 	/// Recursively assign codes to the symbols
-	void computeCodes(const int nodeId, const HuffCode &prefix) {
+	void computeCodes(const int nodeId, HuffCode prefix) {
 		const HuffNode *node(nodes[nodeId]);
 		if (const HuffLeaf *leaf = dynamic_cast<const HuffLeaf*>(node)) {
-			codes[leaf->symbolId] = prefix;
+			codes[leaf->symbolId] = std::move(prefix);
 		} else if (const HuffInnerNode *innerNode = dynamic_cast<const HuffInnerNode*>(node)) {
-			HuffCode leftPrefix = prefix;
-			leftPrefix.push_back(false);
-			computeCodes(innerNode->leftId, leftPrefix);
+			prefix.push_back(false);
+			computeCodes(innerNode->leftId, prefix);
 
-			HuffCode rightPrefix = prefix;
-			rightPrefix.push_back(true);
-			computeCodes(innerNode->rightId, rightPrefix);
+			prefix.back() = true;
+			computeCodes(innerNode->rightId, prefix);
 		}
 	}
 
