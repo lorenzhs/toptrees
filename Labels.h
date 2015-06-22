@@ -102,9 +102,6 @@ struct RandomLabels : LabelsT<int> {
 /**
  * A double-indexed key-value label storage, allowing efficient access
  * by ID and efficient non-duplicating setting of labels
- *
- * This data structure is based on the following anonymous StackOverflow post:
- * http://stackoverflow.com/a/2562117
  */
 template <typename Value>
 struct Labels : LabelsT<Value> {
@@ -121,6 +118,8 @@ struct Labels : LabelsT<Value> {
 			keys.resize(id + 1);
 		}
 
+		// The idea for this is from the following anonymous StackOverflow post:
+ 		// http://stackoverflow.com/a/2562117
 		typename std::unordered_map<Value, int>::iterator it = values.find(value);
 		if (it == values.end()) {
 			it = values.insert(typename std::unordered_map<Value, int>::value_type(value, (int)values.size())).first;
