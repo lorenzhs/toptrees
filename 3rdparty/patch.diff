@@ -1,0 +1,18 @@
+--- a/pugixml.cpp	2015-06-23 13:00:59.764445358 +0200
++++ b/pugixml.cpp	2015-03-25 11:52:39.570157739 +0100
+@@ -2827,12 +2827,12 @@
+ 							
+ 					if (cursor->parent || PUGI__OPTSET(parse_fragment))
+ 					{
+-						PUGI__PUSHNODE(node_pcdata); // Append a new node on the tree.
+-						cursor->value = s; // Save the offset.
++						//PUGI__PUSHNODE(node_pcdata); // Append a new node on the tree.
++						//cursor->value = s; // Save the offset.
+ 
+ 						s = strconv_pcdata(s);
+ 								
+-						PUGI__POPNODE(); // Pop since this is a standalone.
++						//PUGI__POPNODE(); // Pop since this is a standalone.
+ 						
+ 						if (!*s) break;
+ 					}
