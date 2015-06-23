@@ -1,0 +1,8 @@
+<map id="LabelDataEntropy&lt; std::string &gt;" name="LabelDataEntropy&lt; std::string &gt;">
+<area shape="rect" id="node2" href="$struct_labels.html" title="Labels\&lt; std::string \&gt;" alt="" coords="662,109,805,136"/>
+<area shape="rect" id="node3" href="$struct_labels_t.html" title="LabelsT\&lt; std::string \&gt;" alt="" coords="378,5,529,32"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="181,101,260,128"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="5,94,132,135"/>
+<area shape="rect" id="node9" href="$class_huffman_builder.html" title="HuffmanBuilder\&lt; std\l::string::value_type \&gt;" alt="" coords="661,238,805,279"/>
+<area shape="rect" id="node13" href="$struct_huff_node.html" title="A node in a Huffman tree (base class) " alt="" coords="182,373,259,400"/>
+</map>

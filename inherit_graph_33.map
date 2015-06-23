@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$struct_labels_t.html" title="LabelsT\&lt; int \&gt;" alt="" coords="5,31,112,57"/>
+<area shape="rect" id="node2" href="$struct_id_labels.html" title="Hashing modulo&#45;wrapping label generator (NOT UNIFORM) " alt="" coords="206,5,281,32"/>
+<area shape="rect" id="node3" href="$struct_random_labels.html" title="Uniformly random labels. " alt="" coords="160,56,327,83"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="LabelsT&lt; Value &gt;" name="LabelsT&lt; Value &gt;">
+<area shape="rect" id="node2" href="$struct_fake_labels.html" title="Dummy labels that always return the same value for each index. " alt="" coords="5,80,156,107"/>
+<area shape="rect" id="node3" href="$struct_labels.html" title="A key&#45;value label storage. " alt="" coords="180,80,301,107"/>
+</map>

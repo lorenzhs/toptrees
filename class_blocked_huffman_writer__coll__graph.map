@@ -1,0 +1,12 @@
+<map id="BlockedHuffmanWriter&lt; InputType, OutputType, inputSize, outputSize &gt;" name="BlockedHuffmanWriter&lt; InputType, OutputType, inputSize, outputSize &gt;">
+<area shape="rect" id="node2" href="$class_bit_writer.html" title="Unfinished, untested, unused bit writer. " alt="" coords="1155,74,1225,101"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="841,17,919,43"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="554,5,681,47"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="831,74,929,101"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="548,71,687,112"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="364,71,499,112"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="157,78,315,105"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="5,78,108,105"/>
+<area shape="rect" id="node10" href="$class_huffman_builder.html" title="HuffmanBuilder\&lt; OutputType \&gt;" alt="" coords="1088,183,1292,210"/>
+<area shape="rect" id="node14" href="$struct_huff_node.html" title="A node in a Huffman tree (base class) " alt="" coords="579,242,656,269"/>
+</map>

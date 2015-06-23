@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$struct_labels_t.html" title="A label interface (pure virtual) " alt="" coords="5,31,133,57"/>
+<area shape="rect" id="node2" href="$struct_fake_labels.html" title="Dummy labels that always return the same value for each index. " alt="" coords="181,5,332,32"/>
+<area shape="rect" id="node3" href="$struct_labels.html" title="A key&#45;value label storage. " alt="" coords="196,56,317,83"/>
+</map>

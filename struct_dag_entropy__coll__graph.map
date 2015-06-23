@@ -1,0 +1,21 @@
+<map id="DagEntropy&lt; DataType &gt;" name="DagEntropy&lt; DataType &gt;">
+<area shape="rect" id="node2" href="$class_huffman_writer.html" title="HuffmanWriter\&lt; int \&gt;" alt="" coords="1391,171,1532,198"/>
+<area shape="rect" id="node3" href="$class_huffman_builder.html" title="HuffmanBuilder\&lt; int \&gt;" alt="" coords="1103,78,1253,105"/>
+<area shape="rect" id="node19" href="$class_huffman_builder.html" title="HuffmanBuilder\&lt; uint8_t \&gt;" alt="" coords="1091,607,1265,634"/>
+<area shape="rect" id="node23" href="$class_huffman_builder.html" title="HuffmanBuilder\&lt; uint16_t \&gt;" alt="" coords="1088,751,1268,778"/>
+<area shape="rect" id="node27" href="$class_huffman_builder.html" title="HuffmanBuilder\&lt; std\l::string::value_type \&gt;" alt="" coords="1106,336,1250,377"/>
+<area shape="rect" id="node7" href="$struct_huff_node.html" title="A node in a Huffman tree (base class) " alt="" coords="579,395,656,422"/>
+<area shape="rect" id="node9" href="$class_bit_writer.html" title="Unfinished, untested, unused bit writer. " alt="" coords="1143,142,1213,169"/>
+<area shape="rect" id="node21" href="$class_blocked_huffman_writer.html" title="BlockedHuffmanWriter\l\&lt; bool, uint8_t, 1, 8 \&gt;" alt="" coords="1385,389,1538,431"/>
+<area shape="rect" id="node26" href="$class_huffman_writer.html" title="HuffmanWriter\&lt; std\l::string::value_type \&gt;" alt="" coords="1389,291,1533,332"/>
+<area shape="rect" id="node29" href="$class_blocked_huffman_writer.html" title="BlockedHuffmanWriter\l\&lt; char, uint16_t, 4, 16 \&gt;" alt="" coords="1383,603,1540,644"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="841,71,919,98"/>
+<area shape="rect" id="node11" title="STL class. " alt="" coords="554,60,681,101"/>
+<area shape="rect" id="node12" title="STL class. " alt="" coords="831,125,929,151"/>
+<area shape="rect" id="node13" title="STL class. " alt="" coords="548,125,687,167"/>
+<area shape="rect" id="node14" title="STL class. " alt="" coords="364,125,499,167"/>
+<area shape="rect" id="node15" title="STL class. " alt="" coords="157,133,315,159"/>
+<area shape="rect" id="node16" title="STL class. " alt="" coords="5,133,108,159"/>
+<area shape="rect" id="node18" href="$struct_huffman_blocker.html" title="HuffmanBlocker\&lt; bool,\l uint8_t, 1, 8 \&gt;" alt="" coords="1383,512,1540,553"/>
+<area shape="rect" id="node22" href="$struct_huffman_blocker.html" title="HuffmanBlocker\&lt; char,\l uint16_t, 4, 16 \&gt;" alt="" coords="1384,784,1539,825"/>
+</map>

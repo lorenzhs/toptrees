@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$struct_huff_node.html" title="A node in a Huffman tree (base class) " alt="" coords="5,31,83,57"/>
+<area shape="rect" id="node2" href="$struct_huff_inner_node.html" title="An inner node in a Huffman tree. " alt="" coords="131,5,237,32"/>
+<area shape="rect" id="node3" href="$struct_huff_leaf.html" title="A leaf in a Huffman tree. " alt="" coords="149,56,219,83"/>
+</map>

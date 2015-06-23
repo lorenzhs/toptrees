@@ -1,0 +1,4 @@
+<map id="HuffNode" name="HuffNode">
+<area shape="rect" id="node2" href="$struct_huff_inner_node.html" title="An inner node in a Huffman tree. " alt="" coords="5,80,112,107"/>
+<area shape="rect" id="node3" href="$struct_huff_leaf.html" title="A leaf in a Huffman tree. " alt="" coords="137,80,207,107"/>
+</map>
