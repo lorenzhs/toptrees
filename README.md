@@ -1,6 +1,6 @@
 # Tree Compression with Top Trees Revisited
 
-This implementation accompagnies the paper "Tree Compression with Top Trees Revisited" by Rajeev Raman and me (Lorenz Hübschle-Schneider), to be published in the SEA 2015 proceedings. A [technical Report](http://arxiv.org/abs/1506.04499) is available on the arXiv (arXiv:1506.04499 [cs.DS]).
+This implementation accompagnies the paper "Tree Compression with Top Trees Revisited" by Rajeev Raman and me (Lorenz Hübschle-Schneider), to be published in the SEA 2015 proceedings. A [technical report](http://arxiv.org/abs/1506.04499) is available on the arXiv (arXiv:1506.04499 [cs.DS]).
 
 The central part is the implementation of top tree compression, but this repository also contains RePair compression, the generation of random trees, and some utilities around it.
 
@@ -17,6 +17,10 @@ The executables are:
 - `testTT` works similarly to `test` but performs unpacking of the Top DAG to verify correctness. Specify input file with `-i`, output folder for the trimmed and recovered XML files with `-o` (default: `/tmp`), and pass `-r` to use the RePair-inspired combiner.
 - `repair` applies the RePair compression algorithm to the input file, printing the grammar and output string to stdout if `-v` is set.
 - `randomTree` generates trees uniformly at random. Tree and alphabet size, seed, and output folder for an XML file (default: don't write) can be specified, as well as DOT graph plotting similar to `test`. Pass `-h` or `--help` for full usage information.
+
+## A Note on Experiments
+
+Some of the binaries output a line starting with "RESULT" and containing key-value pairs. This line is for parsing with Timo Bingmann's [SqlPlotTools](https://github.com/bingmann/sqlplot-tools) and was used to automatically update the plots, tables, and numbers in the paper as experiments were re-run after changes in the code. Don't give copy-paste errors a chance!
 
 ## Compiling
 
