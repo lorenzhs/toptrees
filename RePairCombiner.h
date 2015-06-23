@@ -52,7 +52,6 @@ public:
 			for (int i = 0; i < tree._numNodes; ++i) {
 				nodeIds[i] = i;
 			}
-			hasher.prepare();
 		}
 
 	/// Perform the top tree construction procedure
