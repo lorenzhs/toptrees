@@ -24,6 +24,7 @@ eval*/
 stat_*
 res_*
 *.log
+eval
 
 testTT
 testTT-*
