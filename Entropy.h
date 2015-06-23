@@ -102,13 +102,18 @@ private:
 };
 
 
+/// Base class for Label entropy calculation. Define specialisation for your data types.
 template <typename DataType>
 struct LabelDataEntropy;
 
+/// Compute entropy of a set of label strings
 template <>
 struct LabelDataEntropy<std::string> {
+	/// Create entropy calculator
+	/// \param labels the labels for which to calculate the entropy
 	LabelDataEntropy(const Labels<std::string> &labels) : labels(labels), huffman() {}
 
+	/// Do entropy calculation
 	void construct() {
 		for (const std::string* label : labels.valueIndex) {
 			if (label != NULL) {
@@ -119,6 +124,7 @@ struct LabelDataEntropy<std::string> {
 		huffman.construct();
 	}
 
+	/// Write the labels to a Huffman writer.
 	void addToWriter(HuffmanWriter<std::string::value_type> &writer) {
 		for (const std::string* label : labels.valueIndex) {
 			if (label != NULL) {
@@ -289,6 +295,7 @@ struct DagEntropy {
 		writer.write();
 	}
 
+	/// Retrieve total size for a Huffman-based encoding of the Top DAG
 	long long getTotalSize() const {
 		// Code dag pointers as fixed-length ints
 		// Size can be deduced from decoded dag structure data

@@ -2,9 +2,14 @@
 
 #include <chrono>
 
-/// A flexible timer. TimeT is the precision of the timing, while scalingFactor
-/// is the factor by which the output will be scaled. The default is to print
-/// return milliseconds with microsecond precision.
+/// A flexible timer
+/**
+ * A flexible timer.
+ *
+ * TimeT is the precision of the timing, while scalingFactor
+ * is the factor by which the output will be scaled. The default is to print
+ * return milliseconds with microsecond precision.
+ */
 template<typename TimeT = std::chrono::microseconds, int scalingFactor = 1000, typename ReturnType = double>
 struct TimerT {
 	TimerT() {

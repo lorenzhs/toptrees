@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+/// Unfinished, untested, unused bit writer
 class BitWriter {
 public:
 	static const int buffersize = 1024;

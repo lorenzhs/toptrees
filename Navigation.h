@@ -5,11 +5,17 @@
 
 #include "TopDag.h"
 
+/// Represents an entry in the DAG stack
 struct NavigationRecord {
 	int nodeId;
 	int parentId;
 	bool left;
+	/// Create a blank navigation record
 	NavigationRecord() : nodeId(-1), parentId(-1), left(true) {}
+	/// Create a new navigation record
+	/// \param node node to which we moved
+	/// \param parent node from which we came
+	/// \param left whether we went into `parent`'s left child to get to `node`
 	NavigationRecord(int node, int parent, bool left) : nodeId(node), parentId(parent), left(left) {}
 
 	friend std::ostream &operator<<(std::ostream &os, const NavigationRecord &record) {
@@ -17,6 +23,7 @@ struct NavigationRecord {
 	}
 };
 
+/// Navigate around in an in-memory Top DAG
 template <typename DataType>
 class Navigator {
 public:
@@ -24,6 +31,7 @@ public:
 	using DStackT = std::stack<NavigationRecord>;
 	using TStackT = std::deque<DStackT>;
 
+	/// Create a new navigator for the given Top DAG
 	Navigator(const DAGType &dag): dag(dag), dagStack(), treeStack(), maxTreeStackSize(0) {
 		if (verbose) std::cout << dag << std::endl;
 
@@ -36,10 +44,13 @@ public:
 		}
 	}
 
+	/// Retrieve the current node's label
 	const DataType* getLabel() const {
 		return dag.nodes[dagStack.top().nodeId].label;
 	}
 
+	/// Move to the current node's parent
+	/// \returns whether the operation completed successfully (i.e. if the current node had a parent)
 	bool parent() {
 		if (treeStack.empty()) {
 			return false;
@@ -50,6 +61,7 @@ public:
 		}
 	}
 
+	/// Check whether the current node is a leaf in the tree
 	bool isLeaf() {
 		DStackT stack(dagStack);
 		while (!stack.empty()) {
@@ -72,6 +84,8 @@ public:
 		return false;
 	}
 
+	/// Move to the current node's first child
+	/// \returns whether the operation was a success
 	bool firstChild() {
 		if (verbose) dumpDagStack();
 		if (isLeaf()) {
@@ -101,6 +115,8 @@ public:
 		return true;
 	}
 
+	/// Move to the current node's next sibling
+	/// \returns whether the operation was a success
 	bool nextSibling() {
 		if (verbose) dumpDagStack();
 
@@ -139,6 +155,7 @@ public:
 		return true;
 	}
 
+	/// Debug helper to dump the DAG stack
 	void dumpDagStack() {
 		DStackT stack(dagStack);
 		std::cout << "DagStack: ";
@@ -149,6 +166,7 @@ public:
 		std::cout << std::endl;
 	}
 
+	/// Debug helper to retrieve tree stack size
 	long long getTreeStackSize() const {
 		long long treeStackSize(0);
 		for (const DStackT &stack : treeStack) {
@@ -158,6 +176,7 @@ public:
 		return treeStackSize;
 	}
 
+	/// Debug helper to return largest tree stack size encountered
 	long long getMaxTreeStackSize() const {
 		return maxTreeStackSize;
 	}

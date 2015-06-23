@@ -10,6 +10,7 @@
 
 #include "BitWriter.h"
 
+/// A node in a Huffman tree (base class)
 struct HuffNode {
 	const int frequency;
 	virtual ~HuffNode() {}
@@ -17,13 +18,20 @@ protected:
 	HuffNode(const int frequency) : frequency(frequency) {}
 };
 
+/// A leaf in a Huffman tree
 struct HuffLeaf : public HuffNode {
 	const int symbolId;
+	/// Construct a Huffman leaf from symbol ID and frequency
 	HuffLeaf(const int symbolId, const int frequency) : HuffNode(frequency), symbolId(symbolId) {}
 };
 
+/// An inner node in a Huffman tree
 struct HuffInnerNode : public HuffNode {
 	const int leftId, rightId;
+	/// Construct a Huffman inner node
+	/// \param leftId ID of the left child node
+	/// \param rightId ID of the right child node
+	/// \param combinedFrequency frequency of the combined symbol (sum of left and right child's frequency)
 	HuffInnerNode(const int leftId, const int rightId, const int combinedFrequency) :
 		HuffNode(combinedFrequency),
 		leftId(leftId),
@@ -146,6 +154,7 @@ public:
 		return os.str();
 	}
 
+	/// Print summary to an ostream
 	friend std::ostream &operator<<(std::ostream &os, const HuffmanBuilder &huff) {
 		return os << "Huffman with " << huff.getNumSymbols() << " symbols and " << huff.getNumItems() << " occurrences, need " << huff.getBitsNeeded() << " bits";
 	}
@@ -193,10 +202,15 @@ protected:
 	std::vector<HuffNode*> nodes;
 };
 
-/// construct a blocked huffman coding
-/// the size of the output type must be a multiple of the input type's!
+/// Constructs a blocked Huffman coding
+/**
+ * Constructs a blocked Huffman coding for the given input distribution.
+ *
+ * The size of the output type must be a multiple of the input type's!
+ */
 template <typename InputType, typename OutputType, int inputSize = sizeof(InputType)*8, int outputSize = sizeof(OutputType)*8>
 struct HuffmanBlocker {
+	/// Initialise Huffman blocker
 	HuffmanBlocker() : blockingFactor(outputSize / inputSize), tempStore(), huffman() {
 		assert(outputSize % inputSize == 0);
 		tempStore.reserve(blockingFactor);
@@ -218,6 +232,7 @@ struct HuffmanBlocker {
 		}
 	}
 
+	/// Flush all remaining unwritten symbols. Call this after adding all items.
 	void flushQueue() {
 		const bool verbose = false;
 
@@ -244,6 +259,7 @@ struct HuffmanBlocker {
 	HuffmanBuilder<OutputType> huffman;
 };
 
+/// Unfinished Huffman code writer
 template <typename SymbolType>
 class HuffmanWriter {
 public:
@@ -278,6 +294,7 @@ protected:
 	std::vector<bool> buffer;
 };
 
+/// Unfinished writer for blocked Huffman codes
 template <typename InputType, typename OutputType, int inputSize = sizeof(InputType)*8, int outputSize = sizeof(OutputType)*8>
 class BlockedHuffmanWriter {
 public:

@@ -4,8 +4,13 @@
 #include "Labels.h"
 #include "OrderedTree.h"
 
+/// Compute size of a succinct encoding of a tree
 template <typename TreeType>
 struct TreeSizeEstimation {
+	/// Compute size of a succinct encoding of a tree
+	/// \param tree the tree
+	/// \param labels the nodes' labels
+	/// \returns required size in bits
 	static long long compute(const TreeType &tree, const Labels<std::string> &labels) {
 		long long result(0);
 

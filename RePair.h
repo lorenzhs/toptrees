@@ -11,11 +11,14 @@
 
 namespace SimpleRePair {
 
+/// Combine hash values
 struct HashCombiner {
+	/// Combine two hash values into a new hash
 	uint operator()(const uint leftHash, const uint rightHash) const {
 		return hash(leftHash, rightHash);
 	}
 
+	/// Combine two hash values into a new hash
 	static uint hash(const uint leftHash, const uint rightHash) {
 		uint seed(0);
 		boost_hash_combine(seed, leftHash);
@@ -24,6 +27,7 @@ struct HashCombiner {
 	}
 };
 
+/// A RePair record consisting of a hash value, a frequency, and an occurence list
 template <typename Pair>
 struct Record {
 	Record(const uint hash = 0) : hash(hash), frequency(0), occurrences() {}
@@ -37,6 +41,7 @@ struct Record {
 	}
 };
 
+/// A list of RePair records
 template <typename Pair>
 struct Records {
 	Records() : records() { add(0); /* dummy for unordered_map stuff */ }
@@ -57,6 +62,7 @@ struct Records {
 	std::vector<Record<Pair>> records;
 };
 
+/// Compare RePair records by frequency (>)
 template <typename Pair>
 struct RecordFrequencyComparator {
 	bool operator()(const Record<Pair> *record, const Record<Pair> *other) const {
@@ -64,6 +70,7 @@ struct RecordFrequencyComparator {
 	}
 };
 
+/// Specialised bucket priority queue for RePair
 template <typename Pair>
 struct PriorityQueue {
 	PriorityQueue(const int size = 0) : lastNonEmptyList(-1), lists(size), frequentRecords() {}
@@ -173,6 +180,7 @@ private:
 	std::set<Record<Pair>*, RecordFrequencyComparator<Pair>> frequentRecords;
 };
 
+/// Specialised hash map for RePair
 template <typename Pair>
 struct HashMap {
 	HashMap(Records<Pair> &records) : records(records) {}

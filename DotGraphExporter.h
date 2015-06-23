@@ -11,6 +11,7 @@
 
 using std::string;
 
+/// Base class for exporting various graphs (or trees) as DOT files
 template <typename TreeType>
 struct DotGraphExporter {
 	/// write a tree's dot graph to a file
@@ -62,6 +63,7 @@ protected:
 	}
 };
 
+/// Export a Top Tree as a DOT graph
 template <typename DataType>
 struct TopTreeDotGraphExporter : DotGraphExporter<TopTree<DataType>> {
 protected:
@@ -85,6 +87,7 @@ protected:
 };
 
 
+/// Export a Top DAG as a DOT graph
 template <typename DataType>
 struct TopDagDotGraphExporter : DotGraphExporter<TopDag<DataType>> {
 	/// write a tree's dot graph to a file

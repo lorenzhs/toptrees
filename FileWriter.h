@@ -2,9 +2,11 @@
 
 #include <iostream>
 
+#include "FileWriter.h"
 #include "Timer.h"
 #include "TreeSizeEstimation.h"
 
+/// UNFINISHED Top DAG writer. Don't use.
 class FileWriter {
 public:
 	template <typename DataType>
