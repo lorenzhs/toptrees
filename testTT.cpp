@@ -1,3 +1,10 @@
+/*
+ * Tests top tree compression on an XML file
+ *
+ * Compresses and decompresses the input file, and
+ * checks whether they match.
+ */
+
 #include <iostream>
 #include <string>
 

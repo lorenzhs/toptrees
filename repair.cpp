@@ -1,3 +1,7 @@
+/*
+ * Applies RePair to the parenthesis bitstring of a tree.
+ */
+
 #include <iostream>
 #include <string>
 

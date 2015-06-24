@@ -1,3 +1,11 @@
+/*
+ * Run top tree compression on an XML file
+ *
+ * Supports classical top tree compression and the
+ * RePair combiner (-r flag).
+ */
+
+
 #include <iostream>
 #include <string>
 

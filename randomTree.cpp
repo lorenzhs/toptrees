@@ -1,3 +1,9 @@
+/*
+ * Generate a random tree and dump it as an XML
+ * file or DOT graph. Can also dump top tree and
+ * Top DAG as DOT graphs.
+ */
+
 #include <iostream>
 
 // Data Structures

@@ -1,3 +1,12 @@
+/*
+ * Evaluate top tree compression on random trees
+ *
+ * Generates lots of trees uniformly at random and measures
+ * statistics about their Top DAGs. Supports classical TTC
+ * as well as the RePair combiner (which doesn't make much
+ * sense on random trees though)
+ */
+
 #include <iostream>
 #include <string>
 

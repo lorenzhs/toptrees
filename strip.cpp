@@ -1,3 +1,9 @@
+/*
+ * Strip noise from an XML file
+ *
+ * Removes everything except the tag names
+ */
+
 #include <iostream>
 #include <string>
 

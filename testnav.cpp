@@ -1,3 +1,10 @@
+/*
+ * Preorder traversal of an in-memory Top DAG.
+ *
+ * Not particularly useful except to test whether
+ * navigation works.
+ */
+
 #include <algorithm>
 #include <iostream>
 #include <string>

@@ -1,3 +1,10 @@
+/*
+ * Applies top tree compression to an XML file. Can dump
+ * the Top DAG as a DOT file, which is really the only
+ * reason to use this anymore. You should probably look
+ * at coding.cpp instead.
+ */
+
 #include <algorithm>
 #include <iostream>
 #include <string>

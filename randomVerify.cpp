@@ -1,3 +1,12 @@
+/*
+ * Test correctness top tree compression with random trees
+ *
+ * Generates lots of trees uniformly at random, compresses
+ * them, then decompresses that and checks whether the result
+ * matches the original tree. Supports both classic TTC and
+ * the RePair combiner.
+ */
+
 #include <iostream>
 #include <string>
 
