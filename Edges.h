@@ -2,15 +2,16 @@
 
 #include <ostream>
 
-// TODO maybe be really hacky and use first bit of headNode as valid flag?
-// -> invalid edges have negative ID
-
 /// Edge type for use with an OrderedTree
 struct TreeEdge {
-	int headNode;
-	bool valid;
+	// Pack them both into one unsigned int
+	// headNode is theoretically an int, but since the sign bit
+	// is unused anyway (all nodes have ID >= 0), using it for
+	// the valid flag is safe.
+	unsigned int valid : 1;
+	unsigned int headNode : 31;
 
-	TreeEdge() : headNode(-1), valid(false) {}
+	TreeEdge() : valid(false), headNode(0) {}
 
 	friend std::ostream &operator<<(std::ostream &os, const TreeEdge &edge) {
 		return os << "(" << edge.headNode << ";" << (edge.valid ? "t" : "f") << ")";
