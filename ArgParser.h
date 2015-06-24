@@ -1,14 +1,9 @@
 #pragma once
 
 #include <cassert>
-#include <map>
+#include <unordered_map>
 #include <sstream>
 #include <vector>
-
-using std::istringstream;
-using std::map;
-using std::string;
-using std::vector;
 
 /// Parse command-line arguments
 /**
@@ -22,17 +17,19 @@ class ArgParser {
 public:
 	/// Parse command-line arguments
 	ArgParser(int argc, char** argv) {
-		for (int i = 1; i < argc; ++i) {
-			if (argv[i][0] == '-') {
-				string arg(argv[i] + 1);
-				if ((i + 1) < argc && argv[i + 1][0] != '-') {
-					string val(argv[++i]);
-					namedArgs[arg] = val;
+		int pos = 1;
+		while (pos < argc) {
+			if (argv[pos][0] == '-') {
+				// Read argument and advance
+				std::string arg(&argv[pos++][1]);
+				// check whether argument has a value (i.e. not just a flag)
+				if (pos < argc && argv[pos][0] != '-') {
+					namedArgs[arg] = std::string{argv[pos++]}; // assign and advance to next
 				} else {
 					namedArgs[arg] = "";
 				}
 			} else {
-				dataArgs.push_back(argv[i]);
+				dataArgs.push_back(std::string{argv[pos++]});
 			}
 		}
 	}
@@ -41,10 +38,11 @@ public:
 	/// \param key the argument name
 	/// \param defaultValue the value to return if the argument wasn't set
 	template <typename T>
-	T get(const string &key, const T defaultValue = T()) {
+	T get(const std::string &key, const T defaultValue = T()) const {
 		T retval;
-		if (namedArgs.find(key) != namedArgs.end()) {
-			istringstream s(namedArgs[key]);
+		auto it = namedArgs.find(key);
+		if (it != namedArgs.end()) {
+			std::istringstream s(it->second);
 			s >> retval;
 		} else {
 			// do this in the else case, otherwise empty string arguments
@@ -55,22 +53,22 @@ public:
 	}
 
 	/// check whether an argument was set
-	bool isSet(const string &arg) const {
+	bool isSet(const std::string &arg) const {
 		return namedArgs.find(arg) != namedArgs.end();
 	}
 
 	/// the number of unnamed data arguments
-	uint numDataArgs() const {
+	size_t numDataArgs() const {
 		return dataArgs.size();
 	}
 
 	/// get a data argument by its index (among the data arguments)
-	string getDataArg(const int index) const {
+	std::string data_arg(const int index) const {
 		assert(0 <= index && index < (int)numDataArgs());
 		return dataArgs[index];
 	}
 
-private:
-	map<string, string> namedArgs;
-	vector<string> dataArgs;
+protected:
+	std::unordered_map<std::string, std::string> namedArgs;
+	std::vector<std::string> dataArgs;
 };
