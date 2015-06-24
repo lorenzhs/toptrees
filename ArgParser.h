@@ -63,7 +63,7 @@ public:
 	}
 
 	/// get a data argument by its index (among the data arguments)
-	std::string data_arg(const int index) const {
+	std::string getDataArg(const int index) const {
 		assert(0 <= index && index < (int)numDataArgs());
 		return dataArgs[index];
 	}
