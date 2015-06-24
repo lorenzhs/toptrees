@@ -26,8 +26,20 @@ using std::cout;
 using std::endl;
 using std::string;
 
+void usage(char* name) {
+	cout << "Usage: " << name << " <options> [filename]" << endl
+		 << "  -r          enable RePair combiner" << endl
+		 << "  -m <float>  minimum merge ratio for RePair combiner, below" << endl
+		 << "              which fallback is invoked (default: 1.26)" << endl;
+}
+
 int main(int argc, char **argv) {
 	ArgParser argParser(argc, argv);
+	if (argParser.isSet("h") || argParser.isSet("-help")) {
+		usage(argv[0]);
+		return 0;
+	}
+
 	const bool useRePair = argParser.isSet("r");
 	string filename = "data/1998statistics.xml";
 	if (argParser.numDataArgs() > 0) {
