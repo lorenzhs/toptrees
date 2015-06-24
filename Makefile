@@ -4,7 +4,7 @@ PGO_CX=g++
 DBG_CX=clang++-3.6
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold when using clang++
-BASEFLAGS=-std=c++1y -Wall -Wextra -Werror
+BASEFLAGS=-std=c++14 -Wall -Wextra -Werror
 FLAGS=-Ofast -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
