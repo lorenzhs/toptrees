@@ -36,3 +36,6 @@ Additional `make` targets are available for static analysis with `cppcheck` (war
 
 The code was tested and run under Debian GNU/Linux in the unstable distribution as of June 2015, but should work on all Linux-based systems. Adaptation for other operating systems will most likely require a change of paths (e.g. '/tmp'), the `makePathRecursive` function in `Common.h` and the `drawSvg` function in `DotGraphExporter.h`. Additionally, the Makefile requires adaptation to discover the number of available processors for link-time optimisation. POSIX threads (pthreads) are a requirement for the `randomEval` and `randomVerify` commands.
 
+## Licensing
+
+Unless otherwise noted, all code in this repository is subject to the GNU General Public License, Version 3. A copy of the licence is provided in the file [LICENSE](LICENSE).
