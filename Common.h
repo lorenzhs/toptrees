@@ -3,6 +3,12 @@
 #include <random>
 #include <sys/stat.h>
 
+#ifdef NDEBUG
+const bool global_debug = false;
+#else
+const bool global_debug = true;
+#endif
+
 // Branch prediction hints
 #define likely(x)   __builtin_expect((x), 1)
 #define unlikely(x) __builtin_expect((x), 0)

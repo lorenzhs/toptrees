@@ -107,12 +107,13 @@ protected:
 			if (numEdges < 2) {
 				continue;
 			}
-#ifndef NDEBUG
-			// verify that these edges indeed do belong to whoever claims to be their parent
-			for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
-				assert(tree.nodes[edge->headNode].parent == nodeId);
-			}
-#endif
+
+			if (global_debug)
+				// verify that these edges indeed do belong to whoever claims to be their parent
+				for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
+					assert(tree.nodes[edge->headNode].parent == nodeId);
+				}
+
 			bool hasMerged=false;
 			EdgeType *leftEdge, *rightEdge, *baseEdge(tree.firstEdge(nodeId));
 			int left, right, newNode, edgeNum;
@@ -173,12 +174,13 @@ protected:
 			if (node.numEdges() < 2) {
 				continue;
 			}
-#ifndef NDEBUG
-			// verify that these edges indeed do belong to whoever claims to be their parent
-			for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
-				assert(tree.nodes[edge->headNode].parent == nodeId);
-			}
-#endif
+
+			if (global_debug)
+				// verify that these edges indeed do belong to whoever claims to be their parent
+				for (EdgeType *edge = tree.firstEdge(nodeId); edge < tree.lastEdge(nodeId); ++edge) {
+					assert(tree.nodes[edge->headNode].parent == nodeId);
+				}
+
 			EdgeType *baseEdge(tree.firstEdge(nodeId));
 			int newNode, lastEdgeNum(node.numEdges() - 1);
 			MergeType mergeType;

@@ -396,17 +396,16 @@ public:
 	}
 
 	/// Perform a few consistency checks.
-	/// NOP if NDEBUG is set
+	/// NOP if compiled without assertions (-DNDEBUG)
 	void checkConsistency() {
-#ifndef NDEBUG
-		for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
-			NodeType &node = nodes[nodeId];
-			assert(node.lastEdgeIndex >= node.firstEdgeIndex - 1);
-			for (EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
-				assert(edge->headNode >= 0 && nodes[edge->headNode].parent == nodeId);
+		if (global_debug)
+			for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
+				NodeType &node = nodes[nodeId];
+				assert(node.lastEdgeIndex >= node.firstEdgeIndex - 1);
+				for (EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
+					assert(edge->headNode >= 0 && nodes[edge->headNode].parent == nodeId);
+				}
 			}
-		}
-#endif
 	}
 
 	/// Compress the edge vector, removing gaps

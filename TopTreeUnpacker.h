@@ -39,6 +39,7 @@ private:
 
 	int unpackCluster(const int clusterId, const int nodeId) {
 		const Cluster<DataType> &cluster = topTree.clusters[clusterId];
+		__attribute__((unused)) // to make compiler happy when assertions are disabled
 		int leafId;
 		switch (cluster.mergeType) {
 		case VERT_NO_BBN:
@@ -52,7 +53,6 @@ private:
 			break;
 		default:
 			assert(false);
-			leafId = -1; // to make the compiler happy with NDEBUG
 		}
 
 		// Perform compaction because the OrderedTree data structure is really unsuitable
