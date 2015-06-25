@@ -4,13 +4,14 @@ PGO_CX=g++
 DBG_CX=clang++-3.6
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold when using clang++
-BASEFLAGS=-std=c++14 -Wall -Wextra -Werror
+BASEFLAGS=-std=c++14 -Wall -Wextra -Werror $(EXTRA)
 FLAGS=-Ofast -ffast-math -flto
 DEBUGFLAGS=-O0 -g
 MULTI=-pthread
 
 # this is going to fail miserably on non-Linux
 NPROCS=$(shell grep -c ^processor /proc/cpuinfo)
+PGOFLAGS=$(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA)
 
 EXECS=test testTT randomTree randomEval randomVerify coding repair testnav strip
 #EXECS
@@ -19,48 +20,50 @@ all: $(EXECS)
 
 pgo: testPGO randomEvalPGO randomVerifyPGO codingPGO repairPGO
 
-test: test.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
+bin_release_%: $(subst bin_release_,,%).cpp *.h
+	$(CX) $(BASEFLAGS) $(FLAGS) -o $(subst .cpp,,$<)$(EXTRA) $<
 
-testDebug: test.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
+bin_debug_%: $(subst bin_debug_,,%).cpp *.h
+	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) -o $(subst .cpp,,$<)$(EXTRA) $<
 
-testNoDebug: test.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o test$(EXTRA) test.cpp
+bin_nodebug_%: $(subst bin_nodebug_,,%).cpp *.h
+	$(CX) $(BASEFLAGS) $(FLAGS) -DNDEBUG -o $(subst .cpp,,$<)$(EXTRA) $<
+
+bin_prelease_%: $(subst bin_prelease_,,%).cpp *.h
+	$(CX) $(BASEFLAGS) $(FLAGS) $(MULTI) -o $(subst .cpp,,$<)$(EXTRA) $<
+
+bin_pdebug_%: $(subst bin_pdebug_,,%).cpp *.h
+	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) -o $(subst .cpp,,$<)$(EXTRA) $<
+
+bin_pnodebug_%: $(subst bin_pnodebug_,,%).cpp *.h
+	$(CX) $(BASEFLAGS) $(FLAGS) $(MULTI) -DNDEBUG -o $(subst .cpp,,$<)$(EXTRA) $<
+
+test: bin_release_test
+	@#significant comment
+testDebug: bin_debug_test
+testNoDebug: bin_nodebug_test
 
 testPGO: test.cpp *.h
 	rm -f test.gcda
-	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o test-p$(EXTRA) test.cpp
+	$(PGO_CX) $(PGOFLAGS) -fprofile-generate -o test-p$(EXTRA) test.cpp
 	./test-p$(EXTRA) data/others/dblp_small.xml
 	./test-p$(EXTRA) -r data/others/dblp_small.xml
-	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o test-p$(EXTRA) test.cpp
+	$(PGO_CX) $(PGOFLAGS) -fprofile-use -o test-p$(EXTRA) test.cpp
 
-testTT: testTT.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
+testTT: bin_release_testTT
+	@#significant comment
+testTTDebug: bin_debug_testTT
+testTTNoDebug: bin_nodebug_testTT
 
-testTTDebug: testTT.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
+randomTree: bin_release_randomTree
+	@#significant comment
+randomTreeDebug: bin_debug_randomTree
+randomTreeNoDebug: bin_nodebug_randomTree
 
-testTTNoDebug: testTT.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testTT$(EXTRA) testTT.cpp
-
-randomTree: randomTree.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
-
-randomTreeDebug: randomTree.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
-
-randomTreeNoDebug: randomTree.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o randomTree$(EXTRA) randomTree.cpp
-
-randomEval: randomEval.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
-
-randomEvalDebug: randomEval.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
-
-randomEvalNoDebug: randomEval.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomEval$(EXTRA) randomEval.cpp
+randomEval: bin_prelease_randomEval
+	@#significant comment
+randomEvalDebug: bin_pdebug_randomEval
+randomEvalNoDebug: bin_pnodebug_randomEval
 
 randomEvalPGO: randomEval.cpp *.h
 	rm -f randomEval.gcda
@@ -69,14 +72,10 @@ randomEvalPGO: randomEval.cpp *.h
 	./randomEval-p$(EXTRA) -n 100 -m 100000 -r
 	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomEval-p$(EXTRA) randomEval.cpp
 
-randomVerify: randomVerify.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
-
-randomVerifyDebug: randomVerify.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
-
-randomVerifyNoDebug: randomVerify.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -o randomVerify$(EXTRA) randomVerify.cpp
+randomVerify: bin_prelease_randomVerify
+	@#significant comment
+randomVerifyDebug: bin_pdebug_randomVerify
+randomVerifyNoDebug: bin_pnodebug_randomVerify
 
 randomVerifyPGO: randomVerify.cpp *.h
 	rm -f randomVerify.gcda
@@ -85,48 +84,37 @@ randomVerifyPGO: randomVerify.cpp *.h
 	./randomVerify-p$(EXTRA) -r -n 100 -m 100000
 	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(MULTI) $(EXTRA) -fprofile-use -fprofile-correction -o randomVerify-p$(EXTRA) randomVerify.cpp
 
-coding: coding.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
 
-codingDebug: coding.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
-
-codingNoDebug: coding.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o coding$(EXTRA) coding.cpp
+coding: bin_release_coding
+	@#significant comment
+codingDebug: bin_debug_coding
+codingNoDebug: bin_nodebug_coding
 
 codingPGO: coding.cpp *.h
 	rm -f coding.gcda
-	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
+	$(PGO_CX) $(PGOFLAGS) -fprofile-generate -o coding-p$(EXTRA) coding.cpp
 	./coding-p$(EXTRA) data/others/dblp_small.xml
 	./coding-p$(EXTRA) -r data/others/dblp_small.xml
-	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o coding-p$(EXTRA) coding.cpp
+	$(PGO_CX) $(PGOFLAGS) -fprofile-use -o coding-p$(EXTRA) coding.cpp
 
-repair: repair.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
-
-repairDebug: repair.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
-
-repairNoDebug: repair.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o repair$(EXTRA) repair.cpp
+repair: bin_release_repair
+	@#significant comment
+repairDebug: bin_debug_repair
+repairNoDebug: bin_nodebug_repair
 
 repairPGO: repair.cpp *.h
 	rm -f repair.gcda
-	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
+	$(PGO_CX) $(PGOFLAGS) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
 	./repair-p$(EXTRA) data/others/dblp_small.xml
-	$(PGO_CX) $(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -fprofile-use -o repair-p$(EXTRA) repair.cpp
+	$(PGO_CX) $(PGOFLAGS) -fprofile-use -o repair-p$(EXTRA) repair.cpp
 
-testnav: testnav.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
+testnav: bin_release_testnav
+	@#significant comment
+testnavDebug: bin_debug_testnav
+testnavNoDebug: bin_nodebug_testnav
 
-testnavDebug: testnav.cpp *.h
-	$(DBG_CX) $(DEBUGFLAGS) $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
-
-testnavNoDebug: testnav.cpp *.h
-	$(CX) $(FLAGS) -DNDEBUG $(BASEFLAGS) $(EXTRA) -o testnav$(EXTRA) testnav.cpp
-
-strip: strip.cpp *.h
-	$(CX) $(FLAGS) $(BASEFLAGS) $(EXTRA) -o strip$(EXTRA) strip.cpp
+strip: bin_release_strip
+	@#significant comment
 
 #RULES
 
