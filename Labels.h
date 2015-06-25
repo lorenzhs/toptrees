@@ -120,9 +120,9 @@ struct Labels : LabelsT<Value> {
 
 		// The idea for this is from the following anonymous StackOverflow post:
  		// http://stackoverflow.com/a/2562117
-		typename std::unordered_map<Value, int>::iterator it = values.find(value);
+		auto it = values.find(value);
 		if (it == values.end()) {
-			it = values.insert(typename std::unordered_map<Value, int>::value_type(value, (int)values.size())).first;
+			it = values.insert(std::make_pair(value, (int)values.size())).first;
 			valueIndex.push_back(&it->first);
 		}
 
