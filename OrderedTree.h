@@ -400,7 +400,8 @@ public:
 	void checkConsistency() {
 		if (global_debug)
 			for (int nodeId = 0; nodeId < _numNodes; ++nodeId) {
-				NodeType &node = nodes[nodeId];
+                                __attribute__((unused))
+                                NodeType &node = nodes[nodeId];
 				assert(node.lastEdgeIndex >= node.firstEdgeIndex - 1);
 				for (EdgeType *edge = firstEdge(nodeId); edge <= lastEdge(nodeId); ++edge) {
 					assert(edge->headNode >= 0 && nodes[edge->headNode].parent == nodeId);

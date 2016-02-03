@@ -26,22 +26,22 @@ public:
     }
 
 protected:
-	/// Output an opening tag
-	void openTag(int depth=0, const bool newline=true) {
-		if (!print) return;
-		for (int i = 0; i < depth; ++i) cout << " ";
-		std::cout << "<" << *nav.getLabel() << ">";
-		if (newline) std::cout << std::endl;
-	}
+    /// Output an opening tag
+    void openTag(int depth=0, const bool newline=true) {
+        if (!print) return;
+        for (int i = 0; i < depth; ++i) cout << " ";
+        std::cout << "<" << *nav.getLabel() << ">";
+        if (newline) std::cout << std::endl;
+    }
 
-	/// Output a closing tag
-	void closeTag(int depth=0, const bool indent=true) {
-		if (!print) return;
-		if (indent) for (int i = 0; i < depth; ++i) cout << " ";
-		std::cout << "</" << *nav.getLabel() << ">" << std::endl;
-	}
+    /// Output a closing tag
+    void closeTag(int depth=0, const bool indent=true) {
+        if (!print) return;
+        if (indent) for (int i = 0; i < depth; ++i) cout << " ";
+        std::cout << "</" << *nav.getLabel() << ">" << std::endl;
+    }
 
-	/// Recursively traverse
+    /// Recursively traverse
     unsigned long long traverse(int depth=0) {
         unsigned long long visited = 0;
 		if (!nav.isLeaf()) {

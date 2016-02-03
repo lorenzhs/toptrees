@@ -62,16 +62,17 @@ int main(int argc, char **argv) {
 		topDagConstructor.construct();
 	} else {
 		TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
-		topDagConstructor.construct();
-	}
-	cout << "Top DAG construction took " << timer.getAndReset() << "ms";
-	//, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
+        topDagConstructor.construct();
+    }
+    cout << "Top DAG construction took " << timer.getAndReset() << "ms";
+    //, avg node depth " << topTree.avgDepth() << " (min " << topTree.minDepth() << "); took " << timer.getAndReset() << " ms" << endl;
 
-	const int edges = dag.countEdges();
-	const double percentage = (edges * 100.0) / treeEdges;
-	const double ratio = ((int)(1000 / percentage)) / 10.0;
-	cout << "Top dag has " << dag.nodes.size() - 1 << " nodes, " << edges << " edges (" << percentage
-		 << "% of original tree, " << ratio << ":1)" << endl;
+    const int edges = dag.countEdges();
+    const double percentage = (edges * 100.0) / treeEdges;
+    const double ratio = ((int)(1000 / percentage)) / 10.0;
+        cout << endl << "Top DAG has " << dag.nodes.size() - 1 << " nodes, "
+             << edges << " edges (" << percentage
+             << "% of original tree, " << ratio << ":1)" << endl;
 
 	/*Navigator<string> nav(dag);
 
