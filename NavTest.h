@@ -12,11 +12,18 @@ public:
 	PreorderTraversal(const TopDag<DataType> &dag, const bool print=false) : nav(dag), print(print) {}
 
 	/// Do the traversal and print an XML representation to stdout
-	long long run() {
+    std::pair<unsigned long long, unsigned long long> run() {
 		openTag(0);
-		traverse(0);
-		return nav.getMaxTreeStackSize();
-	}
+        auto visited = traverse(0);
+        return std::make_pair(visited, nav.getMaxTreeStackSize());
+    }
+
+    /// Do the traversal and print an XML representation to stdout
+    std::pair<unsigned long long, unsigned long long> runRight() {
+        openTag(0);
+        auto visited = traverseRight(0);
+        return std::make_pair(visited, nav.getMaxTreeStackSize());
+    }
 
 protected:
 	/// Output an opening tag
@@ -35,25 +42,54 @@ protected:
 	}
 
 	/// Recursively traverse
-	void traverse(int depth=0) {
+    unsigned long long traverse(int depth=0) {
+        unsigned long long visited = 0;
 		if (!nav.isLeaf()) {
-			nav.firstChild();
+            nav.firstChild();
+            ++visited;
 			openTag(++depth, !nav.isLeaf());
 		} else {
 			closeTag(depth, !nav.isLeaf());
-			if (nav.nextSibling()) {
+            if (nav.nextSibling()) {
+                ++visited;
 				openTag(depth, !nav.isLeaf());
 			} else {
 				while (!nav.nextSibling()) {
 					bool hasParent = nav.parent();
 					if (depth > 0) closeTag(--depth);
-					if (!hasParent) return;
-				}
+                    if (!hasParent) return visited;
+                }
+                ++visited;
 				openTag(depth);
 			}
 		}
-		traverse(depth);
-	}
+        return visited + traverse(depth);
+    }
+
+    /// Recursively traverse
+    size_t traverseRight(int depth=0) {
+        size_t visited = 0;
+        if (!nav.isLeaf()) {
+            nav.lastChild();
+            ++visited;
+            openTag(++depth, !nav.isLeaf());
+        } else {
+            closeTag(depth, !nav.isLeaf());
+            if (nav.prevSibling()) {
+                ++visited;
+                openTag(depth, !nav.isLeaf());
+            } else {
+                while (!nav.prevSibling()) {
+                    bool hasParent = nav.parent();
+                    if (depth > 0) closeTag(--depth);
+                    if (!hasParent) return visited;
+                }
+                ++visited;
+                openTag(depth);
+            }
+        }
+        return visited + traverseRight(depth);
+    }
 
 protected:
 	Navigator<DataType> nav;

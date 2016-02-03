@@ -94,7 +94,7 @@ public:
 		treeStack.push_back(dagStack);
 		maxTreeStackSize = std::max(maxTreeStackSize, getTreeStackSize());
 		while (!dagStack.empty()) {
-			NavigationRecord record = dagStack.top();
+            NavigationRecord &record = dagStack.top();
 			MergeType mergeType = dag.nodes[record.parentId].mergeType;
 
 			if (record.left && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
@@ -113,7 +113,47 @@ public:
 			if (verbose) std::cout << "fC: pushing " << dagStack.top() << std::endl;
 		}
 		return true;
-	}
+    }
+
+    /// Move to the current node's last child
+    /// \returns whether the operation was a success
+    bool lastChild() {
+        if (verbose) dumpDagStack();
+        if (isLeaf()) {
+            return false;
+        }
+        treeStack.push_back(dagStack);
+        maxTreeStackSize = std::max(maxTreeStackSize, getTreeStackSize());
+
+        while (!dagStack.empty()) {
+            NavigationRecord &record = dagStack.top();
+            MergeType mergeType = dag.nodes[record.parentId].mergeType;
+
+            if (record.left && (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN)) {
+                break;
+            }
+            dagStack.pop();
+        }
+        auto nodeId(dagStack.top().parentId), nextNode(dag.nodes[nodeId].right);
+        bool wentLeft = false;
+        dagStack.pop();
+
+        while (nextNode > 0) {
+            dagStack.push({nextNode, nodeId, wentLeft});
+            if (verbose) std::cout << "fC: pushing " << dagStack.top() << std::endl;
+            nodeId = nextNode;
+            auto mergeType = dag.nodes[nextNode].mergeType;
+            if (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN) {
+                nextNode = dag.nodes[nextNode].left;
+                wentLeft = true;
+            } else {
+                nextNode = dag.nodes[nextNode].right;
+                wentLeft = false;
+            }
+        }
+
+        return true;
+    }
 
 	/// Move to the current node's next sibling
 	/// \returns whether the operation was a success
@@ -153,7 +193,57 @@ public:
 			if (verbose) std::cout << "nS: pushing " << dagStack.top() << std::endl;
 		}
 		return true;
-	}
+    }
+
+
+    /// Move to the current node's previous sibling
+    /// \returns whether the operation was a success
+    bool prevSibling() {
+        if (verbose) dumpDagStack();
+
+        DStackT stack(dagStack);
+        while (!stack.empty()) {
+            NavigationRecord &record = stack.top();
+            MergeType mergeType = dag.nodes[record.parentId].mergeType;
+            if (!record.left && (mergeType == HORZ_LEFT_BBN ||
+                                 mergeType == HORZ_RIGHT_BBN ||
+                                 mergeType == HORZ_NO_BBN)) {
+                break;
+            }
+            if ((!record.left) && (mergeType == VERT_WITH_BBN ||
+                                   mergeType == VERT_NO_BBN)) {
+                // a or b from right => abort
+                return false;
+            }
+            stack.pop();
+        }
+
+        // No more next siblings in the tree, we've exhausted the stack
+        if (stack.empty()) {
+            return false;
+        }
+
+        dagStack = stack;
+        auto nodeId(dagStack.top().parentId), nextNode(dag.nodes[nodeId].left);
+        bool wentLeft = true;
+        dagStack.pop();
+
+        while (nextNode > 0) {
+            dagStack.push({nextNode, nodeId, wentLeft});
+            if (verbose) std::cout << "fC: pushing " << dagStack.top() << std::endl;
+            nodeId = nextNode;
+            auto mergeType = dag.nodes[nextNode].mergeType;
+            if (mergeType == VERT_WITH_BBN || mergeType == VERT_NO_BBN) {
+                nextNode = dag.nodes[nextNode].left;
+                wentLeft = true;
+            } else {
+                nextNode = dag.nodes[nextNode].right;
+                wentLeft = false;
+            }
+        }
+
+        return true;
+    }
 
 	/// Debug helper to dump the DAG stack
 	void dumpDagStack() {
@@ -167,8 +257,8 @@ public:
 	}
 
 	/// Debug helper to retrieve tree stack size
-	long long getTreeStackSize() const {
-		long long treeStackSize(0);
+    unsigned long long getTreeStackSize() const {
+        unsigned long long treeStackSize(0);
 		for (const DStackT &stack : treeStack) {
 			treeStackSize += stack.size();
 		}
@@ -177,7 +267,7 @@ public:
 	}
 
 	/// Debug helper to return largest tree stack size encountered
-	long long getMaxTreeStackSize() const {
+    unsigned long long getMaxTreeStackSize() const {
 		return maxTreeStackSize;
 	}
 
@@ -185,6 +275,6 @@ private:
 	const DAGType &dag;
 	DStackT dagStack;
 	TStackT treeStack;
-	long long maxTreeStackSize;
+    unsigned long long maxTreeStackSize;
 	static const bool verbose = false;
 };

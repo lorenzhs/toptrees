@@ -89,10 +89,19 @@ int main(int argc, char **argv) {
 	cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
 */
 
-	timer.reset();
 	PreorderTraversal<string> trav(dag, print);
-	long long maxTreeStackSize = trav.run();
-	cout << "Preorder traversal took " << timer.get() << "ms, max tree stack size = " << maxTreeStackSize << " Bytes" << endl;
+        unsigned long long nodesVisited, maxTreeStackSize;
+        timer.reset();
+        std::tie(nodesVisited, maxTreeStackSize) = trav.run();
+        cout << "Preorder    traversal took " << timer.get() << "ms, visited "
+             << nodesVisited << " nodes; max tree stack size = "
+             << maxTreeStackSize << " Bytes" << endl;
+
+        timer.reset();
+        std::tie(nodesVisited, maxTreeStackSize) = trav.runRight();
+        cout << "Right-first traversal took " << timer.get() << "ms, visited "
+             << nodesVisited << " nodes; max tree stack size = "
+             << maxTreeStackSize << " Bytes" << endl;
 
 	return 0;
 }
