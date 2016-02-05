@@ -36,32 +36,32 @@ using std::endl;
 using std::string;
 
 int main(int argc, char **argv) {
-	OrderedTree<TreeNode, TreeEdge> t;
-	ArgParser argParser(argc, argv);
-	const bool useRePair = argParser.isSet("r");
-	string filename = "data/1998statistics.xml";
-	if (argParser.numDataArgs() > 0) {
-		filename = argParser.getDataArg(0);
-	} else if (useRePair) {
-		// if used as "./test -r foo.xml", it will match the foo.xml to the "-r" which is unfortunate
-		string arg = argParser.get<string>("r", "");
-		filename = (arg == "") ? filename : arg;
-	}
-	const bool print = argParser.isSet("p");
+    OrderedTree<TreeNode, TreeEdge> t;
+    ArgParser argParser(argc, argv);
+    const bool useRePair = argParser.isSet("r");
+    string filename = "data/1998statistics.xml";
+    if (argParser.numDataArgs() > 0) {
+        filename = argParser.getDataArg(0);
+    } else if (useRePair) {
+        // if used as "./test -r foo.xml", it will match the foo.xml to the "-r" which is unfortunate
+        string arg = argParser.get<string>("r", "");
+        filename = (arg == "") ? filename : arg;
+    }
+    const bool print = argParser.isSet("p");
 
-	Labels<string> labels;
-	XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
-	cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
+    Labels<string> labels;
+    XmlParser<OrderedTree<TreeNode, TreeEdge>>::parse(filename, t, labels);
+    cout << t.summary() << "; Height: " << t.height() << " Avg depth: " << t.avgDepth() << endl;
 
-	const int treeEdges = t._numEdges;
-	TopDag<string> dag(t._numNodes, labels);
+    const int treeEdges = t._numEdges;
+    TopDag<string> dag(t._numNodes, labels);
 
-	Timer timer;
-	if (useRePair) {
-		RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
-		topDagConstructor.construct();
-	} else {
-		TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
+    Timer timer;
+    if (useRePair) {
+        RePairCombiner<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
+        topDagConstructor.construct();
+    } else {
+        TopDagConstructor<OrderedTree<TreeNode, TreeEdge>, string> topDagConstructor(t, dag);
         topDagConstructor.construct();
     }
     cout << "Top DAG construction took " << timer.getAndReset() << "ms";
@@ -74,23 +74,23 @@ int main(int argc, char **argv) {
              << edges << " edges (" << percentage
              << "% of original tree, " << ratio << ":1)" << endl;
 
-	/*Navigator<string> nav(dag);
+    /*Navigator<string> nav(dag);
 
-	cout << "isLeaf: " << nav.isLeaf() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "nextSibling: " << nav.nextSibling() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "nextSibling: " << nav.nextSibling() << "; label: " << nav.getLabel() << " = " << std::endl << std::endl;
+    cout << "isLeaf: " << nav.isLeaf() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "nextSibling: " << nav.nextSibling() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "nextSibling: " << nav.nextSibling() << "; label: " << nav.getLabel() << " = " << std::endl << std::endl;
 
-	cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "nextSibling: " << nav.nextSibling() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
-	cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "nextSibling: " << nav.nextSibling() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "firstChild: " << nav.firstChild() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
+    cout << "parent: " << nav.parent() << "; label: " << nav.getLabel() << " = " << std::flush << *nav.getLabel() << std::endl << std::endl;
 */
 
-	PreorderTraversal<string> trav(dag, print);
+    PreorderTraversal<string> trav(dag, print);
         unsigned long long nodesVisited, maxTreeStackSize;
         timer.reset();
         std::tie(nodesVisited, maxTreeStackSize) = trav.run();
@@ -104,5 +104,5 @@ int main(int argc, char **argv) {
              << nodesVisited << " nodes; max tree stack size = "
              << maxTreeStackSize << " Bytes" << endl;
 
-	return 0;
+    return 0;
 }
