@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <stack>
 #include <sys/stat.h>
 
 #ifdef NDEBUG
@@ -73,4 +74,58 @@ bool makePathRecursive(std::string path, int permissions = 0755) {
     }
     // successfully created by mkdir call, no recursion needed
     return true;
+}
+
+namespace std {
+template <typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    const size_t size = v.size();
+    os << "vec(" << size << ")[";
+    for (size_t i = 0; i < size; ++i) {
+        os << v[i] << (i + 1 < size ? ", " : "");
+    }
+    return os << "];" << endl;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, const deque<T> &d) {
+    const size_t size = d.size();
+    os << "deque(" << size << ")[";
+    for (size_t i = 0; i < size; ++i) {
+        os << d[i] << (i + 1 < size ? ", " : "");
+    }
+    return os << "];" << endl;
+}
+
+template <typename T1, typename T2>
+ostream &operator<<(ostream &os, const pair<T1, T2> &p) {
+    return os << "(" << p.first << "," << p.second << ")";
+}
+}
+
+
+// Hack for op<<ing std::stack http://stackoverflow.com/a/4523216
+template <typename T, typename Container>
+const Container& container(const std::stack<T, Container> &stack) {
+    struct HackedStack : private std::stack<T, Container> {
+        static const Container& container(const std::stack<T, Container> &stack) {
+            return stack.*&HackedStack::c;
+        }
+    };
+    return HackedStack::container(stack);
+}
+
+template <typename T,
+          template <typename T2,
+                    typename Container = std::deque<T2>> class Adapter,
+          typename Stream>
+Stream& operator<< (Stream &out, const Adapter<T> &adapter) {
+    auto data = container(adapter);
+
+    out << "[";
+    auto it = data.begin(), end = data.end();
+    while (it != end) {
+        out << *it++ << (it < end ? ", " : "");
+    }
+    return out << "]";
 }

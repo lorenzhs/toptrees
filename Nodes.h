@@ -75,7 +75,9 @@ struct DagNode {
           label(other.label) {}
 
     friend std::ostream &operator<<(std::ostream &os, const DagNode &node) {
-        os << "(" << node.left << ";" << node.right << ";" << node.mergeType << ";#" << node.inDegree << ";";
+        os << "(" << node.left << ";" << node.right << ";"
+           << ((node.mergeType == -1) ? 'X' : (char)(node.mergeType+'a'))
+           << ";#" << node.inDegree << ";";
         if (node.label == NULL)
             os << "NULL";
         else
