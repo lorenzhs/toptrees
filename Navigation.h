@@ -63,7 +63,7 @@ public:
     }
 
     /// Check whether the current node is a leaf in the tree
-    bool isLeaf() {
+    bool isLeaf() const {
         DStackT stack(dagStack);
         while (!stack.empty()) {
             NavigationRecord &record = stack.top();
@@ -250,7 +250,7 @@ public:
     }
 
     /// Debug helper to dump the DAG stack
-    void dumpDagStack() {
+    void dumpDagStack() const {
         DStackT stack(dagStack);
         std::cout << "DagStack: ";
         while (!stack.empty()) {
