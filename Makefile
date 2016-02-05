@@ -1,7 +1,7 @@
-CX=clang++-3.6
+CX=clang++-3.7
 PGO_CX=g++
 # clang++ <= 3.6 doesn't support -g with -std=c++1y
-DBG_CX=clang++-3.6
+DBG_CX=clang++-3.7
 # -flto requires use of the gold linker, so make sure that
 # /usr/bin/ld -> ld.gold when using clang++
 BASEFLAGS=-std=c++14 -Wall -Wextra -Werror $(EXTRA)
