@@ -59,7 +59,7 @@ public:
         for (auto it = freq.cbegin(); it != freq.cend(); ++it) {
             if (it->second == 0) continue;
             double relativeFrequency(((double)it->second) / numItems);
-            entropy -= relativeFrequency * log2(relativeFrequency);
+            entropy -= relativeFrequency * log_2(relativeFrequency);
         }
         return entropy;
     }
@@ -69,7 +69,7 @@ public:
     double optBitsForSymbol(const T &symbol) const {
         CounterType occurrences(freq.at(symbol));
         if (occurrences == 0) return 0;
-        return -1*log2(((double)occurrences) / numItems);
+        return -1*log_2(((double)occurrences) / numItems);
     }
 
     /// The optimal number of bits to code a symbol
@@ -77,7 +77,7 @@ public:
     double optBitsForSymbol(T &&symbol) const {
         CounterType occurrences(freq.at(symbol));
         if (occurrences == 0) return 0;
-        return -1*log2(((double)occurrences) / numItems);
+        return -1*log_2(((double)occurrences) / numItems);
     }
 
     /// A short string summary of the data collected
@@ -299,7 +299,7 @@ struct DagEntropy {
     long long getTotalSize() const {
         // Code dag pointers as fixed-length ints
         // Size can be deduced from decoded dag structure data
-        long long bits_per_pointer = log2(dag.nodes.size());
+        long long bits_per_pointer = log_2(dag.nodes.size());
         long long bits =
             // node IDs are implicit, but we need to encode the blocked huffman's table (it's quite small)
             dagStructureEntropy.huffman.getBitsNeeded() + dagStructureEntropy.huffman.getBitsForTableLabels() +

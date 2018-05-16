@@ -124,7 +124,7 @@ public:
         for (uint i = 0; i < codes.size(); ++i) {
             maxLen = (codes[i].size() > maxLen) ? codes[i].size() : maxLen;
         }
-        bits += 2*log2(maxLen) + 1; // code maxLen using gamma coding
+        bits += 2*log_2(maxLen) + 1; // code maxLen using gamma coding
         for (uint i = 0; i < codes.size(); ++i) {
             auto number = maxLen - codes[i].size();
             bits += number + 1; // code in unary
@@ -135,7 +135,7 @@ public:
     /// Get the number of bits that are required to store the labels to the table entries,
     /// as fixed-length codes.
     long long getBitsForTableLabels() const {
-        return static_cast<long long>(getNumSymbols()) * log2(getNumSymbols());
+        return static_cast<long long>(getNumSymbols()) * log_2(getNumSymbols());
     }
 
     /// Get a string representation, including the symbols, their codes and absolute as well as

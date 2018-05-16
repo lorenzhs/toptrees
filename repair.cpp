@@ -11,9 +11,9 @@
 #include "OrderedTree.h"
 
 // Algorithms
-#include "RePair/Coder.h"
-#include "RePair/Prepair.h"
-#include "RePair/RePair.h"
+#include "TreeRePair/Coder.h"
+#include "TreeRePair/Prepair.h"
+#include "TreeRePair/RePair.h"
 
 // Utils
 #include "ArgParser.h"
