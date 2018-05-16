@@ -17,14 +17,49 @@ const bool global_debug = true;
 // hacky way to calculate the number of digits in a number, for std::setw
 #define NUM_DIGITS(v) ((v >= 1000000000) ? 10 : (v >= 100000000) ? 9 : (v >= 10000000) ? 8 : (v >= 1000000) ? 7 : (v >= 100000) ? 6 : (v >= 10000) ? 5 : (v >= 1000) ? 4 : (v >= 100) ? 3 : (v >= 10) ? 2 : 1)
 
-template <typename T>
-T log2(T val) {
-    T result(0);
-    while (val > 1) {
-        result += 1;
-        val >>= 1;
-    }
-    return result;
+// copied and adapted from tlx:
+// https://github.com/tlx/tlx/blob/master/tlx/math/integer_log2.hpp
+template <typename IntegerType>
+static inline unsigned log2_floor_template(IntegerType i) {
+    unsigned p = 0;
+    while (i >= 65536) i >>= 16, p += 16;
+    while (i >= 256) i >>= 8, p += 8;
+    while (i >>= 1) ++p;
+    return p;
+}
+
+unsigned log2ceil(int i) {
+    if (i <= 1) return 0;
+    return log2_floor_template(i - 1) + 1;
+}
+
+unsigned log2ceil(unsigned int i) {
+    if (i <= 1) return 0;
+    return log2_floor_template(i - 1) + 1;
+}
+
+unsigned log2ceil(long i) {
+    if (i <= 1) return 0;
+    return log2_floor_template(i - 1) + 1;
+}
+
+unsigned log2ceil(unsigned long i) {
+    if (i <= 1) return 0;
+    return log2_floor_template(i - 1) + 1;
+}
+
+unsigned log2ceil(long long i) {
+    if (i <= 1) return 0;
+    return log2_floor_template(i - 1) + 1;
+}
+
+unsigned log2ceil(unsigned long long i) {
+    if (i <= 1) return 0;
+    return log2_floor_template(i - 1) + 1;
+}
+
+unsigned log2ceil(bool) {
+    return 0;
 }
 
 /// Types of merges in the top tree (see top tree compression paper for details)

@@ -15,7 +15,7 @@ struct TreeSizeEstimation {
         long long result(0);
 
         // space for label indices
-        result += tree._numNodes * log2(labels.size());
+        result += tree._numNodes * log2ceil(labels.size());
 
         // space for labels
         for (const std::string *label : labels.valueIndex) {

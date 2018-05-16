@@ -37,7 +37,7 @@ struct Coder {
         for (auto it = mapping.begin(); it != mapping.end(); ++it) {
             maxSymbol = std::max(maxSymbol, it->second);
         }
-        const int bitsPerSymbol(log2(maxSymbol));
+        const int bitsPerSymbol(log2ceil(maxSymbol));
         // code table as fixed-width numbers plus its size
         bitsForInputMapping = mapping.size() * bitsPerSymbol + sizeof(InputType)*8;
     }
