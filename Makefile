@@ -9,12 +9,12 @@ MULTI=-pthread
 NPROCS=$(shell grep -c ^processor /proc/cpuinfo)
 PGOFLAGS=$(FLAGS)=$(NPROCS) -DNDEBUG $(BASEFLAGS) $(EXTRA)
 
-EXECS=test testTT randomTree randomEval randomVerify coding repair testnav strip
+EXECS=test testTT randomTree randomEval randomVerify coding stringrepair testnav strip
 #EXECS
 
 all: $(EXECS)
 
-pgo: testPGO randomEvalPGO randomVerifyPGO codingPGO repairPGO
+pgo: testPGO randomEvalPGO randomVerifyPGO codingPGO stringrepairPGO
 
 bin_release_%: $(subst bin_release_,,%).cpp *.h
 	$(CXX) $(BASEFLAGS) $(FLAGS) -o $(subst .cpp,,$<)$(EXTRA) $<
@@ -93,16 +93,16 @@ codingPGO: coding.cpp *.h
 	./coding-p$(EXTRA) -r data/others/dblp_small.xml
 	$(CXX) $(PGOFLAGS) -fprofile-use -o coding-p$(EXTRA) coding.cpp
 
-repair: bin_release_repair
+stringrepair: bin_release_stringrepair
 	@#significant comment
-repairDebug: bin_debug_repair
-repairNoDebug: bin_nodebug_repair
+stringrepairDebug: bin_debug_stringrepair
+stringrepairNoDebug: bin_nodebug_stringrepair
 
-repairPGO: repair.cpp *.h
-	rm -f repair.gcda
-	$(CXX) $(PGOFLAGS) -fprofile-generate -o repair-p$(EXTRA) repair.cpp
-	./repair-p$(EXTRA) data/others/dblp_small.xml
-	$(CXX) $(PGOFLAGS) -fprofile-use -o repair-p$(EXTRA) repair.cpp
+stringrepairPGO: stringrepair.cpp *.h
+	rm -f stringrepair.gcda
+	$(CXX) $(PGOFLAGS) -fprofile-generate -o stringrepair-p$(EXTRA) stringrepair.cpp
+	./stringrepair-p$(EXTRA) data/others/dblp_small.xml
+	$(CXX) $(PGOFLAGS) -fprofile-use -o stringrepair-p$(EXTRA) stringrepair.cpp
 
 testnav: bin_release_testnav
 	@#significant comment
